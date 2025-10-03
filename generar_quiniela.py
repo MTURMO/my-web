@@ -2,7 +2,7 @@
 
 partidos = [
     {"local": "Equipo A", "visitante": "Equipo B"},
-    {"local": "Equipo C", "visitante": "Equipo D"},
+    {"local": "Equipo Aula", "visitante": "Equipo D"},
 ]
 
 html_content = """<!DOCTYPE html>
