@@ -3,10 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <title>Participante</title>
+  <style>
+    body { font-family: Arial; text-align:center; margin-top:50px; background:#f9f9f9; }
+    input, button { padding:10px; font-size:16px; margin:10px; border-radius:6px; }
+    button { background-color:#007bff; color:white; border:none; cursor:pointer; }
+    button:hover { background-color:#0056b3; }
+    .hidden { display:none; }
+  </style>
 </head>
 <body>
-  <h1>Página de Participantes</h1>
-  <p>Aquí pondremos el formulario donde los amigos pueden poner su nombre y correo.</p>
-  <a href="index.html">⬅ Volver al Menú</a>
+
+  <!-- Registro -->
+  <div id="registro">
+    <h1>Registro de Participante</h1>
+    <input type="text" id="nombre" placeholder="Nombre" required><br>
+    <input type="email" id="correo" placeholder="Correo" required><br>
+    <button onclick="registrarParticipante()">Registrar</button>
+  </div>
+
+  <!-- Quiniela -->
+  <div id="quiniela" class="hidden">
+    <h1>Quiniela</h1>
+    <div id="formContainer"></div>
+    <button onclick="enviarQuiniela()">Enviar Quiniela</button>
+  </div>
+
+  <script>
+    function registrarParticipante() {
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+      if(!nombre || !correo) { alert("Completa todos los campos"); return; }
+      // Guardamos en localStorage (simulación)
+      localStorage.setItem("participante", JSON.stringify({nombre, correo}));
+      document.getElementById("registro").classList.add("hidden");
+      document.getElementById("quiniela").classList.remove("hidden");
+      cargarQuiniela();
+    }
+
+    function cargarQuiniela() {
+      // Cargamos quiniela (simulación)
+      // Para producción, reemplazar por fetch a backend o quiniela.html generado
+      const partidos = [
+        {local: "Equipo A", visitante: "Equipo B"},
+        {local: "Equipo C", visitante: "Equipo D"}
+      ];
+      const container = document.getElementById("formContainer");
+      container.innerHTML = "";
+      partidos.forEach((p, i) => {
+        container.innerHTML += `
+          <p>Partido ${i+1}: ${p.local} vs ${p.visitante}</p>
+          <label><input type="radio" name="partido${i+1}" value="local" required>${p.local}</label>
+          <label><input type="radio" name="partido${i+1}" value="empate">Empate</label>
+          <label><input type="radio" name="partido${i+1}" value="visitante">${p.visitante}</label><br><br>
+        `;
+      });
+    }
+
+    function enviarQuiniela() {
+      const participante = JSON.parse(localStorage.getItem("participante"));
+      const form = document.getElementById("formContainer");
+      const resultados = {};
+      const radios = form.querySelectorAll("input[type=radio]:checked");
+      radios.forEach(r => resultados[r.name] = r.value);
+      console.log("Participante:", participante);
+      console.log("Quiniela:", resultados);
+      alert("Quiniela enviada (simulación). Revisa la consola para ver los datos.");
+    }
+  </script>
+
 </body>
 </html>

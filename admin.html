@@ -4,39 +4,12 @@
   <meta charset="UTF-8">
   <title>Administrador</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 80px;
-      background: #f4f4f4;
-    }
-    .hidden {
-      display: none;
-    }
-    input[type="password"] {
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background-color: #007bff;
-      color: white;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .menu button {
-      display: block;
-      margin: 15px auto;
-      width: 200px;
-    }
+    body { font-family: Arial; text-align:center; margin-top:80px; background:#f4f4f4; }
+    .hidden { display:none; }
+    input, button { padding:10px; font-size:16px; margin:10px; border-radius:6px; }
+    button { background-color:#007bff; color:white; border:none; cursor:pointer; }
+    button:hover { background-color:#0056b3; }
+    .menu button { display:block; margin:15px auto; width:200px; }
   </style>
 </head>
 <body>
@@ -51,13 +24,13 @@
     <p id="error" style="color:red;"></p>
   </div>
 
-  <!-- Menú de admin (oculto al inicio) -->
+  <!-- Menú de admin -->
   <div id="menu" class="hidden">
     <h1>Menú Administrador</h1>
     <div class="menu">
-      <button onclick="alert('Ir a nuevo formulario')">New Form</button>
-      <button onclick="alert('Revisando pagos...')">Check Payments</button>
-      <button onclick="alert('Mostrando resultados...')">Check Results</button>
+      <button onclick="window.location.href='quiniela.html'">New Form (Generar Quiniela)</button>
+      <button onclick="alert('Check Payments (por implementar)')">Check Payments</button>
+      <button onclick="alert('Check Results (por implementar)')">Check Results</button>
     </div>
     <a href="index.html">⬅ Volver al Menú Principal</a>
   </div>
@@ -66,11 +39,8 @@
     function checkPassword() {
       const input = document.getElementById("password").value;
       const error = document.getElementById("error");
-
-      // ⚠️ Contraseña fija para pruebas
-      const correctPassword = "1234";
-
-      if (input === correctPassword) {
+      const correctPassword = "1234"; // Cambia tu contraseña
+      if(input === correctPassword) {
         document.getElementById("login").classList.add("hidden");
         document.getElementById("menu").classList.remove("hidden");
       } else {
