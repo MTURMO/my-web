@@ -1,53 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Administrador</title>
-  <style>
-    body { font-family: Arial; text-align:center; margin-top:80px; background:#f4f4f4; }
-    .hidden { display:none; }
-    input, button { padding:10px; font-size:16px; margin:10px; border-radius:6px; }
-    button { background-color:#007bff; color:white; border:none; cursor:pointer; }
-    button:hover { background-color:#0056b3; }
-    .menu button { display:block; margin:15px auto; width:200px; }
-  </style>
+<meta charset="UTF-8">
+<title>Administrador</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#eef2ff;}
+  h1{font-size:2rem;margin-bottom:1rem;color:#333;}
+  input, button{padding:12px 20px;font-size:16px;margin:10px;border-radius:10px;border:none;}
+  input{width:250px;border:1px solid #ccc;}
+  button{background:linear-gradient(90deg,#6366f1,#3b82f6);color:white;font-weight:600;cursor:pointer;transition:transform 0.2s;}
+  button:hover{transform:translateY(-2px);}
+  .hidden{display:none;}
+  .menu button{width:220px;margin:15px 0;background:linear-gradient(90deg,#10b981,#14b8a6);}
+  .menu button:hover{transform:translateY(-2px);}
+  a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
+</style>
 </head>
 <body>
 
-  <!-- Pantalla de login -->
-  <div id="login">
-    <h1>Acceso Administrador</h1>
-    <p>Introduce la contraseña:</p>
-    <input type="password" id="password" placeholder="Contraseña">
-    <br>
-    <button onclick="checkPassword()">Entrar</button>
-    <p id="error" style="color:red;"></p>
-  </div>
+<!-- Login -->
+<div id="login">
+  <h1>Acceso Administrador</h1>
+  <input type="password" id="password" placeholder="Contraseña"><br>
+  <button onclick="checkPassword()">Entrar</button>
+  <p id="error" style="color:red;"></p>
+</div>
 
-  <!-- Menú de admin -->
-  <div id="menu" class="hidden">
-    <h1>Menú Administrador</h1>
-    <div class="menu">
-      <button onclick="window.location.href='upload.html'">New Form (Subir Quiniela)</button>
-      <button onclick="alert('Check Payments (por implementar)')">Check Payments</button>
-      <button onclick="alert('Check Results (por implementar)')">Check Results</button>
-    </div>
-    <a href="index.html">⬅ Volver al Menú Principal</a>
+<!-- Menú Admin -->
+<div id="menu" class="hidden">
+  <h1>Menú Administrador</h1>
+  <div class="menu">
+    <button onclick="window.location.href='upload.html'">New Form</button>
+    <button onclick="alert('Check Payments (por implementar)')">Check Payments</button>
+    <button onclick="alert('Check Results (por implementar)')">Check Results</button>
   </div>
+  <a href="index.html">⬅ Volver al Menú Principal</a>
+</div>
 
-  <script>
-    function checkPassword() {
-      const input = document.getElementById("password").value;
-      const error = document.getElementById("error");
-      const correctPassword = "1234"; // Cambia tu contraseña
-      if(input === correctPassword) {
-        document.getElementById("login").classList.add("hidden");
-        document.getElementById("menu").classList.remove("hidden");
-      } else {
-        error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
-      }
-    }
-  </script>
+<script>
+function checkPassword() {
+  const input = document.getElementById("password").value;
+  const error = document.getElementById("error");
+  const correctPassword = "1234";
+  if(input === correctPassword){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("menu").classList.remove("hidden");
+  } else {
+    error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
+  }
+}
+</script>
 
 </body>
 </html>

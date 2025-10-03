@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Menú Principal</title>
-  <style>
-    body { font-family: Arial; text-align: center; margin-top: 100px; background:#f9f9f9; }
-    h1 { color:#333; }
-    .menu { margin-top: 40px; }
-    a {
-      display: inline-block; padding:15px 25px; margin:10px;
-      font-size:18px; text-decoration:none; color:white;
-      background-color:#007bff; border-radius:8px;
-      transition: background 0.3s;
-    }
-    a:hover { background-color:#0056b3; }
-  </style>
+<meta charset="UTF-8">
+<title>Menú Principal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; font-family:'Inter',sans-serif; }
+  body {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; background:#f0f4f8;
+  }
+  h1 { font-size:2.5rem; margin-bottom:1rem; color:#333; }
+  p { margin-bottom:2rem; color:#555; font-size:1.2rem; }
+  .menu { display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; }
+  a {
+    padding:15px 30px; text-decoration:none; font-weight:600;
+    color:white; background: linear-gradient(90deg,#4f46e5,#3b82f6);
+    border-radius:12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  a:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+</style>
 </head>
 <body>
   <h1>Bienvenido</h1>
-  <p>Elige una opción:</p>
+  <p>Selecciona tu rol</p>
   <div class="menu">
     <a href="participante.html">Participante</a>
     <a href="admin.html">Administrador</a>

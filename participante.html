@@ -1,75 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Participante</title>
-  <style>
-    body { font-family: Arial; text-align:center; margin-top:50px; background:#f9f9f9; }
-    input, button { padding:10px; font-size:16px; margin:10px; border-radius:6px; }
-    button { background-color:#007bff; color:white; border:none; cursor:pointer; }
-    button:hover { background-color:#0056b3; }
-    .hidden { display:none; }
-  </style>
+<meta charset="UTF-8">
+<title>Participante</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;padding:50px;background:#f0f4f8;}
+input,button{padding:12px 18px;margin:10px;border-radius:10px;border:none;font-size:16px;}
+button{background:linear-gradient(90deg,#4f46e5,#3b82f6);color:white;cursor:pointer;transition:transform 0.2s;}
+button:hover{transform:translateY(-2px);}
+.hidden{display:none;}
+h1{margin-bottom:20px;color:#333;}
+iframe{width:80%;height:500px;border-radius:12px;border:1px solid #ccc;margin-top:20px;}
+</style>
 </head>
 <body>
 
-  <!-- Registro -->
-  <div id="registro">
-    <h1>Registro de Participante</h1>
-    <input type="text" id="nombre" placeholder="Nombre" required><br>
-    <input type="email" id="correo" placeholder="Correo" required><br>
-    <button onclick="registrarParticipante()">Registrar</button>
-  </div>
+<!-- Registro -->
+<div id="registro">
+  <h1>Registro de Participante</h1>
+  <input type="text" id="nombre" placeholder="Nombre"><br>
+  <input type="email" id="correo" placeholder="Correo"><br>
+  <button onclick="registrarParticipante()">Registrar</button>
+</div>
 
-  <!-- Quiniela -->
-  <div id="quiniela" class="hidden">
-    <h1>Quiniela</h1>
-    <div id="formContainer"></div>
-    <button onclick="enviarQuiniela()">Enviar Quiniela</button>
-  </div>
+<!-- Quiniela -->
+<div id="quiniela" class="hidden">
+  <h1>Quiniela</h1>
+  <div id="formContainer"></div>
+  <button onclick="enviarQuiniela()">Enviar Quiniela</button>
+</div>
 
-  <script>
-    function registrarParticipante() {
-      const nombre = document.getElementById("nombre").value;
-      const correo = document.getElementById("correo").value;
-      if(!nombre || !correo) { alert("Completa todos los campos"); return; }
-      // Guardamos en localStorage (simulación)
-      localStorage.setItem("participante", JSON.stringify({nombre, correo}));
-      document.getElementById("registro").classList.add("hidden");
-      document.getElementById("quiniela").classList.remove("hidden");
-      cargarQuiniela();
-    }
+<script>
+function registrarParticipante(){
+  const nombre=document.getElementById("nombre").value;
+  const correo=document.getElementById("correo").value;
+  if(!nombre||!correo){ alert("Completa todos los campos"); return; }
+  localStorage.setItem("participante",JSON.stringify({nombre,correo}));
+  document.getElementById("registro").classList.add("hidden");
+  document.getElementById("quiniela").classList.remove("hidden");
+  cargarQuiniela();
+}
 
-    function cargarQuiniela() {
-      // Cargamos quiniela (simulación)
-      // Para producción, reemplazar por fetch a backend o quiniela.html generado
-      const partidos = [
-        {local: "Equipo A", visitante: "Equipo B"},
-        {local: "Equipo C", visitante: "Equipo D"}
-      ];
-      const container = document.getElementById("formContainer");
-      container.innerHTML = "";
-      partidos.forEach((p, i) => {
-        container.innerHTML += `
-          <p>Partido ${i+1}: ${p.local} vs ${p.visitante}</p>
-          <label><input type="radio" name="partido${i+1}" value="local" required>${p.local}</label>
-          <label><input type="radio" name="partido${i+1}" value="empate">Empate</label>
-          <label><input type="radio" name="partido${i+1}" value="visitante">${p.visitante}</label><br><br>
-        `;
-      });
-    }
+function cargarQuiniela(){
+  const quiniela=localStorage.getItem("quiniela_oficial");
+  const container=document.getElementById("formContainer");
+  if(quiniela){
+    container.innerHTML=quiniela;
+  } else {
+    container.innerHTML="<p>No hay quiniela disponible aún. Espera a que el admin la marque con Check.</p>";
+  }
+}
 
-    function enviarQuiniela() {
-      const participante = JSON.parse(localStorage.getItem("participante"));
-      const form = document.getElementById("formContainer");
-      const resultados = {};
-      const radios = form.querySelectorAll("input[type=radio]:checked");
-      radios.forEach(r => resultados[r.name] = r.value);
-      console.log("Participante:", participante);
-      console.log("Quiniela:", resultados);
-      alert("Quiniela enviada (simulación). Revisa la consola para ver los datos.");
-    }
-  </script>
-
-</body>
-</html>
+func
