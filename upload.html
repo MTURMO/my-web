@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Subir Quiniela</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top:50px; }
+    #dropZone {
+      width: 80%; max-width: 600px; margin: 0 auto; padding: 50px;
+      border: 2px dashed #007bff; border-radius: 10px;
+      background: #f0f8ff; color: #333; cursor: pointer;
+    }
+    iframe { width: 80%; height: 500px; border: 1px solid #ccc; margin-top:20px; }
+  </style>
+</head>
+<body>
+
+<h1>Sube tu Quiniela Generada por Python</h1>
+<p>Arrastra el archivo HTML o haz clic para seleccionar</p>
+
+<div id="dropZone">Arrastra el archivo HTML aquí</div>
+
+<iframe id="preview"></iframe>
+
+<script>
+  const dropZone = document.getElementById('dropZone');
+  const preview = document.getElementById('preview');
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.style.background = '#e0f0ff';
+  });
+
+  dropZone.addEventListener('dragleave', e => {
+    dropZone.style.background = '#f0f8ff';
+  });
+
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.style.background = '#f0f8ff';
+    const file = e.dataTransfer.files[0];
+    if(file && file.type === "text/html") {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        preview.srcdoc = ev.target.result; // Muestra el HTML en el iframe
+      }
+      reader.readAsText(file);
+    } else {
+      alert("Solo se permite un archivo HTML");
+    }
+  });
+
+  // Opción de click para seleccionar archivo
+  dropZone.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.html';
+    input.onchange = e => {
+      const file = e.target.files[0];
+      if(file && file.type === "text/html") {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          preview.srcdoc = ev.target.result;
+        }
+        reader.readAsText(file);
+      } else {
+        alert("Solo se permite un archivo HTML");
+      }
+    };
+    input.click();
+  });
+</script>
+
+<a href="admin.html">⬅ Volver al Menú de Admin</a>
+
+</body>
+</html>
