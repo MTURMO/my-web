@@ -9,47 +9,29 @@ body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-ite
 input,button{padding:12px 18px;margin:10px;border-radius:10px;border:none;font-size:16px;}
 button{background:linear-gradient(90deg,#4f46e5,#3b82f6);color:white;cursor:pointer;transition:transform 0.2s;}
 button:hover{transform:translateY(-2px);}
-.hidden{display:none;}
 h1{margin-bottom:20px;color:#333;}
-iframe{width:80%;height:500px;border-radius:12px;border:1px solid #ccc;margin-top:20px;}
 </style>
 </head>
 <body>
 
-<!-- Registro -->
-<div id="registro">
-  <h1>Registro de Participante</h1>
-  <input type="text" id="nombre" placeholder="Nombre"><br>
-  <input type="email" id="correo" placeholder="Correo"><br>
-  <button onclick="registrarParticipante()">Registrar</button>
-</div>
-
-<!-- Quiniela -->
-<div id="quiniela" class="hidden">
-  <h1>Quiniela</h1>
-  <div id="formContainer"></div>
-  <button onclick="enviarQuiniela()">Enviar Quiniela</button>
-</div>
+<h1>Registro de Participante</h1>
+<input type="text" id="nombre" placeholder="Nombre"><br>
+<input type="email" id="correo" placeholder="Correo"><br>
+<button onclick="registrarParticipante()">Registrar</button>
 
 <script>
-function registrarParticipante(){
-  const nombre=document.getElementById("nombre").value;
-  const correo=document.getElementById("correo").value;
-  if(!nombre||!correo){ alert("Completa todos los campos"); return; }
-  localStorage.setItem("participante",JSON.stringify({nombre,correo}));
-  document.getElementById("registro").classList.add("hidden");
-  document.getElementById("quiniela").classList.remove("hidden");
-  cargarQuiniela();
-}
+function registrarParticipante() {
+  const nombre = document.getElementById("nombre").value;
+  const correo = document.getElementById("correo").value;
+  if(!nombre || !correo){ alert("Completa todos los campos"); return; }
 
-function cargarQuiniela(){
-  const quiniela=localStorage.getItem("quiniela_oficial");
-  const container=document.getElementById("formContainer");
-  if(quiniela){
-    container.innerHTML=quiniela;
-  } else {
-    container.innerHTML="<p>No hay quiniela disponible aún. Espera a que el admin la marque con Check.</p>";
-  }
-}
+  const participante = {nombre, correo};
+  localStorage.setItem("participante", JSON.stringify(participante));
 
-func
+  // Redirigir a la página de quiniela
+  window.location.href = "quiniela_participante.html";
+}
+</script>
+
+</body>
+</html>
