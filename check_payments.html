@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pagos de Participantes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f9fafb;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+table {
+  border-collapse: collapse;
+  width: 90%;
+  max-width: 800px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+th, td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px;
+  text-align: center;
+}
+th {
+  background: #eef2ff;
+}
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: linear-gradient(90deg,#10b981,#14b8a6);
+  color: white;
+}
+button:hover {
+  transform: translateY(-1px);
+}
+#noData {
+  margin-top: 30px;
+  color: #888;
+}
+a {
+  margin-top: 25px;
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+</style>
+</head>
+<body>
+
+<h1>Gestión de Pagos</h1>
+<table id="tablaPagos">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Correo</th>
+      <th>Fecha</th>
+      <th>Pagado</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody id="tablaBody"></tbody>
+</table>
+
+<p id="noData" class="hidden">No hay quinielas enviadas todavía.</p>
+
+<a href="admin.html">⬅ Volver al menú admin</a>
+
+<script>
+function cargarPagos() {
+  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
+  const tbody = document.getElementById("tablaBody");
+  const noData = document.getElementById("noData");
+
+  tbody.innerHTML = "";
+
+  if (envios.length === 0) {
+    noData.classList.remove("hidden");
+    return;
+  } else {
+    noData.classList.add("hidden");
+  }
+
+  envios.forEach((e, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${e.participante?.nombre || "—"}</td>
+      <td>${e.participante?.correo || "—"}</td>
+      <td>${new Date(e.fecha).toLocaleString()}</td>
+      <td>${e.pagado ? "✅" : "❌"}</td>
+      <td><button onclick="togglePago(${i})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function togglePago(index) {
+  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
+  envios[index].pagado = !envios[index].pagado;
+  localStorage.setItem("quinielas_enviadas", JSON.stringify(envios));
+  cargarPagos();
+}
+
+document.addEventListener("DOMContentLoaded", cargarPagos);
+</script>
+
+</body>
+</html>

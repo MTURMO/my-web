@@ -32,9 +32,9 @@ if(quiniela.length === 0){
       <div class="match" data-index="${i}">
         <span>${p.local} vs ${p.visitante}</span>
         <div>
-          <button onclick="marcar(${i},'1')">1</button>
-          <button onclick="marcar(${i},'X')">X</button>
-          <button onclick="marcar(${i},'2')">2</button>
+          <button onclick="marcar(${i},'1', this)">1</button>
+          <button onclick="marcar(${i},'X', this)">X</button>
+          <button onclick="marcar(${i},'2', this)">2</button>
         </div>
       </div>`;
   });
@@ -42,8 +42,15 @@ if(quiniela.length === 0){
 
 let resultados = {};
 
-function marcar(i, val){
+function marcar(i, val, btn){
   resultados[i] = val;
+
+  // Desmarca els altres botons d’aquest partit
+  const match = btn.closest('.match');
+  match.querySelectorAll('button').forEach(b => b.style.background = '');
+  
+  // Marca el botó seleccionat
+  btn.style.background = '#a5b4fc';
 }
 
 document.getElementById("enviar").addEventListener("click", ()=>{
@@ -51,15 +58,24 @@ document.getElementById("enviar").addEventListener("click", ()=>{
     alert("Debes marcar todos los partidos");
     return;
   }
+
   const data = {
     participante,
     resultados,
-    fecha: new Date().toISOString()
+    fecha: new Date().toISOString(),
+    pagado: false
   };
-  localStorage.setItem(`quiniela_${participante.nombre}`, JSON.stringify(data));
-  alert("✅ Quiniela enviada (guardada localmente por ahora)");
+
+  // Guarda la llista d’enviaments anteriors
+  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
+  envios.push(data);
+  localStorage.setItem("quinielas_enviadas", JSON.stringify(envios));
+
+  alert("✅ Quiniela enviada (guardada localmente)");
+  window.location.href = "index.html";
 });
 </script>
+
 
 </body>
 </html>
