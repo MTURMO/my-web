@@ -4,19 +4,18 @@
 <meta charset="UTF-8">
 <title>Administrador</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#eef2ff;padding:20px;}
-h1{font-size:2rem;margin-bottom:1rem;color:#333;text-align:center;}
-input, button{padding:12px 20px;font-size:16px;margin:10px;border-radius:10px;border:none;width:100%;max-width:300px;box-sizing:border-box;}
-button{background:linear-gradient(90deg,#6366f1,#3b82f6);color:white;font-weight:600;cursor:pointer;transition:transform 0.2s;}
-button:hover{transform:translateY(-2px);}
-.hidden{display:none;}
-.menu{display:flex;flex-direction:column;align-items:center;width:100%;max-width:300px;}
-.menu button{width:100%;margin:10px 0;background:linear-gradient(90deg,#10b981,#14b8a6);}
-.menu button:hover{transform:translateY(-2px);}
-a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#eef2ff;}
+  h1{font-size:2rem;margin-bottom:1rem;color:#333;}
+  input, button{padding:12px 20px;font-size:16px;margin:10px;border-radius:10px;border:none;}
+  input{width:250px;border:1px solid #ccc;}
+  button{background:linear-gradient(90deg,#6366f1,#3b82f6);color:white;font-weight:600;cursor:pointer;transition:transform 0.2s;}
+  button:hover{transform:translateY(-2px);}
+  .hidden{display:none;}
+  .menu button{width:220px;margin:15px 0;background:linear-gradient(90deg,#10b981,#14b8a6);}
+  .menu button:hover{transform:translateY(-2px);}
+  a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
 </style>
 </head>
 <body>
@@ -28,6 +27,18 @@ a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
   <button onclick="checkPassword()">Entrar</button>
   <p id="error" style="color:red;"></p>
   <a href="index.html" style="margin-top:15px;color:#3b82f6;display:inline-block;">⬅ Volver al Menú Principal</a>
+</div>
+
+
+<!-- Menú Admin -->
+<div id="menu" class="hidden">
+  <h1>Menú Administrador</h1>
+  <div class="menu">
+    <button onclick="window.location.href='upload.html'">New Form</button>
+    <button onclick="window.location.href='check_payments.html'">Check Payments</button>
+    <button onclick="window.location.href='check_results.html'">Check Results</button>
+  </div>
+  <a href="index.html">⬅ Volver al Menú Principal</a>
 </div>
 
 
