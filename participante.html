@@ -4,20 +4,45 @@
 <meta charset="UTF-8">
 <title>Participante</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;padding:50px;background:#f0f4f8;}
-input,button{padding:12px 18px;margin:10px;border-radius:10px;border:none;font-size:16px;}
+body{
+  font-family:'Inter',sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  background:#f0f4f8;
+}
+h1{margin-bottom:20px;color:#333;text-align:center;}
+input,button{
+  padding:12px 18px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
+  width:100%;
+  max-width:300px;
+  box-sizing:border-box;
+}
 button{background:linear-gradient(90deg,#4f46e5,#3b82f6);color:white;cursor:pointer;transition:transform 0.2s;}
 button:hover{transform:translateY(-2px);}
-h1{margin-bottom:20px;color:#333;}
+a{
+  margin-top:20px;
+  color:#3b82f6;
+  text-decoration:none;
+  font-weight:500;
+}
 </style>
 </head>
 <body>
 
 <h1>Registro de Participante</h1>
-<input type="text" id="nombre" placeholder="Nombre"><br>
-<input type="email" id="correo" placeholder="Correo"><br>
+<input type="text" id="nombre" placeholder="Nombre">
+<input type="email" id="correo" placeholder="Correo">
 <button onclick="registrarParticipante()">Registrar</button>
+
+<a href="index.html">⬅ Volver al Menú Principal</a>
 
 <script>
 function registrarParticipante() {
@@ -28,7 +53,6 @@ function registrarParticipante() {
   const participante = {nombre, correo};
   localStorage.setItem("participante", JSON.stringify(participante));
 
-  // Redirigir a la página de quiniela
   window.location.href = "quiniela_participante.html";
 }
 </script>

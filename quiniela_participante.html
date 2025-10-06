@@ -4,13 +4,60 @@
 <meta charset="UTF-8">
 <title>Quiniela del Participante</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{font-family:'Inter',sans-serif;padding:40px;background:#f0f4f8;}
+body{
+  font-family:'Inter',sans-serif;
+  padding:20px;
+  background:#f0f4f8;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
 h1{text-align:center;margin-bottom:20px;color:#333;}
-.match{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ddd;max-width:500px;margin:auto;}
-button{padding:8px 12px;border:none;border-radius:8px;margin:0 4px;cursor:pointer;}
+#quinielaContainer{
+  width:100%;
+  max-width:500px;
+}
+.match{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  flex-wrap:wrap;
+  margin-bottom:5px;
+}
+.match span{
+  flex:1 1 100%;
+  margin-bottom:5px;
+}
+button{
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  margin:2px;
+  cursor:pointer;
+}
 button:hover{background:#e0e7ff;}
-#enviar{margin-top:30px;padding:12px 20px;background:#4f46e5;color:white;border:none;border-radius:10px;display:block;margin-left:auto;margin-right:auto;}
+#enviar{
+  margin-top:20px;
+  padding:12px 20px;
+  background:#4f46e5;
+  color:white;
+  border:none;
+  border-radius:10px;
+  display:block;
+  width:100%;
+  max-width:200px;
+  text-align:center;
+}
+a{
+  margin-top:15px;
+  color:#3b82f6;
+  text-decoration:none;
+  font-weight:500;
+}
 </style>
 </head>
 <body>
@@ -18,6 +65,7 @@ button:hover{background:#e0e7ff;}
 <h1>Tu Quiniela</h1>
 <div id="quinielaContainer"></div>
 <button id="enviar">📤 Enviar Quiniela</button>
+<a href="index.html">⬅ Volver al Menú Principal</a>
 
 <script>
 const quiniela = JSON.parse(localStorage.getItem("quiniela_oficial") || "[]");
@@ -44,12 +92,8 @@ let resultados = {};
 
 function marcar(i, val, btn){
   resultados[i] = val;
-
-  // Desmarca els altres botons d’aquest partit
   const match = btn.closest('.match');
   match.querySelectorAll('button').forEach(b => b.style.background = '');
-  
-  // Marca el botó seleccionat
   btn.style.background = '#a5b4fc';
 }
 
@@ -66,7 +110,6 @@ document.getElementById("enviar").addEventListener("click", ()=>{
     pagado: false
   };
 
-  // Guarda la llista d’enviaments anteriors
   const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
   envios.push(data);
   localStorage.setItem("quinielas_enviadas", JSON.stringify(envios));
@@ -75,7 +118,6 @@ document.getElementById("enviar").addEventListener("click", ()=>{
   window.location.href = "index.html";
 });
 </script>
-
 
 </body>
 </html>
