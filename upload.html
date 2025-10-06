@@ -4,35 +4,34 @@
 <meta charset="UTF-8">
 <title>Crear Quiniela</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;padding:50px;background:#f9fafb;}
-h1{margin-bottom:15px;color:#333;font-size:1.8rem;}
-input{padding:10px;border:1px solid #ccc;border-radius:8px;margin:5px;width:250px;}
-button{padding:10px 20px;border:none;border-radius:8px;margin-top:15px;background:#10b981;color:white;cursor:pointer;font-size:16px;}
+body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;background:#f9fafb;}
+h1{margin-bottom:15px;color:#333;font-size:1.8rem;text-align:center;}
+input{padding:10px;border:1px solid #ccc;border-radius:8px;margin:5px;width:100%;max-width:250px;}
+button{padding:10px 20px;border:none;border-radius:8px;margin-top:15px;background:#10b981;color:white;cursor:pointer;font-size:16px;transition: transform 0.2s;}
 button:hover{transform:translateY(-2px);}
-#partidos{margin-top:20px;}
-.match-row{display:flex;gap:10px;margin-bottom:5px;}
+#partidos{margin-top:20px;width:100%;max-width:300px;}
+.match-row{display:flex;gap:10px;margin-bottom:5px;flex-wrap:wrap;}
+a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
 </style>
 </head>
 <body>
 
 <h1>Crear Quiniela de la Semana</h1>
-
 <div id="partidos"></div>
 
-<div style="margin-top:20px;">
+<div style="margin-top:20px;width:100%;max-width:300px;display:flex;flex-wrap:wrap;gap:5px;">
   <input type="text" id="local" placeholder="Equipo local">
   <input type="text" id="visitante" placeholder="Equipo visitante">
   <button onclick="agregarPartido()">➕ Añadir Partido</button>
 </div>
 
 <button id="guardarBtn">✅ Guardar Quiniela Oficial</button>
-
-<a href="admin.html" style="margin-top:20px;color:#3b82f6;">⬅ Volver al menú admin</a>
+<a href="admin.html">⬅ Volver al menú admin</a>
 
 <script>
 let partidos = [];
-
 function agregarPartido(){
   const local = document.getElementById("local").value.trim();
   const visitante = document.getElementById("visitante").value.trim();
@@ -42,7 +41,6 @@ function agregarPartido(){
   document.getElementById("local").value = "";
   document.getElementById("visitante").value = "";
 }
-
 function renderPartidos(){
   const cont = document.getElementById("partidos");
   cont.innerHTML = "";
@@ -50,7 +48,6 @@ function renderPartidos(){
     cont.innerHTML += `<div class="match-row">${i+1}. ${p.local} vs ${p.visitante}</div>`;
   });
 }
-
 document.getElementById("guardarBtn").addEventListener("click", ()=>{
   if(partidos.length === 0){ alert("Añade al menos un partido"); return; }
   localStorage.setItem("quiniela_oficial", JSON.stringify(partidos));
