@@ -6,16 +6,60 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{font-family:'Inter',sans-serif;padding:40px;background:#f0f4f8;}
-h1{color:#333;text-align:center;}
-#quinielaFrame{width:80%;height:600px;border:1px solid #ccc;margin:0 auto;border-radius:12px;}
+h1{text-align:center;margin-bottom:20px;color:#333;}
+.match{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ddd;max-width:500px;margin:auto;}
+button{padding:8px 12px;border:none;border-radius:8px;margin:0 4px;cursor:pointer;}
+button:hover{background:#e0e7ff;}
+#enviar{margin-top:30px;padding:12px 20px;background:#4f46e5;color:white;border:none;border-radius:10px;display:block;margin-left:auto;margin-right:auto;}
 </style>
 </head>
 <body>
 
-<h1>Quiniela Oficial</h1>
+<h1>Tu Quiniela</h1>
+<div id="quinielaContainer"></div>
+<button id="enviar">📤 Enviar Quiniela</button>
 
-<!-- Mostramos el quiniela en un iframe -->
-<iframe id="quinielaFrame" src="quiniela.html"></iframe>
+<script>
+const quiniela = JSON.parse(localStorage.getItem("quiniela_oficial") || "[]");
+const participante = JSON.parse(localStorage.getItem("participante") || "{}");
+
+if(quiniela.length === 0){
+  document.body.innerHTML = "<h2 style='text-align:center;color:red;'>No hay quiniela activa</h2>";
+} else {
+  const cont = document.getElementById("quinielaContainer");
+  quiniela.forEach((p,i)=>{
+    cont.innerHTML += `
+      <div class="match" data-index="${i}">
+        <span>${p.local} vs ${p.visitante}</span>
+        <div>
+          <button onclick="marcar(${i},'1')">1</button>
+          <button onclick="marcar(${i},'X')">X</button>
+          <button onclick="marcar(${i},'2')">2</button>
+        </div>
+      </div>`;
+  });
+}
+
+let resultados = {};
+
+function marcar(i, val){
+  resultados[i] = val;
+}
+
+document.getElementById("enviar").addEventListener("click", ()=>{
+  if(Object.keys(resultados).length !== quiniela.length){
+    alert("Debes marcar todos los partidos");
+    return;
+  }
+  const data = {
+    participante,
+    resultados,
+    fecha: new Date().toISOString()
+  };
+  localStorage.setItem(`quiniela_${participante.nombre}`, JSON.stringify(data));
+  alert("✅ Quiniela enviada (guardada localmente por ahora)");
+});
+</script>
 
 </body>
 </html>
