@@ -59,14 +59,12 @@ document.getElementById("guardarBtn").addEventListener("click", async () => {
   if(partidos.length === 0){ alert("Añade al menos un partido"); return; }
 
   try {
-    // Desactivar quinielas anteriores
     const { error: desactivaError } = await supabase
       .from("quiniela_oficial")
       .update({ activa: false })
       .eq("activa", true);
     if (desactivaError) throw desactivaError;
 
-    // Insertar nueva quiniela
     const { error: insertError } = await supabase
       .from("quiniela_oficial")
       .insert([{ data: partidos, activa: true, creada_el: new Date().toISOString() }]);
