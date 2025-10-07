@@ -6,24 +6,84 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family: 'Inter', sans-serif; background: #f9fafb; padding: 20px; display:flex; flex-direction:column; align-items:center; }
-h1 { margin-bottom: 20px; color:#333; text-align:center; }
-table { border-collapse: collapse; width:100%; max-width:800px; background:white; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
-th, td { border-bottom:1px solid #e5e7eb; padding:10px; text-align:center; word-wrap: break-word; }
-th { background:#eef2ff; }
-button { padding:6px 10px; border:none; border-radius:6px; cursor:pointer; background:linear-gradient(90deg,#10b981,#14b8a6); color:white; }
-button:hover { transform:translateY(-1px); }
-#noData { margin-top:20px; color:#888; text-align:center; }
-a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f9fafb;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+th, td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px;
+  text-align: center;
+  word-wrap: break-word;
+}
+th {
+  background: #eef2ff;
+}
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: linear-gradient(90deg,#10b981,#14b8a6);
+  color: white;
+}
+button:hover { transform: translateY(-1px); }
+#noData { margin-top: 20px; color: #888; text-align: center; }
+a {
+  margin-top: 20px;
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+.quiniela-detalle {
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin: 10px auto;
+  padding: 10px;
+  width: 90%;
+  max-width: 700px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.quiniela-detalle h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 8px;
+}
+.match {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 5px 0;
+}
+.match span:first-child { font-weight: 600; }
 @media(max-width:600px){
-  th, td{ font-size:14px; padding:6px; }
-  table { font-size:14px; }
+  th, td { font-size: 13px; padding: 6px; }
+  table { font-size: 14px; }
 }
 </style>
 </head>
 <body>
 
 <h1>Gestión de Pagos</h1>
+
 <table id="tablaPagos">
   <thead>
     <tr>
@@ -32,11 +92,14 @@ a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
       <th>Fecha</th>
       <th>Pagado</th>
       <th>Acción</th>
+      <th>Ver</th>
     </tr>
   </thead>
   <tbody id="tablaBody"></tbody>
 </table>
+
 <p id="noData" class="hidden">No hay quinielas enviadas todavía.</p>
+
 <a href="admin.html">⬅ Volver al menú admin</a>
 
 <script>
@@ -44,27 +107,65 @@ function cargarPagos() {
   const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
   const tbody = document.getElementById("tablaBody");
   const noData = document.getElementById("noData");
+
   tbody.innerHTML = "";
-  if (envios.length === 0){ noData.classList.remove("hidden"); return; } 
-  else{ noData.classList.add("hidden"); }
-  envios.forEach((e,i)=>{
+
+  if (envios.length === 0) {
+    noData.classList.remove("hidden");
+    return;
+  } else {
+    noData.classList.add("hidden");
+  }
+
+  envios.forEach((e, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${e.participante?.nombre||"—"}</td>
-      <td>${e.participante?.correo||"—"}</td>
+      <td>${e.participante?.nombre || "—"}</td>
+      <td>${e.participante?.correo || "—"}</td>
       <td>${new Date(e.fecha).toLocaleString()}</td>
-      <td>${e.pagado?"✅":"❌"}</td>
-      <td><button onclick="togglePago(${i})">${e.pagado?"Desmarcar":"Marcar pagado"}</button></td>
+      <td>${e.pagado ? "✅" : "❌"}</td>
+      <td><button onclick="togglePago(${i})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
+      <td><button onclick="verQuiniela(${i})">👁 Ver Quiniela</button></td>
     `;
     tbody.appendChild(tr);
   });
 }
-function togglePago(index){
+
+function togglePago(index) {
   const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
   envios[index].pagado = !envios[index].pagado;
   localStorage.setItem("quinielas_enviadas", JSON.stringify(envios));
   cargarPagos();
 }
+
+function verQuiniela(index) {
+  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
+  const envio = envios[index];
+  const quinielaOficial = JSON.parse(localStorage.getItem("quiniela_oficial") || "[]");
+
+  // Si ja hi ha un detall obert, el tanquem
+  const viejo = document.querySelector(".quiniela-detalle");
+  if (viejo) viejo.remove();
+
+  // Creem el detall
+  const detalle = document.createElement("div");
+  detalle.className = "quiniela-detalle";
+  detalle.innerHTML = `<h3>Quiniela de ${envio.participante.nombre}</h3>`;
+
+  quinielaOficial.forEach((p, i) => {
+    const res = envio.resultados[i] || "-";
+    detalle.innerHTML += `
+      <div class="match">
+        <span>${p.local} vs ${p.visitante}</span>
+        <span>${res}</span>
+      </div>`;
+  });
+
+  // Inserim el detall sota la fila corresponent
+  const fila = document.getElementById("tablaBody").children[index];
+  fila.insertAdjacentElement("afterend", detalle);
+}
+
 document.addEventListener("DOMContentLoaded", cargarPagos);
 </script>
 
