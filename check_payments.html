@@ -6,100 +6,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f9fafb;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-h1 {
-  margin-bottom: 20px;
-  color: #333;
-  text-align: center;
-}
-table {
-  border-collapse: collapse;
-  width: 100%;
-  max-width: 850px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-th, td {
-  border-bottom: 1px solid #e5e7eb;
-  padding: 10px;
-  text-align: center;
-  word-wrap: break-word;
-}
-th {
-  background: #eef2ff;
-}
-button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background: linear-gradient(90deg,#10b981,#14b8a6);
-  color: white;
-  transition: transform 0.2s;
-}
-button:hover { transform: translateY(-1px); }
-#noData { margin-top: 20px; color: #888; text-align: center; }
-a {
-  margin-top: 20px;
-  color: #3b82f6;
-  text-decoration: none;
-  font-weight: 500;
-}
-.quiniela-detalle {
-  background: #f3f4f6;
-  border-radius: 12px;
-  margin: 5px auto 10px auto;
-  padding: 0 15px;
-  width: 95%;
-  max-width: 750px;
-  text-align: left;
-  font-size: 0.9rem;
-  overflow: hidden;
-  max-height: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: all 0.4s ease-in-out;
-  opacity: 0;
-}
-.quiniela-detalle.show {
-  max-height: 400px;
-  opacity: 1;
-  padding: 15px;
-}
-.quiniela-detalle h3 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 10px;
-}
-.match {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding: 6px 0;
-}
-.match span.equipos {
-  font-weight: 600;
-  color: #111;
-}
-.match span.pronostico {
-  font-weight: 500;
-  background: #d1fae5;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-@media(max-width:600px){
-  th, td { font-size: 13px; padding: 6px; }
-  table { font-size: 14px; }
-  .quiniela-detalle { font-size: 0.8rem; }
-}
+body { font-family:'Inter',sans-serif; background:#f9fafb; padding:20px; display:flex; flex-direction:column; align-items:center; }
+h1 { margin-bottom:20px; color:#333; text-align:center; }
+table { border-collapse:collapse; width:100%; max-width:850px; background:white; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+th, td { border-bottom:1px solid #e5e7eb; padding:10px; text-align:center; word-wrap:break-word; }
+th { background:#eef2ff; }
+button { padding:6px 10px; border:none; border-radius:6px; cursor:pointer; background:linear-gradient(90deg,#10b981,#14b8a6); color:white; transition:transform 0.2s; }
+button:hover { transform:translateY(-1px); }
+#noData { margin-top:20px; color:#888; text-align:center; }
+a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
+.quiniela-detalle { background:#f3f4f6; border-radius:12px; margin:5px auto 10px auto; padding:0 15px; width:95%; max-width:750px; text-align:left; font-size:0.9rem; overflow:hidden; max-height:0; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.4s ease-in-out; opacity:0; }
+.quiniela-detalle.show { max-height:400px; opacity:1; padding:15px; }
+.quiniela-detalle h3 { text-align:center; color:#333; margin-bottom:10px; }
+.match { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:6px 0; }
+.match span.equipos { font-weight:600; color:#111; }
+.match span.pronostico { font-weight:500; background:#d1fae5; padding:2px 6px; border-radius:6px; }
+@media(max-width:600px){ th, td { font-size:13px; padding:6px; } table { font-size:14px; } .quiniela-detalle { font-size:0.8rem; } }
 </style>
 </head>
 <body>
@@ -124,7 +46,6 @@ a {
 
 <a href="admin.html">⬅ Volver al menú admin</a>
 
-<!-- ✅ Import Supabase -->
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
@@ -137,21 +58,25 @@ let partidosOficiales = [];
 async function cargarPartidosOficiales() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
-    .select("id, local, visitante")
-    .order("id", { ascending: true });
+    .select("id, data") // suposem que la columna 'data' conté l'array de partits
+    .eq("activa", true)
+    .single();
 
   if (error) {
     console.error("Error cargando partidos oficiales:", error);
-    return;
+    return [];
   }
 
-  partidosOficiales = data || [];
+  return data?.data || [];
 }
 
 // 💾 Cargar quinielas
 async function cargarPagos() {
   tbody.innerHTML = "";
   noData.style.display = "none";
+
+  // primer carreguem els partits oficials
+  partidosOficiales = await cargarPartidosOficiales();
 
   const { data, error } = await supabase
     .from("quinielas_participantes")
@@ -179,17 +104,16 @@ async function cargarPagos() {
       <td>${new Date(e.fecha).toLocaleString()}</td>
       <td>${e.pagado ? "✅" : "❌"}</td>
       <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
-      <td><button id="btn-ver-${i}" onclick='verQuiniela(${i}, ${JSON.stringify(e.resultados)})'>👁 Ver Quiniela</button></td>
+      <td><button id="btn-ver-${i}">👁 Ver Quiniela</button></td>
     `;
     tbody.appendChild(tr);
 
-    // Contenedor oculto per la quiniela
+    // crear detalle
     const detalle = document.createElement("div");
     detalle.className = "quiniela-detalle";
     detalle.id = `detalle-${i}`;
-    detalle.innerHTML = "<h3>Detalles de la Quiniela</h3>";
+    detalle.innerHTML = `<h3>Detalles de la Quiniela</h3>`;
 
-    // Mostrar cada partit amb nom d’equips i resultat del participant
     partidosOficiales.forEach((partido, j) => {
       const pronostico = e.resultados?.[j] || "—";
       detalle.innerHTML += `
@@ -200,6 +124,18 @@ async function cargarPagos() {
     });
 
     tbody.appendChild(detalle);
+
+    // asignar evento
+    const btn = document.getElementById(`btn-ver-${i}`);
+    btn.addEventListener("click", () => {
+      if (detalle.classList.contains("show")) {
+        detalle.classList.remove("show");
+        btn.textContent = "👁 Ver Quiniela";
+      } else {
+        detalle.classList.add("show");
+        btn.textContent = "👁 Ocultar Quiniela";
+      }
+    });
   });
 }
 
@@ -210,33 +146,11 @@ window.togglePago = async function(id, actual) {
     .update({ pagado: !actual })
     .eq("id", id);
 
-  if (error) {
-    alert("❌ Error actualizando pago: " + error.message);
-  } else {
-    alert("✅ Estado de pago actualizado");
-    cargarPagos();
-  }
+  if (error) alert("❌ Error actualizando pago: " + error.message);
+  else cargarPagos();
 };
 
-// 👁 Ver/Ocultar quiniela completa amb efecte desplegable
-window.verQuiniela = function(index, resultados) {
-  const detalle = document.getElementById(`detalle-${index}`);
-  const btn = document.getElementById(`btn-ver-${index}`);
-
-  if (detalle.classList.contains("show")) {
-    detalle.classList.remove("show");
-    btn.textContent = "👁 Ver Quiniela";
-  } else {
-    detalle.classList.add("show");
-    btn.textContent = "👁 Ocultar Quiniela";
-  }
-};
-
-// Inicialitzar tot
-document.addEventListener("DOMContentLoaded", async () => {
-  await cargarPartidosOficiales();
-  cargarPagos();
-});
+document.addEventListener("DOMContentLoaded", cargarPagos);
 </script>
 
 </body>
