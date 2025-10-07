@@ -24,12 +24,12 @@
 <div id="login">
   <h1>Acceso Administrador</h1>
   <input type="password" id="password" placeholder="Contraseña"><br>
-  <button onclick="checkPassword()">Entrar</button>
+  <button id="loginBtn">Entrar</button>
   <p id="error" style="color:red;"></p>
   <a href="index.html" style="margin-top:15px;color:#3b82f6;display:inline-block;">⬅ Volver al Menú Principal</a>
 </div>
 
-
+<!-- Menú Admin -->
 <div id="menu" class="hidden">
   <h1>Menú Administrador</h1>
   <div class="menu">
@@ -41,12 +41,12 @@
   <a href="index.html">⬅ Volver al Menú Principal</a>
 </div>
 
-
+<!-- Script -->
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
+// Botó tancar participació
 const btnCerrar = document.getElementById("cerrarParticipacionBtn");
-
 btnCerrar.addEventListener("click", async () => {
   if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
 
@@ -54,10 +54,9 @@ btnCerrar.addEventListener("click", async () => {
     const { data, error } = await supabase
       .from('quiniela_oficial')
       .update({ blocked: true })
-      .eq('activa', true);  // només la quiniela activa
+      .eq('activa', true);
 
     if (error) throw error;
-
     alert("✅ Participación cerrada correctamente.");
   } catch (err) {
     alert("❌ Error al cerrar la participación: " + err.message);
@@ -65,8 +64,21 @@ btnCerrar.addEventListener("click", async () => {
   }
 });
 
-</script>
+// Login amb contrasenya
+const loginBtn = document.getElementById("loginBtn");
+loginBtn.addEventListener("click", () => {
+  const input = document.getElementById("password").value;
+  const error = document.getElementById("error");
+  const correctPassword = "1234";
 
+  if (input === correctPassword) {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("menu").classList.remove("hidden");
+  } else {
+    error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
+  }
+});
+</script>
 
 </body>
 </html>
