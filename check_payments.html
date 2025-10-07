@@ -149,7 +149,7 @@ async function cargarPagos() {
 // 🟢 Marcar o desmarcar pago
 window.togglePago = async function(id, actual) {
   const { error } = await supabase
-    .from("quiniela_participante") // 👈 igual que arriba
+    .from("quinielas_participantes")
     .update({ pagado: !actual })
     .eq("id", id);
 
