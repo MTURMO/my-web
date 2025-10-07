@@ -78,8 +78,9 @@ a{
 <!-- Incluimos Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = "https://TU_SUPABASE_URL.supabase.co"; // ⚙️ tu URL
-  const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY"; // ⚙️ tu anon key
+  // ⚙️ Sustituye con tus credenciales reales
+  const SUPABASE_URL = "https://TU_SUPABASE_URL.supabase.co";
+  const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </script>
 
@@ -113,24 +114,30 @@ document.getElementById("guardarBtn").addEventListener("click", async ()=>{
     return;
   }
 
-  // Borramos quiniela anterior
-  const { error: deleteError } = await supabase.from("quiniela_oficial").delete().neq("id", 0);
-  if (deleteError) {
-    alert("❌ Error eliminando quiniela anterior: " + deleteError.message);
-    return;
-  }
+  try {
+    // 1️⃣ Desactivar todas las quinielas anteriores
+    const { error: desactivaError } = await supabase
+      .from("quiniela_oficial")
+      .update({ activa: false })
+      .eq("activa", true);
 
-  // Insertamos la nueva
-  const { error } = await supabase.from("quiniela_oficial").insert([
-    { data: partidos, creada_el: new Date().toISOString() }
-  ]);
+    if (desactivaError) throw desactivaError;
 
-  if(error){
-    alert("❌ Error guardando la quiniela: " + error.message);
-  } else {
+    // 2️⃣ Insertar la nueva quiniela como activa
+    const { error: insertError } = await supabase
+      .from("quiniela_oficial")
+      .insert([
+        { data: partidos, activa: true, creada_el: new Date().toISOString() }
+      ]);
+
+    if (insertError) throw insertError;
+
     alert("✅ Quiniela guardada correctamente en Supabase");
     partidos = [];
     renderPartidos();
+
+  } catch (err) {
+    alert("❌ Error guardando la quiniela: " + err.message);
   }
 });
 </script>
