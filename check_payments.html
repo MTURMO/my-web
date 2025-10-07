@@ -115,7 +115,7 @@ async function cargarPagos() {
   noData.style.display = "none";
 
   const { data, error } = await supabase
-    .from("quinielas_participantes")
+    .from("quiniela_participante")  // 👈 NOMBRE CORREGIDO
     .select("*")
     .order("fecha", { ascending: false });
 
@@ -131,15 +131,16 @@ async function cargarPagos() {
     return;
   }
 
-  data.forEach((e, i) => {
+  data.forEach((e) => {
+    const participante = e.participante || {};
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${e.participante?.nombre || "—"}</td>
-      <td>${e.participante?.correo || "—"}</td>
+      <td>${participante.nombre || "—"}</td>
+      <td>${participante.correo || "—"}</td>
       <td>${new Date(e.fecha).toLocaleString()}</td>
       <td>${e.pagado ? "✅" : "❌"}</td>
       <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
-      <td><button onclick="verQuiniela(${encodeURIComponent(JSON.stringify(e.resultados))})">👁 Ver Quiniela</button></td>
+      <td><button onclick='verQuiniela(${JSON.stringify(e.resultados)})'>👁 Ver Quiniela</button></td>
     `;
     tbody.appendChild(tr);
   });
@@ -148,7 +149,7 @@ async function cargarPagos() {
 // 🟢 Marcar o desmarcar pago
 window.togglePago = async function(id, actual) {
   const { error } = await supabase
-    .from("quinielas_participantes")
+    .from("quiniela_participante") // 👈 igual que arriba
     .update({ pagado: !actual })
     .eq("id", id);
 
@@ -161,10 +162,9 @@ window.togglePago = async function(id, actual) {
 };
 
 // 👁 Ver quiniela completa
-window.verQuiniela = function(resultadosJSON) {
-  const resultados = JSON.parse(decodeURIComponent(resultadosJSON));
+window.verQuiniela = function(resultados) {
+  if (!resultados) return alert("No hay resultados.");
 
-  // eliminar detalle abierto
   const viejo = document.querySelector(".quiniela-detalle");
   if (viejo) viejo.remove();
 
@@ -172,7 +172,6 @@ window.verQuiniela = function(resultadosJSON) {
   detalle.className = "quiniela-detalle";
   detalle.innerHTML = "<h3>Detalles de la Quiniela</h3>";
 
-  // Mostrar resultados por partido
   Object.entries(resultados).forEach(([i, res]) => {
     detalle.innerHTML += `
       <div class="match">
