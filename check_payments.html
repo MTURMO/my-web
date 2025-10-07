@@ -98,73 +98,91 @@ a {
   <tbody id="tablaBody"></tbody>
 </table>
 
-<p id="noData" class="hidden">No hay quinielas enviadas todavía.</p>
+<p id="noData">No hay quinielas enviadas todavía.</p>
 
 <a href="admin.html">⬅ Volver al menú admin</a>
 
-<script>
-function cargarPagos() {
-  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
-  const tbody = document.getElementById("tablaBody");
-  const noData = document.getElementById("noData");
+<!-- ✅ Import Supabase -->
+<script type="module">
+import { supabase } from './supabaseClient.js';
 
+const tbody = document.getElementById("tablaBody");
+const noData = document.getElementById("noData");
+
+// 🔄 Cargar quinielas desde Supabase
+async function cargarPagos() {
   tbody.innerHTML = "";
+  noData.style.display = "none";
 
-  if (envios.length === 0) {
-    noData.classList.remove("hidden");
+  const { data, error } = await supabase
+    .from("quinielas_participantes")
+    .select("*")
+    .order("fecha", { ascending: false });
+
+  if (error) {
+    console.error("Error cargando quinielas:", error);
+    noData.textContent = "Error al cargar quinielas.";
+    noData.style.display = "block";
     return;
-  } else {
-    noData.classList.add("hidden");
   }
 
-  envios.forEach((e, i) => {
+  if (!data || data.length === 0) {
+    noData.style.display = "block";
+    return;
+  }
+
+  data.forEach((e, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${e.participante?.nombre || "—"}</td>
       <td>${e.participante?.correo || "—"}</td>
       <td>${new Date(e.fecha).toLocaleString()}</td>
       <td>${e.pagado ? "✅" : "❌"}</td>
-      <td><button onclick="togglePago(${i})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
-      <td><button onclick="verQuiniela(${i})">👁 Ver Quiniela</button></td>
+      <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
+      <td><button onclick="verQuiniela(${encodeURIComponent(JSON.stringify(e.resultados))})">👁 Ver Quiniela</button></td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-function togglePago(index) {
-  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
-  envios[index].pagado = !envios[index].pagado;
-  localStorage.setItem("quinielas_enviadas", JSON.stringify(envios));
-  cargarPagos();
-}
+// 🟢 Marcar o desmarcar pago
+window.togglePago = async function(id, actual) {
+  const { error } = await supabase
+    .from("quinielas_participantes")
+    .update({ pagado: !actual })
+    .eq("id", id);
 
-function verQuiniela(index) {
-  const envios = JSON.parse(localStorage.getItem("quinielas_enviadas") || "[]");
-  const envio = envios[index];
-  const quinielaOficial = JSON.parse(localStorage.getItem("quiniela_oficial") || "[]");
+  if (error) {
+    alert("❌ Error actualizando pago: " + error.message);
+  } else {
+    alert("✅ Estado de pago actualizado");
+    cargarPagos();
+  }
+};
 
-  // Si ja hi ha un detall obert, el tanquem
+// 👁 Ver quiniela completa
+window.verQuiniela = function(resultadosJSON) {
+  const resultados = JSON.parse(decodeURIComponent(resultadosJSON));
+
+  // eliminar detalle abierto
   const viejo = document.querySelector(".quiniela-detalle");
   if (viejo) viejo.remove();
 
-  // Creem el detall
   const detalle = document.createElement("div");
   detalle.className = "quiniela-detalle";
-  detalle.innerHTML = `<h3>Quiniela de ${envio.participante.nombre}</h3>`;
+  detalle.innerHTML = "<h3>Detalles de la Quiniela</h3>";
 
-  quinielaOficial.forEach((p, i) => {
-    const res = envio.resultados[i] || "-";
+  // Mostrar resultados por partido
+  Object.entries(resultados).forEach(([i, res]) => {
     detalle.innerHTML += `
       <div class="match">
-        <span>${p.local} vs ${p.visitante}</span>
+        <span>Partido ${parseInt(i)+1}</span>
         <span>${res}</span>
       </div>`;
   });
 
-  // Inserim el detall sota la fila corresponent
-  const fila = document.getElementById("tablaBody").children[index];
-  fila.insertAdjacentElement("afterend", detalle);
-}
+  document.body.appendChild(detalle);
+};
 
 document.addEventListener("DOMContentLoaded", cargarPagos);
 </script>
