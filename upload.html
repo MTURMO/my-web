@@ -6,21 +6,66 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;background:#f9fafb;}
-h1{margin-bottom:15px;color:#333;font-size:1.8rem;text-align:center;}
-input{padding:10px;border:1px solid #ccc;border-radius:8px;margin:5px;width:100%;max-width:250px;}
-button{padding:10px 20px;border:none;border-radius:8px;margin-top:15px;background:#10b981;color:white;cursor:pointer;font-size:16px;transition:transform 0.2s;}
+body{
+  font-family:'Inter',sans-serif;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  background:#f9fafb;
+}
+h1{
+  margin-bottom:15px;
+  color:#333;
+  font-size:1.8rem;
+  text-align:center;
+}
+input{
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  margin:5px;
+  width:100%;
+  max-width:250px;
+}
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  margin-top:15px;
+  background:#10b981;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+  transition:transform 0.2s;
+}
 button:hover{transform:translateY(-2px);}
-#partidos{margin-top:20px;width:100%;max-width:300px;}
-.match-row{display:flex;gap:10px;margin-bottom:5px;flex-wrap:wrap;}
-a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
+#partidos{
+  margin-top:20px;
+  width:100%;
+  max-width:400px;
+}
+.match-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:5px;
+  flex-wrap:wrap;
+}
+a{
+  margin-top:20px;
+  color:#3b82f6;
+  text-decoration:none;
+  font-weight:500;
+}
 </style>
 </head>
 <body>
 
 <h1>Crear Quiniela de la Semana</h1>
+
 <div id="partidos"></div>
-<div style="margin-top:20px;width:100%;max-width:300px;display:flex;flex-wrap:wrap;gap:5px;">
+
+<div style="margin-top:20px;width:100%;max-width:400px;display:flex;flex-wrap:wrap;gap:5px;">
   <input type="text" id="local" placeholder="Equipo local">
   <input type="text" id="visitante" placeholder="Equipo visitante">
   <button onclick="agregarPartido()">➕ Añadir Partido</button>
@@ -29,26 +74,27 @@ a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
 <button id="guardarBtn">✅ Guardar Quiniela Oficial</button>
 <a href="admin.html">⬅ Volver al menú admin</a>
 
-<!-- Importem el client Supabase com a mòdul -->
+<!-- Incluimos el client Supabase -->
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
-// Ahora puedes usar:
-const { data, error } = await supabase.from('quiniela_oficial').select('*');
-
-
 let partidos = [];
 
+// Función para añadir partidos
 function agregarPartido(){
   const local = document.getElementById("local").value.trim();
   const visitante = document.getElementById("visitante").value.trim();
-  if(!local || !visitante){ alert("Introduce ambos equipos"); return; }
+  if(!local || !visitante){
+    alert("Introduce ambos equipos");
+    return;
+  }
   partidos.push({local, visitante});
   renderPartidos();
   document.getElementById("local").value = "";
   document.getElementById("visitante").value = "";
 }
 
+// Función para renderizar la lista de partidos
 function renderPartidos(){
   const cont = document.getElementById("partidos");
   cont.innerHTML = "";
@@ -57,33 +103,53 @@ function renderPartidos(){
   });
 }
 
+// Guardar la quiniela en Supabase
 document.getElementById("guardarBtn").addEventListener("click", async ()=>{
   if(partidos.length === 0){ alert("Añade al menos un partido"); return; }
 
   try {
-    // 1️⃣ Desactivar todas les quinieles anteriors
+    // Desactivar la quiniela activa anterior
     const { error: desactivaError } = await supabase
       .from("quiniela_oficial")
       .update({ activa: false })
       .eq("activa", true);
-    if (desactivaError) throw desactivaError;
+    if(desactivaError) throw desactivaError;
 
-    // 2️⃣ Insertar la nova quiniela com a activa
+    // Insertar la nueva quiniela como activa
     const { error: insertError } = await supabase
       .from("quiniela_oficial")
       .insert([
         { data: partidos, activa: true, creada_el: new Date().toISOString() }
       ]);
-    if (insertError) throw insertError;
+    if(insertError) throw insertError;
 
     alert("✅ Quiniela guardada correctamente en Supabase");
     partidos = [];
     renderPartidos();
 
-  } catch (err) {
+  } catch(err) {
+    console.error(err);
     alert("❌ Error guardando la quiniela: " + err.message);
   }
 });
+
+// Opcional: cargar quiniela existente al iniciar
+async function cargarQuiniela(){
+  const { data, error } = await supabase
+    .from("quiniela_oficial")
+    .select('*')
+    .eq('activa', true)
+    .limit(1)
+    .single();
+  if(error && error.code !== 'PGRST116') console.error(error); // PGRST116 = no encontrado
+  else if(data){
+    partidos = data.data || [];
+    renderPartidos();
+  }
+}
+
+cargarQuiniela();
+
 </script>
 
 </body>
