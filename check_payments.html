@@ -15,14 +15,36 @@ button { padding:6px 10px; border:none; border-radius:6px; cursor:pointer; backg
 button:hover { transform:translateY(-1px); }
 #noData { margin-top:20px; color:#888; text-align:center; }
 a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
-.quiniela-detalle { background:#f3f4f6; border-radius:12px; margin:5px auto 10px auto; padding:0 15px; width:95%; max-width:750px; text-align:left; font-size:0.9rem; overflow:hidden; max-height:0; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.4s ease-in-out; opacity:0; }
-.quiniela-detalle.show { max-height:400px; opacity:1; padding:15px; }
+
+/* === Detalls Quiniela === */
+.quiniela-detalle {
+  background:#f3f4f6;
+  border-radius:12px;
+  margin:15px auto 20px auto; /* més marge superior i inferior */
+  padding:0 15px;
+  width:95%;
+  max-width:750px;
+  text-align:left;
+  font-size:0.9rem;
+  overflow:hidden;
+  max-height:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  transition:all 0.4s ease-in-out;
+  opacity:0;
+}
+.quiniela-detalle.show {
+  max-height:400px;      /* desplegable amb alçada màxima */
+  padding:15px;
+  opacity:1;
+  overflow-y:auto;       /* scroll intern si hi ha molts partits */
+}
 .quiniela-detalle h3 { text-align:center; color:#333; margin-bottom:10px; }
 .match { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:6px 0; }
 .match span.equipos { font-weight:600; color:#111; }
-.match span.pronostico { font-weight:500; background:#d1fae5; padding:2px 6px; border-radius:6px; }
+.match span.pronostico { font-weight:500; padding:2px 6px; border-radius:6px; }
 @media(max-width:600px){ th, td { font-size:13px; padding:6px; } table { font-size:14px; } .quiniela-detalle { font-size:0.8rem; } }
 </style>
+
 </head>
 <body>
 
