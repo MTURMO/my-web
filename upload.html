@@ -6,57 +6,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-  font-family:'Inter',sans-serif;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
-  background:#f9fafb;
-}
-h1 {
-  margin-bottom:15px;
-  color:#333;
-  font-size:1.8rem;
-  text-align:center;
-}
-input {
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  margin:5px;
-  width:100%;
-  max-width:250px;
-}
-button {
-  padding:10px 20px;
-  border:none;
-  border-radius:8px;
-  margin-top:15px;
-  background:#10b981;
-  color:white;
-  cursor:pointer;
-  font-size:16px;
-  transition:transform 0.2s;
-}
-button:hover {transform:translateY(-2px);}
-#partidos {
-  margin-top:20px;
-  width:100%;
-  max-width:300px;
-}
-.match-row {
-  display:flex;
-  gap:10px;
-  margin-bottom:5px;
-  flex-wrap:wrap;
-}
-a {
-  margin-top:20px;
-  color:#3b82f6;
-  text-decoration:none;
-  font-weight:500;
-}
+body{font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;background:#f9fafb;}
+h1{margin-bottom:15px;color:#333;font-size:1.8rem;text-align:center;}
+input{padding:10px;border:1px solid #ccc;border-radius:8px;margin:5px;width:100%;max-width:250px;}
+button{padding:10px 20px;border:none;border-radius:8px;margin-top:15px;background:#10b981;color:white;cursor:pointer;font-size:16px;transition:transform 0.2s;}
+button:hover{transform:translateY(-2px);}
+#partidos{margin-top:20px;width:100%;max-width:300px;}
+.match-row{display:flex;gap:10px;margin-bottom:5px;flex-wrap:wrap;}
+a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
 </style>
 </head>
 <body>
@@ -67,23 +24,36 @@ a {
 <div style="margin-top:20px;width:100%;max-width:300px;display:flex;flex-wrap:wrap;gap:5px;">
   <input type="text" id="local" placeholder="Equipo local">
   <input type="text" id="visitante" placeholder="Equipo visitante">
-  <button id="addPartidoBtn">➕ Añadir Partido</button>
+  <button id="agregarBtn">➕ Añadir Partido</button>
 </div>
 
 <button id="guardarBtn">✅ Guardar Quiniela Oficial</button>
 <a href="admin.html">⬅ Volver al menú admin</a>
 
-<!-- Importamos Supabase -->
-<script type="module">
-import { supabase } from './supabaseClient.js';
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Configuración de Supabase (sin módulos)
+  const SUPABASE_URL = "TU_SUPABASE_URL";
+  const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
 
+<script>
 let partidos = [];
 
-// Añadir partido
-document.getElementById("addPartidoBtn").addEventListener("click", () => {
+function renderPartidos(){
+  const cont = document.getElementById("partidos");
+  cont.innerHTML = "";
+  partidos.forEach((p,i)=>{
+    cont.innerHTML += `<div class="match-row">${i+1}. ${p.local} vs ${p.visitante}</div>`;
+  });
+}
+
+document.getElementById("agregarBtn").addEventListener("click", ()=>{
   const local = document.getElementById("local").value.trim();
   const visitante = document.getElementById("visitante").value.trim();
-  if(!local || !visitante) {
+  if(!local || !visitante){
     alert("Introduce ambos equipos");
     return;
   }
@@ -93,40 +63,33 @@ document.getElementById("addPartidoBtn").addEventListener("click", () => {
   document.getElementById("visitante").value = "";
 });
 
-// Renderizar partidos
-function renderPartidos() {
-  const cont = document.getElementById("partidos");
-  cont.innerHTML = "";
-  partidos.forEach((p,i) => {
-    cont.innerHTML += `<div class="match-row">${i+1}. ${p.local} vs ${p.visitante}</div>`;
-  });
-}
-
-// Guardar quiniela en Supabase
-document.getElementById("guardarBtn").addEventListener("click", async () => {
-  if(partidos.length === 0) { alert("Añade al menos un partido"); return; }
+document.getElementById("guardarBtn").addEventListener("click", async ()=>{
+  if(partidos.length === 0){
+    alert("Añade al menos un partido");
+    return;
+  }
 
   try {
-    // 1️⃣ Desactivar quinielas anteriores
+    // Desactivar la quiniela activa anterior
     const { error: desactivaError } = await supabase
       .from("quiniela_oficial")
       .update({ activa: false })
       .eq("activa", true);
-    if (desactivaError) throw desactivaError;
+    if(desactivaError) throw desactivaError;
 
-    // 2️⃣ Insertar nueva quiniela como activa
+    // Insertar la nueva quiniela como activa
     const { error: insertError } = await supabase
       .from("quiniela_oficial")
       .insert([
         { data: partidos, activa: true, creada_el: new Date().toISOString() }
       ]);
-    if (insertError) throw insertError;
+    if(insertError) throw insertError;
 
     alert("✅ Quiniela guardada correctamente en Supabase");
     partidos = [];
     renderPartidos();
 
-  } catch (err) {
+  } catch(err) {
     alert("❌ Error guardando la quiniela: " + err.message);
   }
 });
