@@ -63,18 +63,42 @@ a{
 <body>
 
 <h1>Tu Quiniela</h1>
-<div id="quinielaContainer"></div>
+<div id="quinielaContainer">Cargando quiniela...</div>
 <button id="enviar">📤 Enviar Quiniela</button>
 <a href="index.html">⬅ Volver al Menú Principal</a>
 
-<script>
-const quiniela = JSON.parse(localStorage.getItem("quiniela_oficial") || "[]");
-const participante = JSON.parse(localStorage.getItem("participante") || "{}");
+<!-- Importem Supabase -->
+<script type="module">
+import { supabase } from './supabaseClient.js';
 
-if(quiniela.length === 0){
-  document.body.innerHTML = "<h2 style='text-align:center;color:red;'>No hay quiniela activa</h2>";
-} else {
-  const cont = document.getElementById("quinielaContainer");
+const cont = document.getElementById("quinielaContainer");
+let quiniela = [];
+let resultados = {};
+
+// 🟢 OBTENIR LA QUINIELA ACTIVA DES DE SUPABASE
+async function cargarQuiniela() {
+  try {
+    const { data, error } = await supabase
+      .from("quiniela_oficial")
+      .select("*")
+      .eq("activa", true)
+      .single();
+
+    if (error || !data) {
+      cont.innerHTML = "<h2 style='text-align:center;color:red;'>No hay quiniela activa</h2>";
+      return;
+    }
+
+    quiniela = data.data; // 👈 els partits estan dins la columna "data"
+    renderPartidos();
+
+  } catch (err) {
+    cont.innerHTML = `<p style="color:red;">Error cargando quiniela: ${err.message}</p>`;
+  }
+}
+
+function renderPartidos() {
+  cont.innerHTML = "";
   quiniela.forEach((p,i)=>{
     cont.innerHTML += `
       <div class="match" data-index="${i}">
@@ -88,20 +112,20 @@ if(quiniela.length === 0){
   });
 }
 
-let resultados = {};
-
-function marcar(i, val, btn){
+window.marcar = function(i, val, btn){
   resultados[i] = val;
   const match = btn.closest('.match');
   match.querySelectorAll('button').forEach(b => b.style.background = '');
   btn.style.background = '#a5b4fc';
-}
+};
 
 document.getElementById("enviar").addEventListener("click", ()=>{
   if(Object.keys(resultados).length !== quiniela.length){
     alert("Debes marcar todos los partidos");
     return;
   }
+
+  const participante = JSON.parse(localStorage.getItem("participante") || "{}");
 
   const data = {
     participante,
@@ -117,6 +141,9 @@ document.getElementById("enviar").addEventListener("click", ()=>{
   alert("✅ Quiniela enviada (guardada localmente)");
   window.location.href = "index.html";
 });
+
+// 🔄 carregar la quiniela en iniciar
+cargarQuiniela();
 </script>
 
 </body>
