@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Pagos de Participantes</title>
+<title>Gestión de Pagos</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -22,7 +22,7 @@ h1 {
 table {
   border-collapse: collapse;
   width: 100%;
-  max-width: 800px;
+  max-width: 850px;
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -55,36 +55,50 @@ a {
 }
 .quiniela-detalle {
   background: #f3f4f6;
-  border-radius: 8px;
+  border-radius: 12px;
   margin: 5px auto 10px auto;
-  padding: 10px;
-  width: 90%;
-  max-width: 700px;
+  padding: 0 15px;
+  width: 95%;
+  max-width: 750px;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   overflow: hidden;
   max-height: 0;
-  transition: max-height 0.4s ease-in-out, padding 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.4s ease-in-out;
+  opacity: 0;
 }
 .quiniela-detalle.show {
-  max-height: 300px; /* altura màxima visible */
-  padding: 10px;
+  max-height: 400px;
+  opacity: 1;
+  padding: 15px;
 }
 .quiniela-detalle h3 {
   text-align: center;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .match {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #ddd;
-  padding: 5px 0;
+  padding: 6px 0;
 }
-.match span:first-child { font-weight: 600; }
+.match span.equipos {
+  font-weight: 600;
+  color: #111;
+}
+.match span.pronostico {
+  font-weight: 500;
+  background: #d1fae5;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
 @media(max-width:600px){
   th, td { font-size: 13px; padding: 6px; }
   table { font-size: 14px; }
+  .quiniela-detalle { font-size: 0.8rem; }
 }
 </style>
 </head>
@@ -100,7 +114,7 @@ a {
       <th>Fecha</th>
       <th>Pagado</th>
       <th>Acción</th>
-      <th>Ver</th>
+      <th>Ver Quiniela</th>
     </tr>
   </thead>
   <tbody id="tablaBody"></tbody>
@@ -117,7 +131,24 @@ import { supabase } from './supabaseClient.js';
 const tbody = document.getElementById("tablaBody");
 const noData = document.getElementById("noData");
 
-// 🔄 Cargar quinielas desde Supabase
+let partidosOficiales = [];
+
+// ⚽ Cargar los partidos oficiales
+async function cargarPartidosOficiales() {
+  const { data, error } = await supabase
+    .from("quiniela_oficial")
+    .select("id, local, visitante")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("Error cargando partidos oficiales:", error);
+    return;
+  }
+
+  partidosOficiales = data || [];
+}
+
+// 💾 Cargar quinielas
 async function cargarPagos() {
   tbody.innerHTML = "";
   noData.style.display = "none";
@@ -152,17 +183,19 @@ async function cargarPagos() {
     `;
     tbody.appendChild(tr);
 
-    // contenedor ocult per a la quiniela
+    // Contenedor oculto per la quiniela
     const detalle = document.createElement("div");
     detalle.className = "quiniela-detalle";
     detalle.id = `detalle-${i}`;
     detalle.innerHTML = "<h3>Detalles de la Quiniela</h3>";
 
-    Object.entries(e.resultados || {}).forEach(([j, res]) => {
+    // Mostrar cada partit amb nom d’equips i resultat del participant
+    partidosOficiales.forEach((partido, j) => {
+      const pronostico = e.resultados?.[j] || "—";
       detalle.innerHTML += `
         <div class="match">
-          <span>Partido ${parseInt(j)+1}</span>
-          <span>${res}</span>
+          <span class="equipos">${partido.local} vs ${partido.visitante}</span>
+          <span class="pronostico">${pronostico}</span>
         </div>`;
     });
 
@@ -199,7 +232,11 @@ window.verQuiniela = function(index, resultados) {
   }
 };
 
-document.addEventListener("DOMContentLoaded", cargarPagos);
+// Inicialitzar tot
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarPartidosOficiales();
+  cargarPagos();
+});
 </script>
 
 </body>
