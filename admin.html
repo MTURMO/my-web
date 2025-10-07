@@ -41,43 +41,67 @@
   <a href="index.html">⬅ Volver al Menú Principal</a>
 </div>
 
-<!-- Script -->
-<script type="module">
-import { supabase } from './supabaseClient.js';
-
-// Botó tancar participació
-const btnCerrar = document.getElementById("cerrarParticipacionBtn");
-btnCerrar.addEventListener("click", async () => {
-  if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
-
-  try {
-    const { data, error } = await supabase
-      .from('quiniela_oficial')
-      .update({ blocked: true })
-      .eq('activa', true);
-
-    if (error) throw error;
-    alert("✅ Participación cerrada correctamente.");
-  } catch (err) {
-    alert("❌ Error al cerrar la participación: " + err.message);
-    console.error(err);
-  }
-});
-
-// Login amb contrasenya
-const loginBtn = document.getElementById("loginBtn");
-loginBtn.addEventListener("click", () => {
+<!-- Script (no-module) per al login: sempre s'executa encara que fallen imports modules -->
+<script>
+document.getElementById('loginBtn').addEventListener('click', () => {
   const input = document.getElementById("password").value;
   const error = document.getElementById("error");
-  const correctPassword = "1234";
-
+  const correctPassword = "1234"; // canvia si cal
   if (input === correctPassword) {
     document.getElementById("login").classList.add("hidden");
     document.getElementById("menu").classList.remove("hidden");
+    error.textContent = "";
   } else {
     error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
   }
 });
+</script>
+
+<!-- Mòdul per a Supabase: import dinàmic i manejo d'errors -->
+<script type="module">
+(async () => {
+  const btnCerrar = document.getElementById("cerrarParticipacionBtn");
+  if (!btnCerrar) return;
+
+  try {
+    // Import dinàmic — evita que fallades trenquin la resta de la pàgina
+    const mod = await import('./supabaseClient.js');
+    const supabase = mod.supabase || mod.default?.supabase || null;
+
+    if (!supabase) {
+      console.warn('supabase no exportat correctament des de supabaseClient.js. Revisa l\'export.');
+      btnCerrar.addEventListener('click', () => {
+        alert('Error: Supabase no disponible (manca export supabase). Mira la consola.');
+      });
+      return;
+    }
+
+    // Afegeix listener segur
+    btnCerrar.addEventListener("click", async () => {
+      if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('quiniela_oficial')
+          .update({ blocked: true })
+          .eq('activa', true);
+
+        if (error) throw error;
+        alert("✅ Participación cerrada correctamente.");
+      } catch (err) {
+        console.error('Error actualizando quiniela:', err);
+        alert("❌ Error al cerrar la participación: " + (err.message || err));
+      }
+    });
+
+  } catch (err) {
+    console.warn('No s\'ha pogut importar supabaseClient.js:', err);
+    // fallback: el botó mostra un error informatiu
+    btnCerrar.addEventListener('click', () => {
+      alert('No s\'ha pogut conectar amb Supabase. Revisa la consola (Network / Import).');
+    });
+  }
+})();
 </script>
 
 </body>
