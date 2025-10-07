@@ -43,6 +43,7 @@ button {
   cursor: pointer;
   background: linear-gradient(90deg,#10b981,#14b8a6);
   color: white;
+  transition: transform 0.2s;
 }
 button:hover { transform: translateY(-1px); }
 #noData { margin-top: 20px; color: #888; text-align: center; }
@@ -55,12 +56,19 @@ a {
 .quiniela-detalle {
   background: #f3f4f6;
   border-radius: 8px;
-  margin: 10px auto;
+  margin: 5px auto 10px auto;
   padding: 10px;
   width: 90%;
   max-width: 700px;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease-in-out, padding 0.3s;
+}
+.quiniela-detalle.show {
+  max-height: 300px; /* altura màxima visible */
+  padding: 10px;
 }
 .quiniela-detalle h3 {
   text-align: center;
@@ -131,7 +139,7 @@ async function cargarPagos() {
     return;
   }
 
-  data.forEach((e) => {
+  data.forEach((e, i) => {
     const participante = e.participante || {};
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -140,9 +148,25 @@ async function cargarPagos() {
       <td>${new Date(e.fecha).toLocaleString()}</td>
       <td>${e.pagado ? "✅" : "❌"}</td>
       <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
-      <td><button onclick='verQuiniela(${JSON.stringify(e.resultados)})'>👁 Ver Quiniela</button></td>
+      <td><button id="btn-ver-${i}" onclick='verQuiniela(${i}, ${JSON.stringify(e.resultados)})'>👁 Ver Quiniela</button></td>
     `;
     tbody.appendChild(tr);
+
+    // contenedor ocult per a la quiniela
+    const detalle = document.createElement("div");
+    detalle.className = "quiniela-detalle";
+    detalle.id = `detalle-${i}`;
+    detalle.innerHTML = "<h3>Detalles de la Quiniela</h3>";
+
+    Object.entries(e.resultados || {}).forEach(([j, res]) => {
+      detalle.innerHTML += `
+        <div class="match">
+          <span>Partido ${parseInt(j)+1}</span>
+          <span>${res}</span>
+        </div>`;
+    });
+
+    tbody.appendChild(detalle);
   });
 }
 
@@ -161,26 +185,18 @@ window.togglePago = async function(id, actual) {
   }
 };
 
-// 👁 Ver quiniela completa
-window.verQuiniela = function(resultados) {
-  if (!resultados) return alert("No hay resultados.");
+// 👁 Ver/Ocultar quiniela completa amb efecte desplegable
+window.verQuiniela = function(index, resultados) {
+  const detalle = document.getElementById(`detalle-${index}`);
+  const btn = document.getElementById(`btn-ver-${index}`);
 
-  const viejo = document.querySelector(".quiniela-detalle");
-  if (viejo) viejo.remove();
-
-  const detalle = document.createElement("div");
-  detalle.className = "quiniela-detalle";
-  detalle.innerHTML = "<h3>Detalles de la Quiniela</h3>";
-
-  Object.entries(resultados).forEach(([i, res]) => {
-    detalle.innerHTML += `
-      <div class="match">
-        <span>Partido ${parseInt(i)+1}</span>
-        <span>${res}</span>
-      </div>`;
-  });
-
-  document.body.appendChild(detalle);
+  if (detalle.classList.contains("show")) {
+    detalle.classList.remove("show");
+    btn.textContent = "👁 Ver Quiniela";
+  } else {
+    detalle.classList.add("show");
+    btn.textContent = "👁 Ocultar Quiniela";
+  }
 };
 
 document.addEventListener("DOMContentLoaded", cargarPagos);
