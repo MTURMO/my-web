@@ -30,31 +30,42 @@
 </div>
 
 
-<!-- Menú Admin -->
 <div id="menu" class="hidden">
   <h1>Menú Administrador</h1>
   <div class="menu">
     <button onclick="window.location.href='upload.html'">New Form</button>
     <button onclick="window.location.href='check_payments.html'">Check Payments</button>
     <button onclick="window.location.href='check_results.html'">Check Results</button>
+    <button id="cerrarParticipacionBtn" style="background:linear-gradient(90deg,#ef4444,#f87171);">Cerrar Participación</button>
   </div>
   <a href="index.html">⬅ Volver al Menú Principal</a>
 </div>
 
 
-<script>
-function checkPassword() {
-  const input = document.getElementById("password").value;
-  const error = document.getElementById("error");
-  const correctPassword = "1234";
-  if(input === correctPassword){
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("menu").classList.remove("hidden");
-  } else {
-    error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
+<<script type="module">
+import { supabase } from './supabaseClient.js';
+
+const btnCerrar = document.getElementById("btnCerrarParticipacion");
+
+btnCerrar.addEventListener("click", async () => {
+  if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('quiniela_oficial')
+      .update({ blocked: true })
+      .eq('activa', true);  // només la quiniela activa
+
+    if (error) throw error;
+
+    alert("✅ Participación cerrada correctamente.");
+  } catch (err) {
+    alert("❌ Error al cerrar la participación: " + err.message);
+    console.error(err);
   }
-}
+});
 </script>
+
 
 </body>
 </html>
