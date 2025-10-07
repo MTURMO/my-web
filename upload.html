@@ -32,17 +32,22 @@ a{margin-top:20px;color:#3b82f6;text-decoration:none;font-weight:500;}
 
 <!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // Configuración de Supabase (sin módulos)
-  const SUPABASE_URL = "TU_SUPABASE_URL";
-  const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-</script>
+<script type="module">
+import { supabase } from './supabaseClient.js';
 
-<script>
 let partidos = [];
 
-function renderPartidos(){
+function agregarPartido() {
+  const local = document.getElementById("local").value.trim();
+  const visitante = document.getElementById("visitante").value.trim();
+  if(!local || !visitante){ alert("Introduce ambos equipos"); return; }
+  partidos.push({local, visitante});
+  renderPartidos();
+  document.getElementById("local").value = "";
+  document.getElementById("visitante").value = "";
+}
+
+function renderPartidos() {
   const cont = document.getElementById("partidos");
   cont.innerHTML = "";
   partidos.forEach((p,i)=>{
@@ -50,50 +55,33 @@ function renderPartidos(){
   });
 }
 
-document.getElementById("agregarBtn").addEventListener("click", ()=>{
-  const local = document.getElementById("local").value.trim();
-  const visitante = document.getElementById("visitante").value.trim();
-  if(!local || !visitante){
-    alert("Introduce ambos equipos");
-    return;
-  }
-  partidos.push({local, visitante});
-  renderPartidos();
-  document.getElementById("local").value = "";
-  document.getElementById("visitante").value = "";
-});
-
-document.getElementById("guardarBtn").addEventListener("click", async ()=>{
-  if(partidos.length === 0){
-    alert("Añade al menos un partido");
-    return;
-  }
+document.getElementById("guardarBtn").addEventListener("click", async () => {
+  if(partidos.length === 0){ alert("Añade al menos un partido"); return; }
 
   try {
-    // Desactivar la quiniela activa anterior
+    // Desactivar quinielas anteriores
     const { error: desactivaError } = await supabase
       .from("quiniela_oficial")
       .update({ activa: false })
       .eq("activa", true);
-    if(desactivaError) throw desactivaError;
+    if (desactivaError) throw desactivaError;
 
-    // Insertar la nueva quiniela como activa
+    // Insertar nueva quiniela
     const { error: insertError } = await supabase
       .from("quiniela_oficial")
-      .insert([
-        { data: partidos, activa: true, creada_el: new Date().toISOString() }
-      ]);
-    if(insertError) throw insertError;
+      .insert([{ data: partidos, activa: true, creada_el: new Date().toISOString() }]);
+    if (insertError) throw insertError;
 
     alert("✅ Quiniela guardada correctamente en Supabase");
     partidos = [];
     renderPartidos();
 
-  } catch(err) {
+  } catch (err) {
     alert("❌ Error guardando la quiniela: " + err.message);
   }
 });
 </script>
+
 
 </body>
 </html>
