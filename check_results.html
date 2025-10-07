@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Resultados y Ranking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f4f6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #6366f1, #3b82f6);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 8px;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+}
+#partidosContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 600px;
+  width: 100%;
+  margin-top: 20px;
+}
+.match {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+.match span {
+  flex: 1;
+}
+select {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+#ranking {
+  margin-top: 30px;
+  max-width: 600px;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+#ranking table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#ranking th, #ranking td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+}
+#ranking th {
+  background: #eef2ff;
+}
+</style>
+</head>
+<body>
+
+<h1>Gestión de Resultados</h1>
+
+<div>
+  <button id="btnAfegir">📝 Afegir Resultats</button>
+  <button id="btnRanking">🏆 Calcular Ranking</button>
+</div>
+
+<div id="partidosContainer" class="hidden"></div>
+<div id="ranking" class="hidden"></div>
+
+<a href="admin.html" style="margin-top:25px;color:#3b82f6;text-decoration:none;">⬅ Tornar al menú admin</a>
+
+<script type="module">
+import { supabase } from './supabaseClient.js';
+
+const btnAfegir = document.getElementById("btnAfegir");
+const btnRanking = document.getElementById("btnRanking");
+const cont = document.getElementById("partidosContainer");
+const rankingDiv = document.getElementById("ranking");
+
+let quinielaActiva = null;
+
+// 🟢 Carrega la quiniela activa
+async function cargarQuinielaActiva() {
+  const { data, error } = await supabase
+    .from("quiniela_oficial")
+    .select("*")
+    .eq("activa", true)
+    .single();
+
+  if (error || !data) {
+    alert("❌ No s'ha trobat cap quiniela activa.");
+    return null;
+  }
+
+  quinielaActiva = data;
+  return data;
+}
+
+// 📝 Afegir resultats
+btnAfegir.addEventListener("click", async () => {
+  rankingDiv.classList.add("hidden");
+
+  const quiniela = await cargarQuinielaActiva();
+  if (!quiniela) return;
+
+  cont.classList.remove("hidden");
+  cont.innerHTML = "<h2 style='text-align:center;margin-bottom:10px;'>Introdueix els resultats</h2>";
+
+  quiniela.data.forEach((p, i) => {
+    const val = quiniela.resultados_validos?.[i] || "";
+    cont.innerHTML += `
+      <div class="match">
+        <span>${p.local} vs ${p.visitante}</span>
+        <select id="res-${i}">
+          <option value="">—</option>
+          <option value="1" ${val==="1"?"selected":""}>1</option>
+          <option value="X" ${val==="X"?"selected":""}>X</option>
+          <option value="2" ${val==="2"?"selected":""}>2</option>
+        </select>
+      </div>`;
+  });
+
+  cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats</button>`;
+
+  document.getElementById("guardarResultados").addEventListener("click", guardarResultados);
+});
+
+// 💾 Guardar resultats vàlids
+async function guardarResultados() {
+  const resultados_validos = [];
+
+  quinielaActiva.data.forEach((_, i) => {
+    const val = document.getElementById(`res-${i}`).value;
+    resultados_validos.push(val || null);
+  });
+
+  const { error } = await supabase
+    .from("quiniela_oficial")
+    .update({ resultados_validos })
+    .eq("id", quinielaActiva.id);
+
+  if (error) {
+    alert("❌ Error guardant resultats: " + error.message);
+  } else {
+    alert("✅ Resultats guardats correctament!");
+  }
+}
+
+// 🏆 Calcular ranking
+btnRanking.addEventListener("click", async () => {
+  cont.classList.add("hidden");
+  rankingDiv.classList.remove("hidden");
+  rankingDiv.innerHTML = "<p>Calculant rànquing...</p>";
+
+  const quiniela = await cargarQuinielaActiva();
+  if (!quiniela || !quiniela.resultados_validos) {
+    rankingDiv.innerHTML = "<p style='color:red;'>❌ No hi ha resultats vàlids definits.</p>";
+    return;
+  }
+
+  const { data: participants, error } = await supabase
+    .from("quinielas_participantes")
+    .select("*");
+
+  if (error) {
+    rankingDiv.innerHTML = "<p style='color:red;'>Error carregant participants.</p>";
+    return;
+  }
+
+  const ranking = participants.map(p => {
+    let encerts = 0;
+    quiniela.resultados_validos.forEach((res, i) => {
+      if (res && p.resultados?.[i] === res) encerts++;
+    });
+    return {
+      nom: p.participante?.nombre || "—",
+      correu: p.participante?.correo || "—",
+      encerts
+    };
+  });
+
+  ranking.sort((a, b) => b.encerts - a.encerts);
+
+  let html = "<h2 style='text-align:center;margin-bottom:10px;'>🏆 Rànquing</h2>";
+  html += "<table><tr><th>#</th><th>Nom</th><th>Correu</th><th>Encerts</th></tr>";
+
+  ranking.forEach((r, i) => {
+    html += `<tr><td>${i+1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`;
+  });
+
+  html += "</table>";
+  rankingDiv.innerHTML = html;
+});
+</script>
+
+</body>
+</html>
