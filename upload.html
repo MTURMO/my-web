@@ -60,14 +60,6 @@ a{
 </style>
 </head>
 <body>
-<script>
-// 🔒 Comprovació d'accés administrador
-if (localStorage.getItem("isAdmin") !== "true") {
-  alert("Acceso restringido. Debes iniciar sesión como administrador.");
-  window.location.href = "admin.html"; // redirigeix al login
-}
-</script>
-
 
 <h1>Crear Quiniela de la Semana</h1>
 
@@ -89,6 +81,17 @@ if (localStorage.getItem("isAdmin") !== "true") {
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
+// 🧩 1️⃣ Comprobación de acceso administrador
+const isLocalAdmin = localStorage.getItem("isAdmin") === "true";
+const { data: { session } } = await supabase.auth.getSession();
+
+if (!isLocalAdmin && !session) {
+  alert("Acceso restringido. Debes iniciar sesión como administrador.");
+  window.location.href = "admin.html";
+  throw new Error("Acceso restringido");
+}
+
+// 🧩 2️⃣ Lógica de creación de quiniela
 let partidos = [];
 
 document.getElementById("agregarBtn").addEventListener("click", () => {
