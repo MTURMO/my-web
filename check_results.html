@@ -227,25 +227,45 @@ btnRanking.addEventListener("click", async () => {
   rankingDiv.innerHTML = html;
 
   document.getElementById("guardarRanking").addEventListener("click", async () => {
-    for (const r of ranking) {
-      if (!r.correu) continue;
-      const { error } = await supabase
-        .from("resultados_generales")
-        .upsert(
-          {
-            correo: r.correu,
-            nombre: r.nom,
-            puntos_totales: r.encerts,
-            ultima_actualizacion: new Date().toISOString()
-          },
-          { onConflict: "correo" }
-        );
+  for (const r of ranking) {
+    if (!r.correu) continue;
 
-      if (error) console.error("Error guardant ranking general:", error);
-    }
-    alert("✅ Ranking guardat correctament al total de punts!");
-  });
+    // 🟩 1️⃣ Guardar punts acumulats (upsert)
+    const { error: generalError } = await supabase
+      .from("resultados_generales")
+      .upsert(
+        {
+          correo: r.correu,
+          nombre: r.nom,
+          puntos_totales: supabase.rpc("sumar_puntos", { correo_input: r.correu, puntos_nuevos: r.encerts }),
+          ultima_actualizacion: new Date().toISOString()
+        },
+        { onConflict: "correo" }
+      );
+
+    if (generalError) console.error("Error guardant ranking general:", generalError);
+
+    // 🟩 2️⃣ Guardar punts per jornada
+    const { error: detalleError } = await supabase
+      .from("resultados_detalle")
+      .insert([
+        {
+          correo: r.correu,
+          nombre: r.nom,
+          quiniela_nombre: quinielaActiva.nombre || "Quiniela sense nom",
+          puntos: r.encerts
+        }
+      ]);
+
+    if (detalleError) console.error("Error guardant detall:", detalleError);
+  }
+
+  alert("✅ Ranking guardat correctament al total i al detall per jornada!");
 });
+
+});
+
+
 </script>
 
 </body>
