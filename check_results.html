@@ -98,6 +98,15 @@ if (localStorage.getItem("isAdmin") !== "true") {
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
+const isLocalAdmin = localStorage.getItem("isAdmin") === "true";
+const { data: { session } } = await supabase.auth.getSession();
+
+if (!isLocalAdmin && !session) {
+  alert("Acceso restringido. Debes iniciar sesión como administrador.");
+  window.location.href = "admin.html";
+  throw new Error("Acceso restringido");
+}
+
 const btnAfegir = document.getElementById("btnAfegir");
 const btnRanking = document.getElementById("btnRanking");
 const cont = document.getElementById("partidosContainer");
