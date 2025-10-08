@@ -1,3 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Resultados y Ranking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f4f6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #6366f1, #3b82f6);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 8px;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+}
+#partidosContainer, #ranking {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 600px;
+  width: 100%;
+  margin-top: 20px;
+}
+.match {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+.match span {
+  flex: 1;
+}
+select {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+#ranking table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#ranking th, #ranking td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+}
+#ranking th {
+  background: #eef2ff;
+}
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<h1>Gestión de Resultados</h1>
+
+<div>
+  <button id="btnAfegir">📝 Afegir Resultats</button>
+  <button id="btnRanking">🏆 Calcular Ranking</button>
+</div>
+
+<div id="partidosContainer" class="hidden"></div>
+<div id="ranking" class="hidden"></div>
+
+<a href="admin.html" style="margin-top:25px;color:#3b82f6;text-decoration:none;">⬅ Tornar al menú admin</a>
+
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
@@ -7,9 +95,8 @@ const cont = document.getElementById("partidosContainer");
 const rankingDiv = document.getElementById("ranking");
 
 let quinielaActiva = null;
-let rankingActual = [];
 
-// 🟢 Cargar quiniela activa
+// 🟢 Carrega la quiniela activa
 async function cargarQuinielaActiva() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
@@ -26,7 +113,7 @@ async function cargarQuinielaActiva() {
   return data;
 }
 
-// 📝 Añadir resultados correctos
+// 📝 Afegir resultats
 btnAfegir.addEventListener("click", async () => {
   rankingDiv.classList.add("hidden");
 
@@ -34,7 +121,7 @@ btnAfegir.addEventListener("click", async () => {
   if (!quiniela) return;
 
   cont.classList.remove("hidden");
-  cont.innerHTML = "<h2 style='text-align:center;margin-bottom:10px;'>Resultats Oficials</h2>";
+  cont.innerHTML = "<h2 style='text-align:center;margin-bottom:10px;'>Introdueix els resultats</h2>";
 
   quiniela.data.forEach((p, i) => {
     const val = quiniela.resultados_validos?.[i] || "";
@@ -50,11 +137,12 @@ btnAfegir.addEventListener("click", async () => {
       </div>`;
   });
 
-  cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats Oficials</button>`;
+  cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats</button>`;
+
   document.getElementById("guardarResultados").addEventListener("click", guardarResultados);
 });
 
-// 💾 Guardar quiniela correcta
+// 💾 Guardar resultats vàlids
 async function guardarResultados() {
   const resultados_validos = [];
 
@@ -63,55 +151,56 @@ async function guardarResultados() {
     resultados_validos.push(val || null);
   });
 
-  // 1️⃣ Guardar dentro de tabla auxiliar 'resultados_quiniela'
+  // Guardar también en la tabla resultados_quiniela
   const { error: insertError } = await supabase
     .from("resultados_quiniela")
-    .insert([
-      {
-        quiniela_id: quinielaActiva.id,
-        resultados_validos,
-        creada_el: new Date().toISOString()
-      }
-    ]);
+    .insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
 
   if (insertError) {
-    alert("❌ Error guardant resultats oficials: " + insertError.message);
+    alert("❌ Error guardant resultats: " + insertError.message);
     return;
   }
 
-  // 2️⃣ Actualizar también dentro de la quiniela_oficial activa (opcional)
-  await supabase
+  const { error } = await supabase
     .from("quiniela_oficial")
     .update({ resultados_validos })
     .eq("id", quinielaActiva.id);
 
-  alert("✅ Resultats oficials guardats correctament!");
+  if (error) {
+    alert("❌ Error guardant resultats a quiniela_oficial: " + error.message);
+  } else {
+    alert("✅ Resultats guardats correctament!");
+  }
 }
 
-// 🏆 Calcular ranking (solo pagados)
+// 🏆 Calcular ranking
 btnRanking.addEventListener("click", async () => {
   cont.classList.add("hidden");
   rankingDiv.classList.remove("hidden");
   rankingDiv.innerHTML = "<p>Calculant rànquing...</p>";
 
   const quiniela = await cargarQuinielaActiva();
-  if (!quiniela?.resultados_validos) {
-    rankingDiv.innerHTML = "<p style='color:red;'>❌ No hi ha resultats vàlids.</p>";
+  if (!quiniela || !quiniela.resultados_validos) {
+    rankingDiv.innerHTML = "<p style='color:red;'>❌ No hi ha resultats vàlids definits.</p>";
     return;
   }
 
   const { data: participants, error } = await supabase
     .from("quinielas_participantes")
     .select("*")
-    .eq("pagado", true) // SOLO los que han pagado
-    .order("fecha", { ascending: false });
+    .eq("pagado", true);
 
   if (error) {
     rankingDiv.innerHTML = "<p style='color:red;'>Error carregant participants.</p>";
     return;
   }
 
-  rankingActual = participants.map(p => {
+  if (!participants || participants.length === 0) {
+    rankingDiv.innerHTML = "<p>No hi ha participants pagats per aquesta quiniela.</p>";
+    return;
+  }
+
+  const ranking = participants.map(p => {
     let encerts = 0;
     quiniela.resultados_validos.forEach((res, i) => {
       if (res && p.resultados?.[i] === res) encerts++;
@@ -123,50 +212,41 @@ btnRanking.addEventListener("click", async () => {
     };
   });
 
-  rankingActual.sort((a, b) => b.encerts - a.encerts);
+  ranking.sort((a, b) => b.encerts - a.encerts);
 
   let html = "<h2 style='text-align:center;margin-bottom:10px;'>🏆 Rànquing Quiniela Activa</h2>";
   html += "<table><tr><th>#</th><th>Nom</th><th>Correu</th><th>Encerts</th></tr>";
 
-  rankingActual.forEach((r, i) => {
+  ranking.forEach((r, i) => {
     html += `<tr><td>${i+1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`;
   });
 
   html += "</table>";
-  html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Resultats Generals</button>`;
+  html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Ranking General</button>`;
+
   rankingDiv.innerHTML = html;
 
-  document.getElementById("guardarRanking").addEventListener("click", guardarRankingGeneral);
+  document.getElementById("guardarRanking").addEventListener("click", async () => {
+    for (const r of ranking) {
+      if (!r.correu) continue;
+      const { error } = await supabase
+        .from("resultados_generales")
+        .upsert(
+          {
+            correo: r.correu,
+            nombre: r.nom,
+            puntos_totales: r.encerts,
+            ultima_actualizacion: new Date().toISOString()
+          },
+          { onConflict: "correo" }
+        );
+
+      if (error) console.error("Error guardant ranking general:", error);
+    }
+    alert("✅ Ranking guardat correctament al total de punts!");
+  });
 });
-
-// 💾 Guardar puntos acumulados
-async function guardarRankingGeneral() {
-  for (const r of rankingActual) {
-    if (!r.correu) continue;
-
-    // 🟢 Insertar o actualizar (sumar puntos)
-    const { data: existent } = await supabase
-      .from("resultados_generales")
-      .select("puntos_totales")
-      .eq("correo", r.correu)
-      .single();
-
-    const puntos_totales = (existent?.puntos_totales || 0) + r.encerts;
-
-    const { error } = await supabase
-      .from("resultados_generales")
-      .upsert([
-        {
-          correo: r.correu,
-          nombre: r.nom,
-          puntos_totales,
-          ultima_actualizacion: new Date().toISOString()
-        }
-      ], { onConflict: 'correo' });
-
-    if (error) console.error("Error guardant punts per", r.correu, error);
-  }
-
-  alert("✅ Resultats generals actualitzats correctament!");
-}
 </script>
+
+</body>
+</html>
