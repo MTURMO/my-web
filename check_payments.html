@@ -76,7 +76,25 @@ const noData = document.getElementById("noData");
 let partidosOficiales = [];
 let quinielaActivaId = null;
 
-// ⚽ Obtener la quiniela activa (sense filtrar per policies)
+// 🔐 Comprovar si l'usuari és admin
+async function checkAdmin() {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    alert("Debes iniciar sesión como administrador.");
+    window.location.href = "admin.html";
+    throw new Error("Acceso restringido");
+  }
+
+  // Comprovar email admin
+  if (session.user.email !== "admin@quiniela.com") {
+    alert("No tienes permisos de administrador.");
+    window.location.href = "admin.html";
+    throw new Error("Acceso restringido");
+  }
+}
+
+// ⚽ Obtener la quiniela activa
 async function obtenerQuinielaActiva() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
@@ -126,10 +144,11 @@ async function cargarPagos() {
   }
 
   participantes.forEach((e, i) => {
+    const participante = e.participante || {}; // ⚠️ Aneu al objecte participante
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${e.nombre || "—"}</td>
-      <td>${e.correo || "—"}</td>
+      <td>${participante.nombre || "—"}</td>
+      <td>${participante.correo || "—"}</td>
       <td>${new Date(e.fecha).toLocaleString()}</td>
       <td>${e.pagado ? "✅" : "❌"}</td>
       <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
@@ -137,7 +156,6 @@ async function cargarPagos() {
     `;
     tbody.appendChild(tr);
 
-    // Crear detalle de la quiniela
     const detalle = document.createElement("div");
     detalle.className = "quiniela-detalle";
     detalle.id = `detalle-${i}`;
@@ -154,7 +172,6 @@ async function cargarPagos() {
 
     tbody.appendChild(detalle);
 
-    // Toggle detalle
     const btn = document.getElementById(`btn-ver-${i}`);
     btn.addEventListener("click", () => {
       if (detalle.classList.contains("show")) {
@@ -179,7 +196,11 @@ window.togglePago = async function(id, actual) {
   else cargarPagos();
 };
 
-document.addEventListener("DOMContentLoaded", cargarPagos);
+// 🔑 Inicialitzar
+document.addEventListener("DOMContentLoaded", async () => {
+  await checkAdmin();
+  cargarPagos();
+});
 </script>
 
 </body>
