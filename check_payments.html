@@ -15,39 +15,16 @@ button { padding:6px 10px; border:none; border-radius:6px; cursor:pointer; backg
 button:hover { transform:translateY(-1px); }
 #noData { margin-top:20px; color:#888; text-align:center; }
 a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
-
-/* === Detalls Quiniela === */
-.quiniela-detalle {
-  background:#f3f4f6;
-  border-radius:12px;
-  margin:15px auto 20px auto;
-  padding:0 15px;
-  width:95%;
-  max-width:750px;
-  text-align:left;
-  font-size:0.9rem;
-  overflow:hidden;
-  max-height:0;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
-  transition:all 0.4s ease-in-out;
-  opacity:0;
-}
-.quiniela-detalle.show {
-  max-height:400px;
-  padding:15px;
-  opacity:1;
-  overflow-y:auto;
-}
+.quiniela-detalle { background:#f3f4f6; border-radius:12px; margin:5px auto 10px auto; padding:0 15px; width:95%; max-width:750px; text-align:left; font-size:0.9rem; overflow:hidden; max-height:0; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:all 0.4s ease-in-out; opacity:0; }
+.quiniela-detalle.show { max-height:400px; opacity:1; padding:15px; }
 .quiniela-detalle h3 { text-align:center; color:#333; margin-bottom:10px; }
 .match { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:6px 0; }
 .match span.equipos { font-weight:600; color:#111; }
-.match span.pronostico { font-weight:500; padding:2px 6px; border-radius:6px; }
+.match span.pronostico { font-weight:500; background:#d1fae5; padding:2px 6px; border-radius:6px; }
 @media(max-width:600px){ th, td { font-size:13px; padding:6px; } table { font-size:14px; } .quiniela-detalle { font-size:0.8rem; } }
 </style>
-
 </head>
 <body>
-
 
 <h1>Gestión de Pagos</h1>
 
@@ -72,47 +49,38 @@ a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
-
 const tbody = document.getElementById("tablaBody");
 const noData = document.getElementById("noData");
 
 let partidosOficiales = [];
-let quinielaActivaId = null;
 
-// ⚽ Obtener la quiniela activa
-async function obtenerQuinielaActiva() {
+// ⚽ Cargar los partidos oficiales
+async function cargarPartidosOficiales() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
-    .select("id, data")
+    .select("id, data") // suposem que la columna 'data' conté l'array de partits
     .eq("activa", true)
     .single();
 
-  if (error || !data) {
-    console.error("Error cargando quiniela activa:", error);
-    return null;
+  if (error) {
+    console.error("Error cargando partidos oficiales:", error);
+    return [];
   }
 
-  quinielaActivaId = data.id;
-  partidosOficiales = data.data || [];
-  return quinielaActivaId;
+  return data?.data || [];
 }
 
-// 💾 Cargar quinielas de la quiniela activa
+// 💾 Cargar quinielas
 async function cargarPagos() {
   tbody.innerHTML = "";
   noData.style.display = "none";
 
-  const idActiva = await obtenerQuinielaActiva();
-  if (!idActiva) {
-    noData.textContent = "No hay una quiniela activa.";
-    noData.style.display = "block";
-    return;
-  }
+  // primer carreguem els partits oficials
+  partidosOficiales = await cargarPartidosOficiales();
 
   const { data, error } = await supabase
     .from("quinielas_participantes")
     .select("*")
-    .eq("quiniela_id", idActiva)
     .order("fecha", { ascending: false });
 
   if (error) {
@@ -123,7 +91,6 @@ async function cargarPagos() {
   }
 
   if (!data || data.length === 0) {
-    noData.textContent = "No hay participaciones en la quiniela activa.";
     noData.style.display = "block";
     return;
   }
