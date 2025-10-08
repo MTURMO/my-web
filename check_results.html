@@ -88,208 +88,185 @@ select {
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
-const isLocalAdmin = localStorage.getItem("isAdmin") === "true";
-const { data: { session } } = await supabase.auth.getSession();
+(async () => {
+  // 🔐 Comprovació sessió i admin
+  const { data: { session } } = await supabase.auth.getSession();
+  const isLocalAdmin = localStorage.getItem("isAdmin") === "true";
+  const isSupabaseAdmin = session?.user?.email === "admin@quiniela.com";
 
-if (!isLocalAdmin && !session) {
-  alert("Acceso restringido. Debes iniciar sesión como administrador.");
-  window.location.href = "admin.html";
-  throw new Error("Acceso restringido");
-}
-
-const btnAfegir = document.getElementById("btnAfegir");
-const btnRanking = document.getElementById("btnRanking");
-const cont = document.getElementById("partidosContainer");
-const rankingDiv = document.getElementById("ranking");
-
-let quinielaActiva = null;
-
-// 🟢 Carrega la quiniela activa
-async function cargarQuinielaActiva() {
-  const { data, error } = await supabase
-    .from("quiniela_oficial")
-    .select("*")
-    .eq("activa", true)
-    .single();
-
-  if (error || !data) {
-    alert("❌ No s'ha trobat cap quiniela activa.");
-    return null;
-  }
-
-  quinielaActiva = data;
-  return data;
-}
-
-// 📝 Afegir resultats
-btnAfegir.addEventListener("click", async () => {
-  rankingDiv.classList.add("hidden");
-
-  const quiniela = await cargarQuinielaActiva();
-  if (!quiniela) return;
-
-  cont.classList.remove("hidden");
-  cont.innerHTML = "<h2 style='text-align:center;margin-bottom:10px;'>Introdueix els resultats</h2>";
-
-  quiniela.data.forEach((p, i) => {
-    const val = quiniela.resultados_validos?.[i] || "";
-    cont.innerHTML += `
-      <div class="match">
-        <span>${p.local} vs ${p.visitante}</span>
-        <select id="res-${i}">
-          <option value="">—</option>
-          <option value="1" ${val==="1"?"selected":""}>1</option>
-          <option value="X" ${val==="X"?"selected":""}>X</option>
-          <option value="2" ${val==="2"?"selected":""}>2</option>
-        </select>
-      </div>`;
-  });
-
-  cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats</button>`;
-
-  document.getElementById("guardarResultados").addEventListener("click", guardarResultados);
-});
-
-// 💾 Guardar resultats vàlids
-async function guardarResultados() {
-  const resultados_validos = [];
-
-  quinielaActiva.data.forEach((_, i) => {
-    const val = document.getElementById(`res-${i}`).value;
-    resultados_validos.push(val || null);
-  });
-
-  // Guardar también en la tabla resultados_quiniela
-  const { error: insertError } = await supabase
-    .from("resultados_quiniela")
-    .insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
-
-  if (insertError) {
-    alert("❌ Error guardant resultats: " + insertError.message);
+  if (!isLocalAdmin && !isSupabaseAdmin) {
+    alert("Acceso restringido. Debes iniciar sesión como administrador.");
+    window.location.href = "admin.html";
     return;
   }
 
-  const { error } = await supabase
-    .from("quiniela_oficial")
-    .update({ resultados_validos })
-    .eq("id", quinielaActiva.id);
+  const btnAfegir = document.getElementById("btnAfegir");
+  const btnRanking = document.getElementById("btnRanking");
+  const cont = document.getElementById("partidosContainer");
+  const rankingDiv = document.getElementById("ranking");
 
-  if (error) {
-    alert("❌ Error guardant resultats a quiniela_oficial: " + error.message);
-  } else {
-    alert("✅ Resultats guardats correctament!");
-  }
-}
+  let quinielaActiva = null;
 
-// 🏆 Calcular ranking
-btnRanking.addEventListener("click", async () => {
-  cont.classList.add("hidden");
-  rankingDiv.classList.remove("hidden");
-  rankingDiv.innerHTML = "<p>Calculant rànquing...</p>";
+  // 🟢 Carrega la quiniela activa
+  async function cargarQuinielaActiva() {
+    const { data, error } = await supabase
+      .from("quiniela_oficial")
+      .select("*")
+      .eq("activa", true)
+      .single();
 
-  const quiniela = await cargarQuinielaActiva();
-  if (!quiniela || !quiniela.resultados_validos) {
-    rankingDiv.innerHTML = "<p style='color:red;'>❌ No hi ha resultats vàlids definits.</p>";
-    return;
-  }
-
-  const { data: participants, error } = await supabase
-    .from("quinielas_participantes")
-    .select("*")
-    .eq("pagado", true)
-    .eq("quiniela_id", quinielaActiva.id);
-
-  if (error) {
-    rankingDiv.innerHTML = "<p style='color:red;'>Error carregant participants.</p>";
-    return;
-  }
-
-  if (!participants || participants.length === 0) {
-    rankingDiv.innerHTML = "<p>No hi ha participants pagats per aquesta quiniela.</p>";
-    return;
-  }
-
-  // 🔹 Calcular encerts per participant
-  const rankingTemp = participants.map(p => {
-    let encerts = 0;
-    quiniela.resultados_validos.forEach((res, i) => {
-      if (res && p.resultados?.[i] === res) encerts++;
-    });
-    return {
-      nom: p.participante?.nombre || "—",
-      correu: p.participante?.correo || "—",
-      encerts
-    };
-  });
-
-  // 🔹 Agrupar per correu sumant encerts
-  const rankingMap = new Map();
-  rankingTemp.forEach(r => {
-    if (!rankingMap.has(r.correu)) {
-      rankingMap.set(r.correu, { nom: r.nom, correu: r.correu, encerts: r.encerts });
-    } else {
-      const exist = rankingMap.get(r.correu);
-      exist.encerts += r.encerts;
-      rankingMap.set(r.correu, exist);
+    if (error || !data) {
+      alert("❌ No s'ha trobat cap quiniela activa.");
+      return null;
     }
+
+    quinielaActiva = data;
+    return data;
+  }
+
+  // 📝 Afegir resultats
+  btnAfegir.addEventListener("click", async () => {
+    rankingDiv.classList.add("hidden");
+
+    const quiniela = await cargarQuinielaActiva();
+    if (!quiniela) return;
+
+    cont.classList.remove("hidden");
+    cont.innerHTML = "<h2 style='text-align:center;margin-bottom:10px;'>Introdueix els resultats</h2>";
+
+    quiniela.data.forEach((p, i) => {
+      const val = quiniela.resultados_validos?.[i] || "";
+      cont.innerHTML += `
+        <div class="match">
+          <span>${p.local} vs ${p.visitante}</span>
+          <select id="res-${i}">
+            <option value="">—</option>
+            <option value="1" ${val==="1"?"selected":""}>1</option>
+            <option value="X" ${val==="X"?"selected":""}>X</option>
+            <option value="2" ${val==="2"?"selected":""}>2</option>
+          </select>
+        </div>`;
+    });
+
+    cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats</button>`;
+
+    document.getElementById("guardarResultados").addEventListener("click", guardarResultados);
   });
 
-  const ranking = Array.from(rankingMap.values());
-  ranking.sort((a, b) => b.encerts - a.encerts);
+  // 💾 Guardar resultats vàlids
+  async function guardarResultados() {
+    const resultados_validos = [];
+    quinielaActiva.data.forEach((_, i) => {
+      const val = document.getElementById(`res-${i}`).value;
+      resultados_validos.push(val || null);
+    });
 
-  // 🔹 Renderitzar taula
-  let html = "<h2 style='text-align:center;margin-bottom:10px;'>🏆 Rànquing Quiniela Activa</h2>";
-  html += "<table><tr><th>#</th><th>Nom</th><th>Correu</th><th>Encerts</th></tr>";
+    const { error: insertError } = await supabase
+      .from("resultados_quiniela")
+      .insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
 
-  ranking.forEach((r, i) => {
-    html += `<tr><td>${i + 1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`;
-  });
+    if (insertError) {
+      alert("❌ Error guardant resultats: " + insertError.message);
+      return;
+    }
 
-  html += "</table>";
-  html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Ranking General</button>`;
-  rankingDiv.innerHTML = html;
+    const { error } = await supabase
+      .from("quiniela_oficial")
+      .update({ resultados_validos })
+      .eq("id", quinielaActiva.id);
 
-  // 🔹 Guardar resultats
-  document.getElementById("guardarRanking").addEventListener("click", async () => {
-    for (const r of ranking) {
-      if (!r.correu) continue;
+    if (error) alert("❌ Error guardant resultats a quiniela_oficial: " + error.message);
+    else alert("✅ Resultats guardats correctament!");
+  }
 
-      const { data: existent } = await supabase
-        .from("resultados_generales")
-        .select("puntos_totales")
-        .eq("correo", r.correu)
-        .single();
+  // 🏆 Calcular ranking
+  btnRanking.addEventListener("click", async () => {
+    cont.classList.add("hidden");
+    rankingDiv.classList.remove("hidden");
+    rankingDiv.innerHTML = "<p>Calculant rànquing...</p>";
 
-      const puntsActuals = existent?.puntos_totales || 0;
-      const puntsTotals = puntsActuals + r.encerts;
+    const quiniela = await cargarQuinielaActiva();
+    if (!quiniela || !quiniela.resultados_validos) {
+      rankingDiv.innerHTML = "<p style='color:red;'>❌ No hi ha resultats vàlids definits.</p>";
+      return;
+    }
 
-      const { error: generalError } = await supabase
-        .from("resultados_generales")
-        .upsert({
+    const { data: participants, error } = await supabase
+      .from("quinielas_participantes")
+      .select("*")
+      .eq("pagado", true)
+      .eq("quiniela_id", quinielaActiva.id);
+
+    if (error) {
+      rankingDiv.innerHTML = "<p style='color:red;'>Error carregant participants.</p>";
+      return;
+    }
+
+    if (!participants || participants.length === 0) {
+      rankingDiv.innerHTML = "<p>No hi ha participants pagats per aquesta quiniela.</p>";
+      return;
+    }
+
+    const rankingTemp = participants.map(p => {
+      let encerts = 0;
+      quiniela.resultados_validos.forEach((res, i) => {
+        if (res && p.resultados?.[i] === res) encerts++;
+      });
+      return {
+        nom: p.participante?.nombre || "—",
+        correu: p.participante?.correo || "—",
+        encerts
+      };
+    });
+
+    const rankingMap = new Map();
+    rankingTemp.forEach(r => {
+      if (!rankingMap.has(r.correu)) rankingMap.set(r.correu, { ...r });
+      else rankingMap.get(r.correu).encerts += r.encerts;
+    });
+
+    const ranking = Array.from(rankingMap.values()).sort((a,b) => b.encerts - a.encerts);
+
+    let html = "<h2 style='text-align:center;margin-bottom:10px;'>🏆 Rànquing Quiniela Activa</h2>";
+    html += "<table><tr><th>#</th><th>Nom</th><th>Correu</th><th>Encerts</th></tr>";
+    ranking.forEach((r,i) => html += `<tr><td>${i+1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`);
+    html += "</table>";
+    html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Ranking General</button>`;
+    rankingDiv.innerHTML = html;
+
+    document.getElementById("guardarRanking").addEventListener("click", async () => {
+      for (const r of ranking) {
+        if (!r.correu) continue;
+
+        const { data: existent } = await supabase
+          .from("resultados_generales")
+          .select("puntos_totales")
+          .eq("correo", r.correu)
+          .single();
+
+        const puntsTotals = (existent?.puntos_totales || 0) + r.encerts;
+
+        await supabase.from("resultados_generales").upsert({
           correo: r.correu,
           nombre: r.nom,
           puntos_totales: puntsTotals,
           ultima_actualizacion: new Date().toISOString()
         }, { onConflict: "correo" });
 
-      if (generalError) console.error("Error guardant ranking general:", generalError);
-
-      const { error: detalleError } = await supabase
-        .from("resultados_detalle")
-        .insert({
+        await supabase.from("resultados_detalle").insert({
           correo: r.correu,
           nombre: r.nom,
           quiniela_nombre: quinielaActiva.nombre || "Quiniela sense nom",
           puntos: r.encerts
         });
+      }
 
-      if (detalleError) console.error("Error guardant detall:", detalleError);
-    }
-
-    alert("✅ Ranking guardat correctament al total i al detall per jornada!");
+      alert("✅ Ranking guardat correctament al total i al detall per jornada!");
+    });
   });
-});
+})();
 </script>
+
 
 </body>
 </html>
