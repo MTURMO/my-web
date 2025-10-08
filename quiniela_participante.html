@@ -73,6 +73,7 @@ import { supabase } from './supabaseClient.js';
 
 const cont = document.getElementById("quinielaContainer");
 let quiniela = [];
+let quinielaActivaId = null;
 let resultados = {};
 
 // 🟢 OBTENIR LA QUINIELA ACTIVA
@@ -86,10 +87,21 @@ async function cargarQuiniela() {
 
     if (error || !data) {
       cont.innerHTML = "<h2 style='text-align:center;color:red;'>No hay quiniela activa</h2>";
+      document.getElementById("enviar").disabled = true;
       return;
     }
 
-    quiniela = data.data; // 👈 els partits estan dins la columna "data"
+    // 🔹 Guardem ID de la quiniela activa
+    quinielaActivaId = data.id;
+    quiniela = data.data; // els partits estan dins la columna "data"
+
+    // Si està bloquejada, impedir participació
+    if (data.blocked) {
+      cont.innerHTML = "<h2 style='text-align:center;color:red;'>🚫 La quiniela está bloqueada. No se aceptan participaciones.</h2>";
+      document.getElementById("enviar").disabled = true;
+      return;
+    }
+
     renderPartidos();
 
   } catch (err) {
@@ -121,6 +133,11 @@ window.marcar = function(i, val, btn){
 
 // 🟣 ENVIAR LA QUINIELA A SUPABASE
 document.getElementById("enviar").addEventListener("click", async ()=>{
+  if (!quinielaActivaId) {
+    alert("❌ No hay quiniela activa para participar.");
+    return;
+  }
+
   if(Object.keys(resultados).length !== quiniela.length){
     alert("Debes marcar todos los partidos");
     return;
@@ -132,7 +149,8 @@ document.getElementById("enviar").addEventListener("click", async ()=>{
     participante,
     resultados,
     fecha: new Date().toISOString(),
-    pagado: false
+    pagado: false,
+    quiniela_id: quinielaActivaId // 👈 ID de la quiniela activa
   };
 
   try {
