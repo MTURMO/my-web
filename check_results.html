@@ -188,7 +188,8 @@ btnRanking.addEventListener("click", async () => {
   const { data: participants, error } = await supabase
     .from("quinielas_participantes")
     .select("*")
-    .eq("pagado", true);
+    .eq("pagado", true)
+    .eq("quiniela_id", quinielaActiva.id);;
 
   if (error) {
     rankingDiv.innerHTML = "<p style='color:red;'>Error carregant participants.</p>";
