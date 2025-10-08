@@ -48,6 +48,7 @@ a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
 </head>
 <body>
 
+
 <h1>Gestión de Pagos</h1>
 
 <table id="tablaPagos">
@@ -70,15 +71,6 @@ a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
 
 <script type="module">
 import { supabase } from './supabaseClient.js';
-
-const isLocalAdmin = localStorage.getItem("isAdmin") === "true";
-const { data: { session } } = await supabase.auth.getSession();
-
-if (!isLocalAdmin && !session) {
-  alert("Acceso restringido. Debes iniciar sesión como administrador.");
-  window.location.href = "admin.html";
-  throw new Error("Acceso restringido");
-}
 
 const tbody = document.getElementById("tablaBody");
 const noData = document.getElementById("noData");
