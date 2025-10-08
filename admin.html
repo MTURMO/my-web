@@ -42,89 +42,76 @@
   <a href="index.html">⬅ Volver al Menú Principal</a>
 </div>
 
-<script>
+<script type="module">
 // ------------------------------
-// 🔐 Control de sesión local
+// 🔐 Autenticación con Supabase
 // ------------------------------
-const correctPassword = "1234"; // puedes cambiarla o traerla de un entorno seguro
+import { supabase } from './supabaseClient.js';
 
-const isAdmin = localStorage.getItem("isAdmin");
 const loginDiv = document.getElementById("login");
 const menuDiv = document.getElementById("menu");
+const errorMsg = document.getElementById("error");
+const passwordInput = document.getElementById("password");
 
-// Si ja està loguejat, mostra directament el menú
-if (isAdmin === "true") {
+// Comprovar sessió actual
+const { data: { session } } = await supabase.auth.getSession();
+
+if (session) {
+  // Si ja està autenticat → mostra menú directament
+  loginDiv.classList.add("hidden");
   menuDiv.classList.remove("hidden");
 } else {
+  // Si no → mostra login
   loginDiv.classList.remove("hidden");
 }
 
-// Login manual
-document.getElementById('loginBtn').addEventListener('click', () => {
-  const input = document.getElementById("password").value;
-  const error = document.getElementById("error");
+// 🔑 Login Supabase Auth
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const password = passwordInput.value.trim();
+  if (!password) return (errorMsg.textContent = "Introdueix la contrasenya");
 
-  if (input === correctPassword) {
-    localStorage.setItem("isAdmin", "true"); // 🧠 Desa la sessió
-    loginDiv.classList.add("hidden");
-    menuDiv.classList.remove("hidden");
-    error.textContent = "";
-  } else {
-    error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: "admin@quiniela.com", // 🧠 usuari admin creat a Supabase
+    password: password
+  });
+
+  if (error) {
+    errorMsg.textContent = "❌ Contraseña incorrecta o error de autenticación.";
+    console.error(error);
+    return;
   }
+
+  loginDiv.classList.add("hidden");
+  menuDiv.classList.remove("hidden");
+  errorMsg.textContent = "";
 });
 
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("isAdmin");
+// 🚪 Logout
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
   alert("Sesión cerrada correctamente.");
-  window.location.reload();
+  location.reload();
 });
-</script>
 
-<!-- Mòdul Supabase -->
-<script type="module">
-(async () => {
-  const btnCerrar = document.getElementById("cerrarParticipacionBtn");
-  if (!btnCerrar) return;
+// ------------------------------
+// ⚙️ Botón: Cerrar participación
+// ------------------------------
+document.getElementById("cerrarParticipacionBtn").addEventListener("click", async () => {
+  if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
 
   try {
-    const mod = await import('./supabaseClient.js');
-    const supabase = mod.supabase || mod.default?.supabase || null;
+    const { error } = await supabase
+      .from('quiniela_oficial')
+      .update({ blocked: true })
+      .eq('activa', true);
 
-    if (!supabase) {
-      console.warn('Supabase no exportat correctament.');
-      btnCerrar.addEventListener('click', () => {
-        alert('Error: Supabase no disponible.');
-      });
-      return;
-    }
-
-    // Bloquejar participació
-    btnCerrar.addEventListener("click", async () => {
-      if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
-
-      try {
-        const { data, error } = await supabase
-          .from('quiniela_oficial')
-          .update({ blocked: true })
-          .eq('activa', true);
-
-        if (error) throw error;
-        alert("✅ Participación cerrada correctamente.");
-      } catch (err) {
-        console.error('Error actualizando quiniela:', err);
-        alert("❌ Error al cerrar la participación: " + (err.message || err));
-      }
-    });
-
+    if (error) throw error;
+    alert("✅ Participación cerrada correctamente.");
   } catch (err) {
-    console.warn('No se pudo importar supabaseClient.js:', err);
-    btnCerrar.addEventListener('click', () => {
-      alert('No se pudo conectar con Supabase. Mira la consola.');
-    });
+    console.error(err);
+    alert("❌ Error al cerrar la participación: " + (err.message || err));
   }
-})();
+});
 </script>
 
 </body>
