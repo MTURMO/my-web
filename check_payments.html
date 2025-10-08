@@ -76,25 +76,7 @@ const noData = document.getElementById("noData");
 let partidosOficiales = [];
 let quinielaActivaId = null;
 
-// 🔐 Comprovar si l'usuari és admin
-async function checkAdmin() {
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) {
-    alert("Debes iniciar sesión como administrador.");
-    window.location.href = "admin.html";
-    throw new Error("Acceso restringido");
-  }
-
-  // Opcional: comprovar email
-  if (session.user.email !== "admin@quiniela.com") {
-    alert("No tienes permisos de administrador.");
-    window.location.href = "admin.html";
-    throw new Error("Acceso restringido");
-  }
-}
-
-// ⚽ Obtener la quiniela activa
+// ⚽ Obtener la quiniela activa (sense filtrar per policies)
 async function obtenerQuinielaActiva() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
@@ -155,6 +137,7 @@ async function cargarPagos() {
     `;
     tbody.appendChild(tr);
 
+    // Crear detalle de la quiniela
     const detalle = document.createElement("div");
     detalle.className = "quiniela-detalle";
     detalle.id = `detalle-${i}`;
@@ -171,6 +154,7 @@ async function cargarPagos() {
 
     tbody.appendChild(detalle);
 
+    // Toggle detalle
     const btn = document.getElementById(`btn-ver-${i}`);
     btn.addEventListener("click", () => {
       if (detalle.classList.contains("show")) {
@@ -195,11 +179,7 @@ window.togglePago = async function(id, actual) {
   else cargarPagos();
 };
 
-// 🔑 Inicialitzar
-document.addEventListener("DOMContentLoaded", async () => {
-  await checkAdmin();
-  cargarPagos();
-});
+document.addEventListener("DOMContentLoaded", cargarPagos);
 </script>
 
 </body>
