@@ -21,7 +21,7 @@
 <body>
 
 <!-- Login -->
-<div id="login">
+<div id="login" class="hidden">
   <h1>Acceso Administrador</h1>
   <input type="password" id="password" placeholder="Contraseña"><br>
   <button id="loginBtn">Entrar</button>
@@ -38,45 +38,69 @@
     <button onclick="window.location.href='check_results.html'">Check Results</button>
     <button id="cerrarParticipacionBtn" style="background:linear-gradient(90deg,#ef4444,#f87171);">Cerrar Participación</button>
   </div>
+  <button id="logoutBtn" style="background:linear-gradient(90deg,#6366f1,#3b82f6);">Cerrar Sesión</button>
   <a href="index.html">⬅ Volver al Menú Principal</a>
 </div>
 
-<!-- Script (no-module) per al login: sempre s'executa encara que fallen imports modules -->
 <script>
+// ------------------------------
+// 🔐 Control de sesión local
+// ------------------------------
+const correctPassword = "1234"; // puedes cambiarla o traerla de un entorno seguro
+
+const isAdmin = localStorage.getItem("isAdmin");
+const loginDiv = document.getElementById("login");
+const menuDiv = document.getElementById("menu");
+
+// Si ja està loguejat, mostra directament el menú
+if (isAdmin === "true") {
+  menuDiv.classList.remove("hidden");
+} else {
+  loginDiv.classList.remove("hidden");
+}
+
+// Login manual
 document.getElementById('loginBtn').addEventListener('click', () => {
   const input = document.getElementById("password").value;
   const error = document.getElementById("error");
-  const correctPassword = "1234"; // canvia si cal
+
   if (input === correctPassword) {
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("menu").classList.remove("hidden");
+    localStorage.setItem("isAdmin", "true"); // 🧠 Desa la sessió
+    loginDiv.classList.add("hidden");
+    menuDiv.classList.remove("hidden");
     error.textContent = "";
   } else {
     error.textContent = "Contraseña incorrecta. Intenta de nuevo.";
   }
 });
+
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("isAdmin");
+  alert("Sesión cerrada correctamente.");
+  window.location.reload();
+});
 </script>
 
-<!-- Mòdul per a Supabase: import dinàmic i manejo d'errors -->
+<!-- Mòdul Supabase -->
 <script type="module">
 (async () => {
   const btnCerrar = document.getElementById("cerrarParticipacionBtn");
   if (!btnCerrar) return;
 
   try {
-    // Import dinàmic — evita que fallades trenquin la resta de la pàgina
     const mod = await import('./supabaseClient.js');
     const supabase = mod.supabase || mod.default?.supabase || null;
 
     if (!supabase) {
-      console.warn('supabase no exportat correctament des de supabaseClient.js. Revisa l\'export.');
+      console.warn('Supabase no exportat correctament.');
       btnCerrar.addEventListener('click', () => {
-        alert('Error: Supabase no disponible (manca export supabase). Mira la consola.');
+        alert('Error: Supabase no disponible.');
       });
       return;
     }
 
-    // Afegeix listener segur
+    // Bloquejar participació
     btnCerrar.addEventListener("click", async () => {
       if (!confirm("¿Estás seguro de cerrar la participación? Esto bloqueará la quiniela activa.")) return;
 
@@ -95,10 +119,9 @@ document.getElementById('loginBtn').addEventListener('click', () => {
     });
 
   } catch (err) {
-    console.warn('No s\'ha pogut importar supabaseClient.js:', err);
-    // fallback: el botó mostra un error informatiu
+    console.warn('No se pudo importar supabaseClient.js:', err);
     btnCerrar.addEventListener('click', () => {
-      alert('No s\'ha pogut conectar amb Supabase. Revisa la consola (Network / Import).');
+      alert('No se pudo conectar con Supabase. Mira la consola.');
     });
   }
 })();

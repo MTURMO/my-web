@@ -48,6 +48,15 @@ a { margin-top:20px; color:#3b82f6; text-decoration:none; font-weight:500; }
 </head>
 <body>
 
+
+  <script>
+// 🔒 Comprovació d'accés administrador
+if (localStorage.getItem("isAdmin") !== "true") {
+  alert("Acceso restringido. Debes iniciar sesión como administrador.");
+  window.location.href = "admin.html"; // redirigeix al login
+}
+</script>
+
 <h1>Gestión de Pagos</h1>
 
 <table id="tablaPagos">
