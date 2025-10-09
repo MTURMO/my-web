@@ -67,24 +67,29 @@ a{
 <button id="enviar">📤 Enviar Quiniela</button>
 <a href="index.html">⬅ Volver al Menú Principal</a>
 
-<!-- Importem Supabase -->
 <script type="module">
 import { supabase } from './supabaseClient.js';
-
-// 🧩 Comprovem si l'usuari ha fet login
-const participante = JSON.parse(localStorage.getItem("participante") || "{}");
-if (!participante?.correo) {
-  alert("Debes iniciar sesión antes de acceder a la quiniela.");
-  window.location.href = "participante.html";
-}
-
 
 const cont = document.getElementById("quinielaContainer");
 let quiniela = [];
 let quinielaActivaId = null;
 let resultados = {};
 
-// 🟢 OBTENIR LA QUINIELA ACTIVA
+// 🧩 Comprobar si el usuario ha iniciado sesión
+async function checkLogin() {
+  const { data: { session } } = await supabase.auth.getSession();
+  const participante = JSON.parse(localStorage.getItem("participante") || "{}");
+
+  if (!session || !participante?.id) {
+    alert("⚠️ Debes iniciar sesión antes de participar.");
+    window.location.href = "participante.html";
+    return false;
+  }
+
+  return participante;
+}
+
+// ⚽ Obtener la quiniela activa
 async function cargarQuiniela() {
   try {
     const { data, error } = await supabase
@@ -99,11 +104,9 @@ async function cargarQuiniela() {
       return;
     }
 
-    // 🔹 Guardem ID de la quiniela activa
     quinielaActivaId = data.id;
-    quiniela = data.data; // els partits estan dins la columna "data"
+    quiniela = data.data;
 
-    // Si està bloquejada, impedir participació
     if (data.blocked) {
       cont.innerHTML = "<h2 style='text-align:center;color:red;'>🚫 La quiniela está bloqueada. No se aceptan participaciones.</h2>";
       document.getElementById("enviar").disabled = true;
@@ -139,8 +142,11 @@ window.marcar = function(i, val, btn){
   btn.style.background = '#a5b4fc';
 };
 
-// 🟣 ENVIAR LA QUINIELA A SUPABASE
+// 🟣 Enviar la quiniela
 document.getElementById("enviar").addEventListener("click", async ()=>{
+  const participante = await checkLogin();
+  if (!participante) return;
+
   if (!quinielaActivaId) {
     alert("❌ No hay quiniela activa para participar.");
     return;
@@ -151,15 +157,8 @@ document.getElementById("enviar").addEventListener("click", async ()=>{
     return;
   }
 
-  const participante = JSON.parse(localStorage.getItem("participante") || "{}");
-
-  if (!participante?.correo || !participante?.nombre) {
-    alert("⚠️ Debes iniciar sesión antes de participar.");
-    window.location.href = "participante.html";
-    return;
-  }
-
   const data = {
+    participante_id: participante.id,
     nombre: participante.nombre,
     correo: participante.correo,
     resultados,
@@ -175,7 +174,7 @@ document.getElementById("enviar").addEventListener("click", async ()=>{
 
     if (error) throw error;
 
-    alert("✅ Quiniela enviada correctamente a Supabase");
+    alert("✅ Quiniela enviada correctamente");
     window.location.href = "index.html";
 
   } catch (err) {
@@ -183,9 +182,9 @@ document.getElementById("enviar").addEventListener("click", async ()=>{
   }
 });
 
-
-// 🔄 carregar la quiniela en iniciar
-cargarQuiniela();
+// 🔄 Cargar al inicio
+await checkLogin();
+await cargarQuiniela();
 </script>
 
 </body>
