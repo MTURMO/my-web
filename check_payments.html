@@ -119,7 +119,7 @@ async function cargarPagos() {
 
   const idActiva = await obtenerQuinielaActiva();
   if (!idActiva) {
-    noData.textContent = "No hay una quiniela activa.";
+    noData.textContent = "No hi ha una quiniela activa.";
     noData.style.display = "block";
     return;
   }
@@ -132,13 +132,13 @@ async function cargarPagos() {
 
   if (error) {
     console.error("Error cargando participantes:", error);
-    noData.textContent = "Error al cargar participantes.";
+    noData.textContent = "Error al carregar participants.";
     noData.style.display = "block";
     return;
   }
 
   if (!participantes || participantes.length === 0) {
-    noData.textContent = "No hay participaciones en la quiniela activa.";
+    noData.textContent = "No hi ha participacions a la quiniela activa.";
     noData.style.display = "block";
     return;
   }
@@ -151,7 +151,7 @@ async function cargarPagos() {
     <td>${new Date(e.fecha).toLocaleString()}</td>
     <td>${e.pagado ? "✅" : "❌"}</td>
     <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
-    <td><button id="btn-ver-${i}">👁 Ver Quiniela</button></td>
+    <td><button id="btn-ver-${i}">👁 Veure Quiniela</button></td>
   `;
   tbody.appendChild(tr);
   

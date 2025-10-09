@@ -84,14 +84,14 @@ a {
   <h1>Participante</h1>
 
   <div class="tabs">
-    <button id="tabLogin" class="active">Iniciar Sesión</button>
-    <button id="tabRegister">Registrarse</button>
+    <button id="tabLogin" class="active">Iniciar Sessió</button>
+    <button id="tabRegister">Registrar-se</button>
   </div>
 
   <!-- LOGIN -->
   <div id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Correo" required>
-    <input type="password" id="loginPassword" placeholder="Contraseña" required>
+    <input type="email" id="loginEmail" placeholder="Correu" required>
+    <input type="password" id="loginPassword" placeholder="Contrasenya" required>
     <button id="btnLogin">Entrar</button>
   </div>
 
@@ -204,7 +204,7 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   });
 
   if (loginError) {
-    msg.textContent = "❌ Credenciales incorrectas o error al iniciar sesión.";
+    msg.textContent = "❌ Credencials incorrectes o error al iniciar sessió.";
     msg.style.color = "red";
     console.error(loginError);
     return;
