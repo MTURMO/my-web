@@ -15,17 +15,8 @@
       flex-direction: column;
       align-items: center;
     }
-
-    h1 {
-      color: #333;
-      margin-bottom: 5px;
-    }
-
-    h2 {
-      color: #2563eb;
-      margin-top: 10px;
-    }
-
+    h1 { color: #333; margin-bottom: 5px; }
+    h2 { color: #2563eb; margin-top: 10px; }
     .quiniela-card {
       background: white;
       border-radius: 12px;
@@ -35,7 +26,6 @@
       margin: 10px 0;
       padding: 20px;
     }
-
     .quiniela-card pre {
       background: #f9fafb;
       border-radius: 8px;
@@ -43,7 +33,6 @@
       font-size: 14px;
       overflow-x: auto;
     }
-
     #nueva {
       margin-top: 20px;
       padding: 12px 20px;
@@ -56,23 +45,9 @@
       font-weight: 600;
       transition: transform 0.2s;
     }
-
-    #nueva:hover {
-      transform: translateY(-2px);
-      background: #3b82f6;
-    }
-
-    #message {
-      margin-top: 10px;
-      font-size: 14px;
-    }
-
-    a {
-      margin-top: 20px;
-      color: #3b82f6;
-      text-decoration: none;
-      font-weight: 500;
-    }
+    #nueva:hover { transform: translateY(-2px); background: #3b82f6; }
+    #message { margin-top: 10px; font-size: 14px; text-align:center; }
+    a { margin-top: 20px; color: #3b82f6; text-decoration: none; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -96,6 +71,7 @@
     const nombreUsuario = document.getElementById('nombreUsuario');
 
     let participante = null;
+    let quinielaActiva = null;
     let quinielaActivaId = null;
 
     // ✅ Comprovar sessió
@@ -113,7 +89,7 @@
       return true;
     }
 
-    // 🟦 Obtenir quiniela activa
+    // 🟦 Obtenir quiniela activa (amb partits)
     async function getQuinielaActiva() {
       const { data, error } = await supabase
         .from('quiniela_oficial')
@@ -128,8 +104,29 @@
         return null;
       }
 
+      quinielaActiva = data;
       quinielaActivaId = data.id;
       return data;
+    }
+
+    // 🏆 Mostrar partits amb equips
+    function renderPartidos(resultados, partidos) {
+      if (!resultados) return '<p>Sense resultats</p>';
+      if (!partidos) return `<pre>${JSON.stringify(resultados, null, 2)}</pre>`;
+
+      let html = '<table style="width:100%; border-collapse:collapse;">';
+      html += '<tr><th style="text-align:left;">Partit</th><th style="text-align:center;">Selecció</th></tr>';
+      partidos.forEach((p, i) => {
+        const seleccio = resultados[i + 1] || '-';
+        html += `
+          <tr>
+            <td>${p.equip1} vs ${p.equip2}</td>
+            <td style="text-align:center;">${seleccio}</td>
+          </tr>
+        `;
+      });
+      html += '</table>';
+      return html;
     }
 
     // 📋 Carregar quinieles del participant
@@ -161,22 +158,13 @@
           <h3>${esActiva ? '⚽ Quiniela Activa' : '📜 Quiniela anterior'}</h3>
           <p><strong>Data:</strong> ${new Date(q.fecha).toLocaleString()}</p>
           <p><strong>Pagat:</strong> ${q.pagado ? '✅ Sí' : '❌ No'}</p>
-          <pre>${JSON.stringify(q.resultados, null, 2)}</pre>
+          ${renderPartidos(q.resultados, quinielaActiva?.partidos)}
         `;
         container.appendChild(card);
       });
-
-      // Bloquejar botó si ja ha participat a la quiniela activa
-      const yaHecha = data.some(q => q.quiniela_id === quinielaActivaId);
-      if (yaHecha) {
-        btnNueva.disabled = true;
-        btnNueva.textContent = '✔️ Ja has fet la quiniela activa';
-        btnNueva.style.background = '#9ca3af';
-        btnNueva.style.cursor = 'not-allowed';
-      }
     }
 
-    // ➕ Botó nova quiniela
+    // ➕ Botó nova quiniela (ara sense bloqueig)
     btnNueva.addEventListener('click', () => {
       window.location.href = 'quiniela_participante.html';
     });
