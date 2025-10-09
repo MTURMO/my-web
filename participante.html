@@ -2,91 +2,200 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Participante</title>
+<title>Participante - Login / Registro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-  font-family:'Inter',sans-serif;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
-  background:#f0f4f8;
+body {
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f0f4f8;
+  margin: 0;
 }
-h1{margin-bottom:20px;color:#333;text-align:center;}
-input,button{
-  padding:12px 18px;
-  margin:10px 0;
-  border-radius:10px;
-  border:none;
-  font-size:16px;
-  width:100%;
-  max-width:300px;
-  box-sizing:border-box;
+.container {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
 }
-button{
-  background:linear-gradient(90deg,#4f46e5,#3b82f6);
-  color:white;
-  cursor:pointer;
-  transition:transform 0.2s;
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
 }
-button:hover{transform:translateY(-2px);}
-a{
-  margin-top:20px;
-  color:#3b82f6;
-  text-decoration:none;
-  font-weight:500;
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+.tabs button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tabs button.active {
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+}
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+button {
+  background: linear-gradient(90deg, #4f46e5, #3b82f6);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+button:hover { transform: translateY(-2px); }
+#message {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+a {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  color: #3b82f6;
+  text-decoration: none;
 }
 </style>
 </head>
 <body>
 
-<h1>Registro de Participante</h1>
-<input type="text" id="nombre" placeholder="Nombre">
-<input type="email" id="correo" placeholder="Correo">
-<button id="registrarBtn">Registrar</button>
+<div class="container">
+  <h1>Participante</h1>
 
-<a href="index.html">⬅ Volver al Menú Principal</a>
+  <div class="tabs">
+    <button id="tabLogin" class="active">Iniciar Sesión</button>
+    <button id="tabRegister">Registrarse</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginForm">
+    <input type="email" id="loginEmail" placeholder="Correo" required>
+    <input type="password" id="loginPassword" placeholder="Contraseña" required>
+    <button id="btnLogin">Entrar</button>
+  </div>
+
+  <!-- REGISTRO -->
+  <div id="registerForm" style="display:none;">
+    <input type="text" id="regNombre" placeholder="Nombre completo" required>
+    <input type="email" id="regEmail" placeholder="Correo" required>
+    <input type="password" id="regPassword" placeholder="Contraseña" required>
+    <button id="btnRegister">Crear cuenta</button>
+  </div>
+
+  <div id="message"></div>
+  <a href="index.html">⬅ Volver al menú principal</a>
+</div>
 
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
-const btn = document.getElementById("registrarBtn");
+// Tabs
+const tabLogin = document.getElementById("tabLogin");
+const tabRegister = document.getElementById("tabRegister");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const msg = document.getElementById("message");
 
-btn.addEventListener("click", async () => {
-  const nombre = document.getElementById("nombre").value.trim();
-  const correo = document.getElementById("correo").value.trim();
+tabLogin.addEventListener("click", () => {
+  tabLogin.classList.add("active");
+  tabRegister.classList.remove("active");
+  loginForm.style.display = "block";
+  registerForm.style.display = "none";
+  msg.textContent = "";
+});
 
-  if(!nombre || !correo){
-    alert("⚠️ Completa todos los campos antes de continuar.");
+tabRegister.addEventListener("click", () => {
+  tabRegister.classList.add("active");
+  tabLogin.classList.remove("active");
+  registerForm.style.display = "block";
+  loginForm.style.display = "none";
+  msg.textContent = "";
+});
+
+// 🟩 REGISTRO DE USUARIO
+document.getElementById("btnRegister").addEventListener("click", async () => {
+  msg.textContent = "";
+  const nombre = document.getElementById("regNombre").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value.trim();
+
+  if (!nombre || !email || !password) {
+    msg.textContent = "⚠️ Completa todos los campos.";
+    msg.style.color = "orange";
     return;
   }
 
-  // 🔍 Comprobar si la quiniela activa está bloqueada
-  const { data: quiniela, error } = await supabase
-    .from("quiniela_oficial")
-    .select("blocked")
-    .eq("activa", true)
-    .maybeSingle();
+  // Crear usuario a Supabase Auth
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { nombre } }
+  });
 
   if (error) {
-    console.error("Error al comprobar la quiniela:", error);
-    alert("❌ Error al comprobar el estado de la quiniela activa.");
+    msg.textContent = "❌ Error al registrarse: " + error.message;
+    msg.style.color = "red";
     return;
   }
 
-  if (quiniela?.blocked) {
-    alert("🚫 La participación está bloqueada. No se pueden registrar nuevos participantes.");
+  // Guardar en la taula perfil_participantes
+  const user = data.user;
+  if (user) {
+    await supabase.from("perfil_participantes").insert([
+      { id: user.id, nombre, correo: email }
+    ]);
+  }
+
+  msg.textContent = "✅ Cuenta creada correctamente. Ya puedes iniciar sesión.";
+  msg.style.color = "green";
+  tabLogin.click();
+});
+
+// 🟦 LOGIN DE USUARIO
+document.getElementById("btnLogin").addEventListener("click", async () => {
+  msg.textContent = "";
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  if (!email || !password) {
+    msg.textContent = "⚠️ Completa todos los campos.";
+    msg.style.color = "orange";
     return;
   }
 
-  // 💾 Guardar participante localmente
-  const participante = { nombre, correo };
-  localStorage.setItem("participante", JSON.stringify(participante));
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  // 👉 Redirigir al formulario de quiniela
-  window.location.href = "quiniela_participante.html";
+  if (error) {
+    msg.textContent = "❌ Credenciales incorrectas.";
+    msg.style.color = "red";
+  } else {
+    msg.textContent = "✅ Sesión iniciada correctamente.";
+    msg.style.color = "green";
+
+    localStorage.setItem("participante", JSON.stringify({ email }));
+    setTimeout(() => (window.location.href = "quiniela_participante.html"), 1000);
+  }
 });
 </script>
 
