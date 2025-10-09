@@ -55,15 +55,17 @@ const passwordInput = document.getElementById("password");
 
 // Comprovar sessió actual
 const { data: { session } } = await supabase.auth.getSession();
+const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-if (session) {
-  // Si ja està autenticat → mostra menú directament
+if (session && isAdmin) {
   loginDiv.classList.add("hidden");
   menuDiv.classList.remove("hidden");
 } else {
-  // Si no → mostra login
+  await supabase.auth.signOut();
+  localStorage.removeItem("isAdmin");
   loginDiv.classList.remove("hidden");
 }
+
 
 // 🔑 Login Supabase Auth
 document.getElementById('loginBtn').addEventListener('click', async () => {
@@ -81,10 +83,16 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     return;
   }
 
+  // ⚡ Just aquí, després del login correcte, posem el flag
+  if (data.user.email === "admin@quiniela.com") {
+    localStorage.setItem("isAdmin", "true");
+  }
+
   loginDiv.classList.add("hidden");
   menuDiv.classList.remove("hidden");
   errorMsg.textContent = "";
 });
+
 
 // 🚪 Logout
 document.getElementById("logoutBtn").addEventListener("click", async () => {
