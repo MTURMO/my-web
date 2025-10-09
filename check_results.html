@@ -210,7 +210,11 @@ import { supabase } from './supabaseClient.js';
     const rankingTemp = participants.map(p => {
         let encerts = 0;
         quiniela.resultados_validos.forEach((res, i) => {
-            if (res && p.resultados?.[i] === res) encerts++;
+            const resposta = p.resultados?.[i];
+            if (res && resposta === res) {
+                // ✅ Si l’encert és un empat (“X”), val 2 punts
+                encerts += (res === "X" ? 2 : 1);
+            }
         });
         return {
             nom: p.nombre || "—",
@@ -218,6 +222,7 @@ import { supabase } from './supabaseClient.js';
             encerts
         };
     });
+
 
 
 
