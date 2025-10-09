@@ -213,11 +213,12 @@ import { supabase } from './supabaseClient.js';
             if (res && p.resultados?.[i] === res) encerts++;
         });
         return {
-            nom: p.participante?.nombre || "—",
-            correu: p.participante?.correo || "—",
+            nom: p.nombre || "—",
+            correu: p.correo || "—",
             encerts
         };
-        });
+    });
+
 
 
     const rankingMap = new Map();
