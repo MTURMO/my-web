@@ -65,14 +65,14 @@ a:hover { transform: translateY(-2px); }
 
 <table id="tablaRanking">
   <thead>
-    <tr><th>#</th><th>Nom</th><th>Punts</th></tr>
+    <tr id="headerRow"><th>#</th><th>Nom</th><th>Punts</th></tr>
   </thead>
   <tbody></tbody>
 </table>
 
 <div class="menu">
   <a href="participante.html">Participante</a>
-  <a href="admin.html">Administrador</a>
+  <a href="admin.html" id="adminLink">Administrador</a>
 </div>
 
 <script type="module">
@@ -80,6 +80,26 @@ import { supabase } from './supabaseClient.js';
 
 const filtro = document.getElementById("filtroQuiniela");
 const tbody = document.querySelector("#tablaRanking tbody");
+const headerRow = document.getElementById("headerRow");
+const adminLink = document.getElementById("adminLink");
+
+// 🔐 Comprovació si l'usuari és admin
+let isAdmin = false;
+const { data: { session } } = await supabase.auth.getSession();
+if (session?.user?.email === "admin@quiniela.com") {
+  isAdmin = true;
+  localStorage.setItem("isAdmin", "true");
+} else {
+  localStorage.setItem("isAdmin", "false");
+  adminLink.style.display = "none"; // amaga enllaç admin
+}
+
+// 🔹 Ajusta la taula per mostrar correus només si és admin
+if (isAdmin) {
+  const th = document.createElement("th");
+  th.textContent = "Correu";
+  headerRow.insertBefore(th, headerRow.children[2]); // entre Nom i Punts
+}
 
 // 🔹 Cargar quinielas disponibles
 async function cargarQuinielas() {
@@ -100,7 +120,7 @@ async function cargarQuinielas() {
 
 // 🔹 Cargar ranking general o por quiniela
 async function cargarRanking(nombreQuiniela = "") {
-  tbody.innerHTML = "<tr><td colspan='4'>Carregant...</td></tr>";
+  tbody.innerHTML = `<tr><td colspan='${isAdmin ? 4 : 3}'>Carregant...</td></tr>`;
 
   let data = [];
   if (nombreQuiniela) {
@@ -123,13 +143,16 @@ async function cargarRanking(nombreQuiniela = "") {
   }
 
   if (data.length === 0) {
-    tbody.innerHTML = "<tr><td colspan='4'>No hi ha dades.</td></tr>";
+    tbody.innerHTML = `<tr><td colspan='${isAdmin ? 4 : 3}'>No hi ha dades.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = "";
   data.forEach((r, i) => {
-    tbody.innerHTML += `<tr><td>${i+1}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>`;
+    let row = `<td>${i+1}</td><td>${r.nombre}</td>`;
+    if (isAdmin) row += `<td>${r.correo || ''}</td>`;
+    row += `<td>${r.puntos}</td>`;
+    tbody.innerHTML += `<tr>${row}</tr>`;
   });
 }
 
