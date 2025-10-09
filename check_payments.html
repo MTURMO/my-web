@@ -144,45 +144,45 @@ async function cargarPagos() {
   }
 
   participantes.forEach((e, i) => {
-    const participante = e.participante || {}; // ⚠️ Aneu al objecte participante
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${participante.nombre || "—"}</td>
-      <td>${participante.correo || "—"}</td>
-      <td>${new Date(e.fecha).toLocaleString()}</td>
-      <td>${e.pagado ? "✅" : "❌"}</td>
-      <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
-      <td><button id="btn-ver-${i}">👁 Ver Quiniela</button></td>
-    `;
-    tbody.appendChild(tr);
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${e.nombre || "—"}</td>
+    <td>${e.correo || "—"}</td>
+    <td>${new Date(e.fecha).toLocaleString()}</td>
+    <td>${e.pagado ? "✅" : "❌"}</td>
+    <td><button onclick="togglePago(${e.id}, ${e.pagado})">${e.pagado ? "Desmarcar" : "Marcar pagado"}</button></td>
+    <td><button id="btn-ver-${i}">👁 Ver Quiniela</button></td>
+  `;
+  tbody.appendChild(tr);
+  
+  const detalle = document.createElement("div");
+  detalle.className = "quiniela-detalle";
+  detalle.id = `detalle-${i}`;
+  detalle.innerHTML = `<h3>Detalles de la Quiniela</h3>`;
 
-    const detalle = document.createElement("div");
-    detalle.className = "quiniela-detalle";
-    detalle.id = `detalle-${i}`;
-    detalle.innerHTML = `<h3>Detalles de la Quiniela</h3>`;
-
-    partidosOficiales.forEach((partido, j) => {
-      const pronostico = e.resultados?.[j] || "—";
-      detalle.innerHTML += `
-        <div class="match">
-          <span class="equipos">${partido.local} vs ${partido.visitante}</span>
-          <span class="pronostico">${pronostico}</span>
-        </div>`;
-    });
-
-    tbody.appendChild(detalle);
-
-    const btn = document.getElementById(`btn-ver-${i}`);
-    btn.addEventListener("click", () => {
-      if (detalle.classList.contains("show")) {
-        detalle.classList.remove("show");
-        btn.textContent = "👁 Ver Quiniela";
-      } else {
-        detalle.classList.add("show");
-        btn.textContent = "👁 Ocultar Quiniela";
-      }
-    });
+  partidosOficiales.forEach((partido, j) => {
+    const pronostico = e.resultados?.[j] || "—";
+    detalle.innerHTML += `
+      <div class="match">
+        <span class="equipos">${partido.local} vs ${partido.visitante}</span>
+        <span class="pronostico">${pronostico}</span>
+      </div>`;
   });
+
+  tbody.appendChild(detalle);
+
+  const btn = document.getElementById(`btn-ver-${i}`);
+  btn.addEventListener("click", () => {
+    if (detalle.classList.contains("show")) {
+      detalle.classList.remove("show");
+      btn.textContent = "👁 Ver Quiniela";
+    } else {
+      detalle.classList.add("show");
+      btn.textContent = "👁 Ocultar Quiniela";
+    }
+  });
+});
+
 }
 
 // 🟢 Marcar o desmarcar pago
