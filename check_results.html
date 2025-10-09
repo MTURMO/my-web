@@ -161,6 +161,7 @@ import { supabase } from './supabaseClient.js';
       resultados_validos.push(val || null);
     });
 
+    // Guarda resultats a la taula auxiliar
     const { error: insertError } = await supabase
       .from("resultados_quiniela")
       .insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
@@ -170,6 +171,7 @@ import { supabase } from './supabaseClient.js';
       return;
     }
 
+    // Actualitza la quiniela oficial
     const { error } = await supabase
       .from("quiniela_oficial")
       .update({ resultados_validos })
@@ -207,40 +209,43 @@ import { supabase } from './supabaseClient.js';
       return;
     }
 
+    // 💯 Calcular punts (2 per empat encertat)
     const rankingTemp = participants.map(p => {
-        let encerts = 0;
-        quiniela.resultados_validos.forEach((res, i) => {
-            const resposta = p.resultados?.[i];
-            if (res && resposta === res) {
-                // ✅ Si l’encert és un empat (“X”), val 2 punts
-                encerts += (res === "X" ? 2 : 1);
-            }
-        });
-        return {
-            nom: p.nombre || "—",
-            correu: p.correo || "—",
-            encerts
-        };
+      let encerts = 0;
+      quiniela.resultados_validos.forEach((res, i) => {
+        const resposta = p.resultados?.[i];
+        if (res && resposta && resposta.trim().toUpperCase() === res.trim().toUpperCase()) {
+          // Si és un empat (“X”), val 2 punts
+          encerts += (res.trim().toUpperCase() === "X" ? 2 : 1);
+        }
+      });
+      return {
+        nom: p.nombre || "—",
+        correu: p.correo || "—",
+        encerts
+      };
     });
 
-
-
-
+    // 🔁 Agrupar per correu (si hi ha duplicats)
     const rankingMap = new Map();
     rankingTemp.forEach(r => {
       if (!rankingMap.has(r.correu)) rankingMap.set(r.correu, { ...r });
       else rankingMap.get(r.correu).encerts += r.encerts;
     });
 
-    const ranking = Array.from(rankingMap.values()).sort((a,b) => b.encerts - a.encerts);
+    const ranking = Array.from(rankingMap.values()).sort((a, b) => b.encerts - a.encerts);
 
+    // 🧾 Mostrar taula
     let html = "<h2 style='text-align:center;margin-bottom:10px;'>🏆 Rànquing Quiniela Activa</h2>";
-    html += "<table><tr><th>#</th><th>Nom</th><th>Correu</th><th>Encerts</th></tr>";
-    ranking.forEach((r,i) => html += `<tr><td>${i+1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`);
+    html += "<table><tr><th>#</th><th>Nom</th><th>Correu</th><th>Punts</th></tr>";
+    ranking.forEach((r, i) => {
+      html += `<tr><td>${i + 1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`;
+    });
     html += "</table>";
     html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Ranking General</button>`;
     rankingDiv.innerHTML = html;
 
+    // 💾 Desa el ranking global i detallat
     document.getElementById("guardarRanking").addEventListener("click", async () => {
       for (const r of ranking) {
         if (!r.correu) continue;
@@ -273,7 +278,6 @@ import { supabase } from './supabaseClient.js';
   });
 })();
 </script>
-
 
 </body>
 </html>
