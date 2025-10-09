@@ -185,6 +185,73 @@ document.getElementById("btnRegister").addEventListener("click", async () => {
   tabLogin.click();
 });
 
+// 🟦 LOGIN DE USUARIO
+document.getElementById("btnLogin").addEventListener("click", async () => {
+  msg.textContent = "";
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  if (!email || !password) {
+    msg.textContent = "⚠️ Completa todos los campos.";
+    msg.style.color = "orange";
+    return;
+  }
+
+  // 🔹 Intentar iniciar sessió
+  const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (loginError) {
+    msg.textContent = "❌ Credenciales incorrectas o error al iniciar sesión.";
+    msg.style.color = "red";
+    console.error(loginError);
+    return;
+  }
+
+  // 🔹 Recuperar sessió per obtenir user.id
+  const { data: sessionData } = await supabase.auth.getSession();
+  const user = sessionData?.session?.user || loginData?.user;
+
+  if (!user) {
+    msg.textContent = "⚠️ Error obteniendo usuario autenticado.";
+    msg.style.color = "orange";
+    console.error("No se encontró usuario en la sesión.");
+    return;
+  }
+
+  // 🔹 Obtenim el perfil del participant
+  const { data: perfil, error: perfilError } = await supabase
+    .from("perfil_participantes")
+    .select("nombre, correo")
+    .eq("id", user.id)
+    .single();
+
+  if (perfilError || !perfil) {
+    msg.textContent = "⚠️ No se ha encontrado el perfil del usuario.";
+    msg.style.color = "orange";
+    console.error(perfilError);
+    return;
+  }
+
+  // 🟢 Guardem nom i correu al localStorage
+  localStorage.setItem("participante", JSON.stringify({
+    id: user.id,
+    nombre: perfil.nombre,
+    correo: perfil.correo
+  }));
+
+  msg.textContent = "✅ Sesión iniciada correctamente.";
+  msg.style.color = "green";
+
+  // Esperem una mica abans de redirigir
+  setTimeout(() => {
+    window.location.href = "quiniela_participante.html";
+  }, 1000);
+});
+
+
 
 </script>
 
