@@ -189,14 +189,37 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
   if (error) {
     msg.textContent = "❌ Credenciales incorrectas.";
     msg.style.color = "red";
-  } else {
-    msg.textContent = "✅ Sesión iniciada correctamente.";
-    msg.style.color = "green";
-
-    localStorage.setItem("participante", JSON.stringify({ email }));
-    setTimeout(() => (window.location.href = "quiniela_participante.html"), 1000);
+    return;
   }
+
+  const user = data.user;
+
+  // 🔹 Obtenim el nom del perfil
+  const { data: perfil, error: perfilError } = await supabase
+    .from("perfil_participantes")
+    .select("nombre, correo")
+    .eq("id", user.id)
+    .single();
+
+  if (perfilError) {
+    msg.textContent = "⚠️ No se ha encontrado el perfil del usuario.";
+    msg.style.color = "orange";
+    return;
+  }
+
+  // 🟢 Guardem nom i correu al localStorage
+  localStorage.setItem("participante", JSON.stringify({
+    id: user.id,
+    nombre: perfil.nombre,
+    correo: perfil.correo
+  }));
+
+  msg.textContent = "✅ Sesión iniciada correctamente.";
+  msg.style.color = "green";
+
+  setTimeout(() => (window.location.href = "quiniela_participante.html"), 1000);
 });
+
 </script>
 
 </body>

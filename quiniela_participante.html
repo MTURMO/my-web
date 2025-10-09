@@ -71,6 +71,14 @@ a{
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
+// 🧩 Comprovem si l'usuari ha fet login
+const participante = JSON.parse(localStorage.getItem("participante") || "{}");
+if (!participante?.correo) {
+  alert("Debes iniciar sesión antes de acceder a la quiniela.");
+  window.location.href = "participante.html";
+}
+
+
 const cont = document.getElementById("quinielaContainer");
 let quiniela = [];
 let quinielaActivaId = null;
@@ -145,12 +153,19 @@ document.getElementById("enviar").addEventListener("click", async ()=>{
 
   const participante = JSON.parse(localStorage.getItem("participante") || "{}");
 
+  if (!participante?.correo || !participante?.nombre) {
+    alert("⚠️ Debes iniciar sesión antes de participar.");
+    window.location.href = "participante.html";
+    return;
+  }
+
   const data = {
-    participante,
+    nombre: participante.nombre,
+    correo: participante.correo,
     resultados,
     fecha: new Date().toISOString(),
     pagado: false,
-    quiniela_id: quinielaActivaId // 👈 ID de la quiniela activa
+    quiniela_id: quinielaActivaId
   };
 
   try {
@@ -167,6 +182,7 @@ document.getElementById("enviar").addEventListener("click", async ()=>{
     alert("❌ Error enviando la quiniela: " + err.message);
   }
 });
+
 
 // 🔄 carregar la quiniela en iniciar
 cargarQuiniela();
