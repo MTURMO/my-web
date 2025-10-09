@@ -208,16 +208,17 @@ import { supabase } from './supabaseClient.js';
     }
 
     const rankingTemp = participants.map(p => {
-      let encerts = 0;
-      quiniela.resultados_validos.forEach((res, i) => {
-        if (res && p.resultados?.[i] === res) encerts++;
-      });
-      return {
-        nom: p.participante?.nombre || "—",
-        correu: p.participante?.correo || "—",
-        encerts
-      };
-    });
+        let encerts = 0;
+        quiniela.resultados_validos.forEach((res, i) => {
+            if (res && p.resultados?.[i] === res) encerts++;
+        });
+        return {
+            nom: p.participante?.nombre || "—",
+            correu: p.participante?.correo || "—",
+            encerts
+        };
+        });
+
 
     const rankingMap = new Map();
     rankingTemp.forEach(r => {
