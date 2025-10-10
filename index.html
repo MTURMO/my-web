@@ -54,11 +54,47 @@ a {
   transition: transform 0.2s;
 }
 a:hover { transform: translateY(-2px); }
+
+.instruccions {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 20px;
+  max-width: 700px;
+  margin: 20px 0;
+  line-height: 1.6;
+}
+.instruccions h2 {
+  color: #4f46e5;
+  margin-top: 0;
+}
+.instruccions ul {
+  margin: 10px 0 0 20px;
+}
+.instruccions li {
+  margin-bottom: 8px;
+}
+
+
 </style>
 </head>
 <body>
 
 <h1>🏆 Rànquing General</h1>
+
+<div class="instruccions">
+  <h2>ℹ️ Com funciona la Quiniela</h2>
+  <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions en cada jornada.</p>
+  <ul>
+    <li>Selecciona una jornada al menú desplegable per veure la classificació d’aquella quiniela.</li>
+    <li>Si no selecciones res, es mostra el rànquing general acumulat.</li>
+    <li>A la part inferior, pots veure tots els participants i el nombre total de quinieles que han fet.</li>
+    <li>Per participar, ves a la secció <strong>Participant</strong> i omple la teva quiniela activa.</li>
+    <li>Només l’administrador pot gestionar resultats i crear noves quinieles.</li>
+  </ul>
+</div>
+
+
 <p>Consulta els punts totals o filtra per jornada</p>
 
 <select id="filtroQuiniela">
