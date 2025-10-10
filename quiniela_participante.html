@@ -26,13 +26,9 @@
       margin: 10px 0;
       padding: 20px;
     }
-    .quiniela-card pre {
-      background: #f9fafb;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 14px;
-      overflow-x: auto;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 6px; border-bottom: 1px solid #eee; text-align: center; }
+    th { background: #eef2ff; }
     #nueva {
       margin-top: 20px;
       padding: 12px 20px;
@@ -106,25 +102,33 @@
 
       quinielaActiva = data;
       quinielaActivaId = data.id;
+      console.log('🟢 Quiniela activa carregada:', quinielaActiva);
       return data;
     }
 
     // 🏆 Mostrar partits amb equips
     function renderPartidos(resultados, partidos) {
       if (!resultados) return '<p>Sense resultats</p>';
-      if (!partidos) return `<pre>${JSON.stringify(resultados, null, 2)}</pre>`;
 
-      let html = '<table style="width:100%; border-collapse:collapse;">';
-      html += '<tr><th style="text-align:left;">Partit</th><th style="text-align:center;">Selecció</th></tr>';
-      partidos.forEach((p, i) => {
-        const seleccio = resultados[i + 1] || '-';
+      // Si els partits venen a la columna "data", no "partidos"
+      const llista = partidos || quinielaActiva?.data;
+
+      if (!llista) {
+        return `<pre>${JSON.stringify(resultados, null, 2)}</pre>`;
+      }
+
+      let html = '<table>';
+      html += '<tr><th>Partit</th><th>Selecció</th></tr>';
+
+      llista.forEach((p, i) => {
+        const seleccio = resultados[i] || '-';
         html += `
           <tr>
-            <td>${p.equip1} vs ${p.equip2}</td>
-            <td style="text-align:center;">${seleccio}</td>
-          </tr>
-        `;
+            <td>${p.local || p.equip1} vs ${p.visitante || p.equip2}</td>
+            <td>${seleccio}</td>
+          </tr>`;
       });
+
       html += '</table>';
       return html;
     }
@@ -158,15 +162,19 @@
           <h3>${esActiva ? '⚽ Quiniela Activa' : '📜 Quiniela anterior'}</h3>
           <p><strong>Data:</strong> ${new Date(q.fecha).toLocaleString()}</p>
           <p><strong>Pagat:</strong> ${q.pagado ? '✅ Sí' : '❌ No'}</p>
-          ${renderPartidos(q.resultados, quinielaActiva?.partidos)}
+          ${renderPartidos(q.resultados, quinielaActiva?.data)}
         `;
         container.appendChild(card);
       });
     }
 
-    // ➕ Botó nova quiniela (ara sense bloqueig)
+    // ➕ Botó nova quiniela (ara funcional amb id activa)
     btnNueva.addEventListener('click', () => {
-      window.location.href = 'quiniela_participante.html';
+      if (!quinielaActivaId) {
+        alert('⚠️ No hi ha cap quiniela activa.');
+        return;
+      }
+      window.location.href = `quiniela_participante.html?quiniela_id=${quinielaActivaId}`;
     });
 
     // 🔄 Execució inicial
@@ -174,7 +182,6 @@
       await getQuinielaActiva();
       await cargarMisQuinielas();
     }
-
   </script>
 </body>
 </html>
