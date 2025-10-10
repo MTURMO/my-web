@@ -111,6 +111,30 @@ details[open] summary::after {
   font-weight: 600;
   text-align: center;
 }
+
+.select-xulo {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid #3b82f6;
+  background: white;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e3a8a;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.select-xulo:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.select-xulo:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+}
 </style>
 </head>
 <body>
@@ -177,7 +201,7 @@ details[open] summary::after {
 
 <p>Consulta els punts totals o filtra per jornada:</p>
 
-<select id="filtroQuiniela">
+<select id="filtroQuiniela" class="select-xulo">
   <option value="">🔹 Totes les quinieles</option>
 </select>
 
