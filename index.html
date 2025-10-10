@@ -68,14 +68,49 @@ a:hover { transform: translateY(-2px); }
   color: #4f46e5;
   margin-top: 0;
 }
+details {
+  background: #f9fafb;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+details[open] {
+  background: #eef2ff;
+  border-color: #4f46e5;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  list-style: none;
+}
+summary::marker { display: none; }
+summary::after {
+  content: "▾";
+  float: right;
+  transition: transform 0.2s;
+}
+details[open] summary::after {
+  transform: rotate(180deg);
+}
 .instruccions ul {
   margin: 10px 0 0 20px;
 }
 .instruccions li {
   margin-bottom: 8px;
 }
-
-
+.alerta {
+  background: #fff3cd;
+  color: #92400e;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #fcd34d;
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -84,17 +119,64 @@ a:hover { transform: translateY(-2px); }
 
 <div class="instruccions">
   <h2>ℹ️ Com funciona la Quiniela</h2>
+  <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
   <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions en cada jornada.</p>
-  <ul>
-    <li>Selecciona una jornada al menú desplegable per veure la classificació d’aquella quiniela.</li>
-    <li>Si no selecciones res, es mostra el rànquing general acumulat.</li>
-    <li>A la part inferior, pots veure tots els participants i el nombre total de quinieles que han fet.</li>
-    <li>Per participar, ves a la secció <strong>Participant</strong> i omple la teva quiniela activa.</li>
-  </ul>
+  
+  <details open>
+    <summary>🎟️ Apuestas</summary>
+    <ul>
+      <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
+      <li>Pots realitzar tantes apostes com vulguis a cada jornada.</li>
+      <li>Només la teva aposta amb <strong>millor puntuació</strong> de la jornada sumarà per la classificació general.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>📊 Puntuació per Jornada</summary>
+    <ul>
+      <li>Acierto de <strong>1</strong> (guanyador local) o <strong>2</strong> (guanyador visitant): <strong>1 punt</strong>.</li>
+      <li>Acierto de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
+      <li>Es sumen els punts de cada aposta de cada participant.</li>
+      <li>Només compta la <strong>aposta amb més punts</strong> de cada participant per al total general.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>🏅 Premis</summary>
+    <ul>
+      <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
+      <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
+      <ul>
+        <li>50% per al <strong>premi setmanal</strong>.</li>
+        <li>15% per al <strong>premi general</strong>.</li>
+        <li>35% per al <strong>club</strong>.</li>
+      </ul>
+    </ul>
+
+    <details>
+      <summary>💰 Premi per Jornada</summary>
+      <ul>
+        <li>Per guanyar el premi setmanal cal fer <strong>pleno d’encerts (8)</strong>.</li>
+        <li>Si hi ha diversos plens, es divideix el premi entre tots.</li>
+        <li>Si no hi ha cap ple:</li>
+        <ul>
+          <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
+          <li>El 50% restant es divideix entre el club i el premi de la setmana següent.</li>
+        </ul>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🏆 Premi Temporada</summary>
+      <ul>
+        <li>El participant amb la puntuació acumulada més alta guanya el <strong>premi general</strong>.</li>
+        <li>Si hi ha empat, es divideix el premi a parts iguals entre els empatats.</li>
+      </ul>
+    </details>
+  </details>
 </div>
 
-
-<p>Consulta els punts totals o filtra per jornada</p>
+<p>Consulta els punts totals o filtra per jornada:</p>
 
 <select id="filtroQuiniela">
   <option value="">🔹 Totes les quinieles</option>
@@ -126,22 +208,20 @@ import { supabase } from './supabaseClient.js';
 const filtro = document.getElementById("filtroQuiniela");
 const tbodyRanking = document.querySelector("#tablaRanking tbody");
 const tbodyActivos = document.querySelector("#tablaActivos tbody");
-const headerRow = document.getElementById("headerRow");
 const adminLink = document.getElementById("adminLink");
 
-// 🔐 Comprovar si és admin (només per mostrar enllaç)
+// 🔐 Comprovar si és admin
 const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") {
   adminLink.style.display = "none";
 }
 
-// 🔹 Carregar quinieles disponibles
+// 🔹 Carregar quinieles
 async function cargarQuinielas() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
     .select("nombre")
     .order("creada_el", { ascending: false });
-
   if (!error && data) {
     data.forEach(q => {
       const opt = document.createElement("option");
@@ -152,10 +232,9 @@ async function cargarQuinielas() {
   }
 }
 
-// 🔹 Carregar rànquing general o per jornada
+// 🔹 Carregar rànquing
 async function cargarRanking(nombreQuiniela = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
-
   let data = [];
   if (nombreQuiniela) {
     const { data: detalle, error } = await supabase
@@ -206,14 +285,12 @@ async function cargarActivos() {
     return;
   }
 
-  // Comptar quantes quinieles ha fet cada participant
   const conteo = {};
   data.forEach(q => {
     if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
     conteo[q.participante_id].count++;
   });
 
-  // Passar-ho a array i ordenar
   const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
 
   tbodyActivos.innerHTML = "";
