@@ -72,7 +72,7 @@ a:hover { transform: translateY(-2px); }
   <tbody></tbody>
 </table>
 
-<h2>📋 Participants Actius</h2>
+<h2>📋 Participants i Quinieles Fetes</h2>
 <table id="tablaActivos">
   <thead>
     <tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr>
@@ -94,25 +94,13 @@ const tbodyActivos = document.querySelector("#tablaActivos tbody");
 const headerRow = document.getElementById("headerRow");
 const adminLink = document.getElementById("adminLink");
 
-// 🔐 Comprovar si l’usuari és admin
-let isAdmin = false;
+// 🔐 Comprovar si és admin (només per mostrar enllaç)
 const { data: { session } } = await supabase.auth.getSession();
-if (session?.user?.email === "admin@quiniela.com") {
-  isAdmin = true;
-  localStorage.setItem("isAdmin", "true");
-} else {
-  localStorage.setItem("isAdmin", "false");
+if (session?.user?.email !== "admin@quiniela.com") {
   adminLink.style.display = "none";
 }
 
-// Mostrar correu al rànquing si és admin
-if (isAdmin) {
-  const th = document.createElement("th");
-  th.textContent = "Correu";
-  headerRow.insertBefore(th, headerRow.children[2]);
-}
-
-// 🔹 Carregar llista de quinieles
+// 🔹 Carregar quinieles disponibles
 async function cargarQuinielas() {
   const { data, error } = await supabase
     .from("quiniela_oficial")
@@ -129,94 +117,77 @@ async function cargarQuinielas() {
   }
 }
 
-// 🔹 Carregar rànquing
+// 🔹 Carregar rànquing general o per jornada
 async function cargarRanking(nombreQuiniela = "") {
-  tbodyRanking.innerHTML = `<tr><td colspan='${isAdmin ? 4 : 3}'>Carregant...</td></tr>`;
+  tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
 
   let data = [];
   if (nombreQuiniela) {
     const { data: detalle, error } = await supabase
       .from("resultados_detalle")
-      .select("*")
+      .select("nombre, puntos")
       .eq("quiniela_nombre", nombreQuiniela)
       .order("puntos", { ascending: false });
     if (!error && detalle) data = detalle;
   } else {
     const { data: general, error } = await supabase
       .from("resultados_generales")
-      .select("*")
+      .select("nombre, puntos_totales")
       .order("puntos_totales", { ascending: false });
-    if (!error && general) data = general.map(d => ({
-      nombre: d.nombre,
-      correo: d.correo,
-      puntos: d.puntos_totales
-    }));
+    if (!error && general) {
+      data = general.map(d => ({
+        nombre: d.nombre,
+        puntos: d.puntos_totales
+      }));
+    }
   }
 
   if (data.length === 0) {
-    tbodyRanking.innerHTML = `<tr><td colspan='${isAdmin ? 4 : 3}'>No hi ha dades.</td></tr>`;
+    tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
     return;
   }
 
   tbodyRanking.innerHTML = "";
   data.forEach((r, i) => {
-    let row = `<td>${i+1}</td><td>${r.nombre}</td>`;
-    if (isAdmin) row += `<td>${r.correo || ''}</td>`;
-    row += `<td>${r.puntos}</td>`;
-    tbodyRanking.innerHTML += `<tr>${row}</tr>`;
+    tbodyRanking.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r.nombre}</td>
+        <td>${r.puntos}</td>
+      </tr>`;
   });
 }
 
-// 🟢 Carregar participants actius
+// 🟢 Carregar participants i comptar quinieles
 async function cargarActivos() {
-  tbodyActivos.innerHTML = "<tr><td colspan='4'>Carregant...</td></tr>";
+  tbodyActivos.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
 
-  // 1️⃣ Quiniela activa
-  const { data: quinielaActiva } = await supabase
-    .from("quiniela_oficial")
-    .select("id")
-    .eq("activa", true)
-    .single();
+  const { data, error } = await supabase
+    .from("quinielas_participantes")
+    .select("participante_id, nombre");
 
-  if (!quinielaActiva) {
-    tbodyActivos.innerHTML = "<tr><td colspan='4'>❌ No hi ha quiniela activa.</td></tr>";
+  if (error || !data?.length) {
+    tbodyActivos.innerHTML = "<tr><td colspan='3'>No hi ha cap participant.</td></tr>";
     return;
   }
 
-  // 2️⃣ Participants que han omplert la quiniela activa
-  const { data: participants, error } = await supabase
-    .from("quinielas_participantes")
-    .select("participante_id, nombre, correo, quiniela_id")
-    .eq("quiniela_id", quinielaActiva.id);
-
-  if (error || !participants?.length) {
-    tbodyActivos.innerHTML = "<tr><td colspan='4'>Encara ningú ha omplert la quiniela activa.</td></tr>";
-    return;
-  }
-
-  // 3️⃣ Comptar quantes quinieles ha fet cada participant
-  const { data: totales } = await supabase
-    .from("quinielas_participantes")
-    .select("participante_id, count:participante_id", { count: "exact" });
-
-  // 4️⃣ Fer un map amb el recompte
+  // Comptar quantes quinieles ha fet cada participant
   const conteo = {};
-  if (totales) {
-    totales.forEach(t => {
-      if (!conteo[t.participante_id]) conteo[t.participante_id] = 0;
-      conteo[t.participante_id]++;
-    });
-  }
+  data.forEach(q => {
+    if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
+    conteo[q.participante_id].count++;
+  });
+
+  // Passar-ho a array i ordenar
+  const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
 
   tbodyActivos.innerHTML = "";
-  participants.forEach((p, i) => {
-    const numQuinieles = conteo[p.participante_id] || 1;
+  lista.forEach((p, i) => {
     tbodyActivos.innerHTML += `
       <tr>
         <td>${i + 1}</td>
         <td>${p.nombre}</td>
-        <td>${p.correo || '-'}</td>
-        <td>${numQuinieles}</td>
+        <td>${p.count}</td>
       </tr>`;
   });
 }
@@ -225,7 +196,7 @@ filtro.addEventListener("change", e => {
   cargarRanking(e.target.value);
 });
 
-// 🔄 Inicialització
+// 🔄 Execució inicial
 await cargarQuinielas();
 await cargarRanking();
 await cargarActivos();
