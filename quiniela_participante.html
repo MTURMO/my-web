@@ -1,187 +1,200 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Les meves Quinieles</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f4f8;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    h1 { color: #333; margin-bottom: 5px; }
-    h2 { color: #2563eb; margin-top: 10px; }
-    .quiniela-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 500px;
-      margin: 10px 0;
-      padding: 20px;
-    }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { padding: 6px; border-bottom: 1px solid #eee; text-align: center; }
-    th { background: #eef2ff; }
-    #nueva {
-      margin-top: 20px;
-      padding: 12px 20px;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: transform 0.2s;
-    }
-    #nueva:hover { transform: translateY(-2px); background: #3b82f6; }
-    #message { margin-top: 10px; font-size: 14px; text-align:center; }
-    a { margin-top: 20px; color: #3b82f6; text-decoration: none; font-weight: 500; }
-  </style>
+<meta charset="UTF-8">
+<title>Quiniela del Participant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  background: #f0f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+#quinielaContainer {
+  width: 100%;
+  max-width: 500px;
+}
+.match {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+.match span {
+  flex: 1 1 100%;
+  margin-bottom: 5px;
+}
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  margin: 2px;
+  cursor: pointer;
+}
+button:hover { background: #e0e7ff; }
+#enviar {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+}
+a {
+  margin-top: 15px;
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+</style>
 </head>
 <body>
 
-  <h1>Benvingut/da a la teva zona de participant 👋</h1>
-  <h2 id="nombreUsuario"></h2>
+<h1>La teva Quiniela</h1>
+<div id="quinielaContainer">Carregant quiniela...</div>
+<button id="enviar">📤 Enviar Quiniela</button>
+<a href="mis_quinielas.html">⬅ Tornar a les meves quinieles</a>
 
-  <div id="quinielasContainer">Carregant les teves quinieles...</div>
+<script type="module">
+import { supabase } from './supabaseClient.js';
 
-  <button id="nueva">➕ Nova Quiniela</button>
+const cont = document.getElementById("quinielaContainer");
+const btnEnviar = document.getElementById("enviar");
 
-  <div id="message"></div>
-  <a href="index.html">⬅ Tornar al menú principal</a>
+let quiniela = [];
+let quinielaId = null;
+let resultados = {};
 
-  <script type="module">
-    import { supabase } from './supabaseClient.js';
+// 🧭 LLegir paràmetres de la URL
+const params = new URLSearchParams(window.location.search);
+quinielaId = params.get("quiniela_id");
 
-    const container = document.getElementById('quinielasContainer');
-    const btnNueva = document.getElementById('nueva');
-    const msg = document.getElementById('message');
-    const nombreUsuario = document.getElementById('nombreUsuario');
+// 🧩 Comprovar sessió
+async function checkLogin() {
+  const { data: { session } } = await supabase.auth.getSession();
+  const participante = JSON.parse(localStorage.getItem("participante") || "{}");
 
-    let participante = null;
-    let quinielaActiva = null;
-    let quinielaActivaId = null;
+  if (!session || !participante?.id) {
+    alert("⚠️ Has d'iniciar sessió abans de participar.");
+    window.location.href = "participante.html";
+    return null;
+  }
 
-    // ✅ Comprovar sessió
-    async function checkLogin() {
-      const { data: { session } } = await supabase.auth.getSession();
-      participante = JSON.parse(localStorage.getItem('participante') || '{}');
+  return participante;
+}
 
-      if (!session || !participante?.id) {
-        alert('⚠️ Has d’iniciar sessió abans de veure les teves quinieles.');
-        window.location.href = 'participante.html';
-        return false;
-      }
-
-      nombreUsuario.textContent = `${participante.nombre}`;
-      return true;
+// ⚽ Carregar la quiniela segons l'ID de la URL
+async function cargarQuiniela() {
+  try {
+    if (!quinielaId) {
+      cont.innerHTML = "<h2 style='text-align:center;color:red;'>❌ No s'ha trobat cap quiniela vàlida</h2>";
+      btnEnviar.disabled = true;
+      return;
     }
 
-    // 🟦 Obtenir quiniela activa (amb partits)
-    async function getQuinielaActiva() {
-      const { data, error } = await supabase
-        .from('quiniela_oficial')
-        .select('*')
-        .eq('activa', true)
-        .single();
+    const { data, error } = await supabase
+      .from("quiniela_oficial")
+      .select("*")
+      .eq("id", quinielaId)
+      .single();
 
-      if (error || !data) {
-        msg.textContent = '❌ No hi ha cap quiniela activa actualment.';
-        msg.style.color = 'red';
-        btnNueva.disabled = true;
-        return null;
-      }
-
-      quinielaActiva = data;
-      quinielaActivaId = data.id;
-      console.log('🟢 Quiniela activa carregada:', quinielaActiva);
-      return data;
+    if (error || !data) {
+      cont.innerHTML = "<h2 style='text-align:center;color:red;'>No s'ha pogut carregar la quiniela</h2>";
+      btnEnviar.disabled = true;
+      return;
     }
 
-    // 🏆 Mostrar partits amb equips
-    function renderPartidos(resultados, partidos) {
-      if (!resultados) return '<p>Sense resultats</p>';
+    quiniela = data.data; // aquí hi ha els partits
+    console.log("🟢 Quiniela carregada:", quiniela);
+    renderPartidos();
 
-      // Si els partits venen a la columna "data", no "partidos"
-      const llista = partidos || quinielaActiva?.data;
+  } catch (err) {
+    cont.innerHTML = `<p style="color:red;">Error carregant quiniela: ${err.message}</p>`;
+  }
+}
 
-      if (!llista) {
-        return `<pre>${JSON.stringify(resultados, null, 2)}</pre>`;
-      }
+function renderPartidos() {
+  cont.innerHTML = "";
+  quiniela.forEach((p, i) => {
+    cont.innerHTML += `
+      <div class="match" data-index="${i}">
+        <span>${p.local} vs ${p.visitante}</span>
+        <div>
+          <button onclick="marcar(${i}, '1', this)">1</button>
+          <button onclick="marcar(${i}, 'X', this)">X</button>
+          <button onclick="marcar(${i}, '2', this)">2</button>
+        </div>
+      </div>`;
+  });
+}
 
-      let html = '<table>';
-      html += '<tr><th>Partit</th><th>Selecció</th></tr>';
+window.marcar = function(i, val, btn) {
+  resultados[i] = val;
+  const match = btn.closest('.match');
+  match.querySelectorAll('button').forEach(b => b.style.background = '');
+  btn.style.background = '#a5b4fc';
+};
 
-      llista.forEach((p, i) => {
-        const seleccio = resultados[i] || '-';
-        html += `
-          <tr>
-            <td>${p.local || p.equip1} vs ${p.visitante || p.equip2}</td>
-            <td>${seleccio}</td>
-          </tr>`;
-      });
+// 🟣 Enviar la quiniela
+btnEnviar.addEventListener("click", async () => {
+  const participante = await checkLogin();
+  if (!participante) return;
 
-      html += '</table>';
-      return html;
-    }
+  if (!quinielaId) {
+    alert("❌ No hi ha cap quiniela vàlida per participar.");
+    return;
+  }
 
-    // 📋 Carregar quinieles del participant
-    async function cargarMisQuinielas() {
-      container.innerHTML = 'Carregant les teves quinieles...';
+  if (Object.keys(resultados).length !== quiniela.length) {
+    alert("⚠️ Has de marcar tots els partits!");
+    return;
+  }
 
-      const { data, error } = await supabase
-        .from('quinielas_participantes')
-        .select('id, resultados, fecha, pagado, quiniela_id')
-        .eq('participante_id', participante.id)
-        .order('fecha', { ascending: false });
+  const data = {
+    participante_id: participante.id,
+    nombre: participante.nombre,
+    correo: participante.correo,
+    resultados,
+    fecha: new Date().toISOString(),
+    pagado: false,
+    quiniela_id: quinielaId
+  };
 
-      if (error) {
-        container.innerHTML = `<p style="color:red;">❌ Error carregant les teves quinieles: ${error.message}</p>`;
-        return;
-      }
+  try {
+    const { error } = await supabase
+      .from("quinielas_participantes")
+      .insert([data]);
 
-      if (!data || data.length === 0) {
-        container.innerHTML = '<p>Encara no has fet cap quiniela.</p>';
-        return;
-      }
+    if (error) throw error;
 
-      container.innerHTML = '';
-      data.forEach(q => {
-        const esActiva = q.quiniela_id === quinielaActivaId;
-        const card = document.createElement('div');
-        card.className = 'quiniela-card';
-        card.innerHTML = `
-          <h3>${esActiva ? '⚽ Quiniela Activa' : '📜 Quiniela anterior'}</h3>
-          <p><strong>Data:</strong> ${new Date(q.fecha).toLocaleString()}</p>
-          <p><strong>Pagat:</strong> ${q.pagado ? '✅ Sí' : '❌ No'}</p>
-          ${renderPartidos(q.resultados, quinielaActiva?.data)}
-        `;
-        container.appendChild(card);
-      });
-    }
+    alert("✅ Quiniela enviada correctament!");
+    window.location.href = "mis_quinielas.html";
 
-    // ➕ Botó nova quiniela (ara funcional amb id activa)
-    btnNueva.addEventListener('click', () => {
-      if (!quinielaActivaId) {
-        alert('⚠️ No hi ha cap quiniela activa.');
-        return;
-      }
-      window.location.href = `quiniela_participante.html?quiniela_id=${quinielaActivaId}`;
-    });
+  } catch (err) {
+    alert("❌ Error enviant la quiniela: " + err.message);
+  }
+});
 
-    // 🔄 Execució inicial
-    if (await checkLogin()) {
-      await getQuinielaActiva();
-      await cargarMisQuinielas();
-    }
-  </script>
+// 🔄 Execució inicial
+await checkLogin();
+await cargarQuiniela();
+</script>
+
 </body>
 </html>
