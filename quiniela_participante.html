@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8">
 <title>Quiniela del Participant</title>
@@ -62,6 +62,16 @@ a {
   text-decoration: none;
   font-weight: 500;
 }
+.alerta {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #b91c1c;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
 </style>
 </head>
 <body>
@@ -80,8 +90,9 @@ const btnEnviar = document.getElementById("enviar");
 let quiniela = [];
 let quinielaId = null;
 let resultados = {};
+let bloquejada = false;
 
-// 🧭 LLegir paràmetres de la URL
+// 🧭 Llegir paràmetres de la URL
 const params = new URLSearchParams(window.location.search);
 quinielaId = params.get("quiniela_id");
 
@@ -99,7 +110,7 @@ async function checkLogin() {
   return participante;
 }
 
-// ⚽ Carregar la quiniela segons l'ID de la URL
+// ⚽ Carregar la quiniela segons l'ID
 async function cargarQuiniela() {
   try {
     if (!quinielaId) {
@@ -120,8 +131,21 @@ async function cargarQuiniela() {
       return;
     }
 
-    quiniela = data.data; // aquí hi ha els partits
-    console.log("🟢 Quiniela carregada:", quiniela);
+    bloquejada = data.blocked === true;
+    quiniela = data.data;
+
+    if (bloquejada) {
+      cont.innerHTML = `
+        <div class="alerta">
+          ❌ Aquesta quiniela ja està <strong>tancada</strong>.<br>
+          Ja no és possible enviar noves apostes.
+        </div>`;
+      btnEnviar.disabled = true;
+      btnEnviar.style.opacity = "0.5";
+      btnEnviar.style.cursor = "not-allowed";
+      return;
+    }
+
     renderPartidos();
 
   } catch (err) {
@@ -145,6 +169,7 @@ function renderPartidos() {
 }
 
 window.marcar = function(i, val, btn) {
+  if (bloquejada) return;
   resultados[i] = val;
   const match = btn.closest('.match');
   match.querySelectorAll('button').forEach(b => b.style.background = '');
@@ -153,6 +178,11 @@ window.marcar = function(i, val, btn) {
 
 // 🟣 Enviar la quiniela
 btnEnviar.addEventListener("click", async () => {
+  if (bloquejada) {
+    alert("❌ Aquesta quiniela ja està tancada. No pots enviar més apostes.");
+    return;
+  }
+
   const participante = await checkLogin();
   if (!participante) return;
 
