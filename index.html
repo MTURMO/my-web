@@ -55,8 +55,8 @@ body {
   transform: translateY(-2px); 
 }
 
-h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; }
-h2 { color: #2563eb; margin-top: 40px; }
+h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; margin-top: 20px; }
+h2 { color: #2563eb; margin-top: 40px; text-align: center; }
 table {
   border-collapse: collapse;
   width: 100%;
@@ -65,13 +65,46 @@ table {
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   margin-bottom: 20px;
+  overflow: hidden;
 }
 th, td {
-  padding: 10px;
+  padding: 12px;
   text-align: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f3f4f6;
 }
-th { background: #e0e7ff; }
+th { 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+tbody tr {
+  transition: all 0.2s ease;
+}
+tbody tr:hover {
+  background: #f9fafb;
+  transform: scale(1.01);
+}
+tbody tr:nth-child(odd) {
+  background: #fafbff;
+}
+tbody tr:nth-child(1) td:first-child {
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+tbody tr:nth-child(2) td:first-child {
+  color: #9ca3af;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+tbody tr:nth-child(3) td:first-child {
+  color: #cd7f32;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
 .menu {
   margin-top: 20px;
   display: flex;
@@ -318,35 +351,12 @@ a.menu-link:hover { transform: translateY(-2px); }
   padding: 10px 20px;
   border-radius: 0 0 8px 8px;
 }
-
-.participant-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  padding: 10px 20px;
-  background: linear-gradient(90deg,#10b981,#059669);
-  color: white;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: transform 0.2s;
-  border: none;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  text-decoration: none;
-}
-.participant-btn:hover {
-  transform: translateY(-2px);
-}
-
 </style>
 </head>
 <body>
 
 <button id="btnInfo" class="info-btn">ℹ️ Informació</button>
-<a href="participante.html" class="participant-btn">Login</a>
-
+<a href="participante.html" class="login-btn">🔐 Login</a>
 
 <h1>🏆 Rànquing General</h1>
 
@@ -381,11 +391,11 @@ a.menu-link:hover { transform: translateY(-2px); }
     <details>
       <summary>🏅 Premis</summary>
       <ul>
-        <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador de temporada</strong>.</li>
+        <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
         <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
         <ul>
           <li>50% destinat al <strong>premi setmanal</strong>.</li>
-          <li>15% destinat al <strong>premi de temporada</strong>.</li>
+          <li>15% destinat al <strong>premi general</strong>.</li>
           <li>35% destinat al <strong>club</strong>.</li>
         </ul>
       </ul>
@@ -406,7 +416,7 @@ a.menu-link:hover { transform: translateY(-2px); }
       <details>
         <summary>🏆 Premi de temporada</summary>
         <ul>
-          <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi de temporada</strong>.</li>
+          <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi general</strong>.</li>
           <li>Si hi ha empat, el premi es dividirà a parts iguals entre els empatats.</li>
         </ul>
       </details>
@@ -417,7 +427,7 @@ a.menu-link:hover { transform: translateY(-2px); }
 <p>Consulta els punts totals o filtra per jornada:</p>
 
 <select id="filtroQuiniela" class="select-xulo">
-  <option value="">Rànquing General</option>
+  <option value="">🔹 Totes les quinieles</option>
 </select>
 
 <table id="tablaRanking">
