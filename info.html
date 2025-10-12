@@ -1,74 +1,217 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-<meta charset="UTF-8">
-<title>Informació Quiniela</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f3f4f6;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-h1 { font-size: 2rem; color: #333; margin-bottom: 20px; text-align:center; }
-h2 { color: #2563eb; margin-top: 30px; margin-bottom: 10px; }
-p { line-height: 1.6; color: #1f2937; }
-ul { line-height: 1.6; margin-left: 20px; color: #1f2937; }
-a.back-btn {
-  padding: 10px 20px;
-  background: linear-gradient(90deg,#4f46e5,#3b82f6);
-  color: white;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: transform 0.2s;
-  margin-bottom: 20px;
-}
-a.back-btn:hover { transform: translateY(-2px); }
-.info-section {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 700px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Informació Quiniela</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #2563eb;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      line-height: 1.6;
+      color: #1f2937;
+    }
+
+    ul {
+      line-height: 1.6;
+      margin-left: 20px;
+      color: #1f2937;
+    }
+
+    a.back-btn {
+      padding: 10px 20px;
+      background: linear-gradient(90deg,#4f46e5,#3b82f6);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: transform 0.2s;
+      margin-bottom: 20px;
+    }
+
+    a.back-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .instruccions {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 700px;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+
+    .instruccions h2 {
+      color: #4f46e5;
+      margin-top: 0;
+    }
+
+    .alerta {
+      background: #fff3cd;
+      color: #92400e;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #fcd34d;
+      margin-bottom: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    details {
+      background: #f9fafb;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    details[open] {
+      background: #eef2ff;
+      border-color: #4f46e5;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      list-style: none;
+      position: relative;
+      padding-right: 25px;
+    }
+
+    summary::marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "▾";
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+      color: #4f46e5;
+    }
+
+    details[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    details ul {
+      margin-top: 10px;
+      padding-left: 20px;
+      color: #374151;
+    }
+
+    details details {
+      background: #f3f4f6;
+      border: 1px dashed #cbd5e1;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    details details summary {
+      background: #6366f1;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+    }
+
+    details details ul {
+      background: #f9fafb;
+      padding: 10px 20px;
+      border-radius: 0 0 8px 8px;
+    }
+  </style>
 </head>
 <body>
 
-<a href="index.html" class="back-btn">⬅️ Tornar enrere</a>
+  <a href="index.html" class="back-btn">⬅️ Tornar enrere</a>
 
-<h1>ℹ️ Informació Quiniela</h1>
+  <h1>ℹ️ Informació Quiniela</h1>
 
-<div class="info-section">
-  <h2>Com funciona?</h2>
-  <p>La quiniela és un joc en què els participants prediuen els resultats dels partits. Cada aposta pot ser:</p>
-  <ul>
-    <li><strong>1</strong> - victòria del local</li>
-    <li><strong>X</strong> - empat</li>
-    <li><strong>2</strong> - victòria del visitant</li>
-  </ul>
+  <div class="instruccions">
+    <h2>ℹ️ Com funciona la Quiniela</h2>
+    <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
+    <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions a cada jornada.</p>
 
-  <h2>Puntuació</h2>
-  <p>Els punts es calculen segons l’encert en els resultats:</p>
-  <ul>
-    <li>Acierta el resultat exacte: màxima puntuació.</li>
-    <li>Acierta només el resultat final (1/X/2): puntuació menor.</li>
-  </ul>
+    <details open>
+      <summary>🎟️ Apostes</summary>
+      <ul>
+        <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
+        <li>Pots fer tantes apostes com vulguis a cada jornada.</li>
+        <li>Només la teva aposta amb <strong>la millor puntuació</strong> de la jornada sumarà per a la classificació general.</li>
+      </ul>
+    </details>
 
-  <h2>Filtrar per jornada</h2>
-  <p>Al rànquing principal pots seleccionar la quiniela d’una jornada concreta per veure els punts de cada participant només d’aquella jornada.</p>
+    <details>
+      <summary>📊 Puntuació per jornada</summary>
+      <ul>
+        <li>Encert de <strong>1</strong> (guanyador local) o <strong>2</strong> (guanyador visitant): <strong>1 punt</strong>.</li>
+        <li>Encert de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
+        <li>Es sumen els punts de totes les apostes de cada participant.</li>
+        <li>Només comptarà <strong>l’aposta amb més punts</strong> de cada participant per al total general.</li>
+      </ul>
+    </details>
 
-  <h2>Rànquing general</h2>
-  <p>El rànquing general mostra els punts totals acumulats per cada participant a totes les quinieles actives.</p>
+    <details>
+      <summary>🏅 Premis</summary>
+      <ul>
+        <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
+        <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
+        <ul>
+          <li>50% destinat al <strong>premi setmanal</strong>.</li>
+          <li>15% destinat al <strong>premi general</strong>.</li>
+          <li>35% destinat al <strong>club</strong>.</li>
+        </ul>
+      </ul>
 
-  <h2>Repartiment d’apostes</h2>
-  <p>La secció de repartiment mostra, per a cada partit, el percentatge de participants que han apostat per 1, X o 2. Això et permet veure quins resultats són més previsibles o més disputats.</p>
-</div>
+      <details>
+        <summary>💰 Premi per jornada</summary>
+        <ul>
+          <li>Per obtenir el premi setmanal cal fer <strong>ple d’encerts (8 encerts)</strong>.</li>
+          <li>Si hi ha diversos participants amb ple, el premi es divideix entre tots.</li>
+          <li>Si no hi ha cap ple:</li>
+          <ul>
+            <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
+            <li>El 50% restant es divideix a parts iguals entre el club i el premi setmanal de la jornada següent.</li>
+          </ul>
+        </ul>
+      </details>
+
+      <details>
+        <summary>🏆 Premi de temporada</summary>
+        <ul>
+          <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi general</strong>.</li>
+          <li>Si hi ha empat, el premi es dividirà a parts iguals entre els empatats.</li>
+        </ul>
+      </details>
+    </details>
+  </div>
 
 </body>
 </html>
