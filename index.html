@@ -14,23 +14,26 @@ body {
   flex-direction: column;
   align-items: center;
 }
-.top-bar {
-  width: 100%;
-  max-width: 700px;
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 10px;
-}
+
 .info-btn {
-  padding: 8px 16px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  padding: 10px 20px;
   background: linear-gradient(90deg,#4f46e5,#3b82f6);
   color: white;
-  border-radius: 8px;
-  text-decoration: none;
+  border-radius: 10px;
   font-weight: 600;
   transition: transform 0.2s;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
 }
-.info-btn:hover { transform: translateY(-2px); }
+.info-btn:hover { 
+  transform: translateY(-2px); 
+}
 
 h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; }
 h2 { color: #2563eb; margin-top: 40px; }
@@ -66,23 +69,6 @@ a.menu-link {
   transition: transform 0.2s;
 }
 a.menu-link:hover { transform: translateY(-2px); }
-
-a.back-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  padding: 10px 20px;
-  background: linear-gradient(90deg,#4f46e5,#3b82f6);
-  color: white;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
-a.back-btn:hover { 
-  transform: translateY(-2px); 
-}
 
 #tablaRanking {
   border-collapse: collapse;
@@ -159,41 +145,6 @@ a.back-btn:hover {
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
-/* Partit a sobre */
-.partit-header {
-  background: #f9fafb;
-  font-weight: 600;
-  text-align: center;
-  color: #1e3a8a;
-  border-top: 2px solid #e0e7ff;
-}
-
-/* Capçalera del partit amb els equips */
-.partit-equipos {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  gap: 15px;
-}
-.partit-equipos .equip {
-  flex: 1;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-.partit-equipos .equip-local {
-  text-align: right;
-}
-.partit-equipos .equip-visitant {
-  text-align: left;
-}
-.partit-equipos .vs {
-  color: #6b7280;
-  font-weight: 500;
-  font-size: 0.85rem;
-  flex-shrink: 0;
-}
-
 /* Files de les barres */
 .partit-barres td {
   vertical-align: middle;
@@ -215,15 +166,189 @@ a.back-btn:hover {
   color: #6b7280;
   margin-bottom: 5px;
 }
+
+/* Desplegable Informació */
+.info-panel {
+  width: 100%;
+  max-width: 700px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.info-panel.open {
+  max-height: 2000px;
+}
+
+.info-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.info-content h2 {
+  color: #4f46e5;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.info-content p {
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.alerta {
+  background: #fff3cd;
+  color: #92400e;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #fcd34d;
+  margin: 15px 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+.info-content details {
+  background: #f9fafb;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.info-content details[open] {
+  background: #eef2ff;
+  border-color: #4f46e5;
+}
+
+.info-content summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  list-style: none;
+  position: relative;
+  padding-right: 25px;
+}
+
+.info-content summary::marker {
+  display: none;
+}
+
+.info-content summary::after {
+  content: "▾";
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+  color: #4f46e5;
+}
+
+.info-content details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.info-content details ul {
+  margin-top: 10px;
+  padding-left: 20px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.info-content details details {
+  background: #f3f4f6;
+  border: 1px dashed #cbd5e1;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.info-content details details summary {
+  background: #6366f1;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.info-content details details ul {
+  background: #f9fafb;
+  padding: 10px 20px;
+  border-radius: 0 0 8px 8px;
+}
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-<a href="info.html" target="_blank" class="info-btn back-btn">ℹ️ Informació</a>
-</div>
+<button id="btnInfo" class="info-btn">ℹ️ Informació</button>
 
 <h1>🏆 Rànquing General</h1>
+
+<!-- Desplegable Informació -->
+<div id="infoPanel" class="info-panel">
+  <div class="info-content">
+    <h2>ℹ️ Com funciona la Quiniela</h2>
+    
+    <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
+    
+    <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions a cada jornada.</p>
+
+    <details open>
+      <summary>🎟️ Apostes</summary>
+      <ul>
+        <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
+        <li>Pots fer tantes apostes com vulguis a cada jornada.</li>
+        <li>Només la teva aposta amb <strong>la millor puntuació</strong> de la jornada sumarà per a la classificació general.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>📊 Puntuació per jornada</summary>
+      <ul>
+        <li>Encert de <strong>1</strong> (guanyador local) o <strong>2</strong> (guanyador visitant): <strong>1 punt</strong>.</li>
+        <li>Encert de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
+        <li>Es sumen els punts de totes les apostes de cada participant.</li>
+        <li>Només comptarà <strong>l'aposta amb més punts</strong> de cada participant per al total general.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🏅 Premis</summary>
+      <ul>
+        <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
+        <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
+        <ul>
+          <li>50% destinat al <strong>premi setmanal</strong>.</li>
+          <li>15% destinat al <strong>premi general</strong>.</li>
+          <li>35% destinat al <strong>club</strong>.</li>
+        </ul>
+      </ul>
+
+      <details>
+        <summary>💰 Premi per jornada</summary>
+        <ul>
+          <li>Per obtenir el premi setmanal cal fer <strong>ple d'encerts (8 encerts)</strong>.</li>
+          <li>Si hi ha diversos participants amb ple, el premi es divideix entre tots.</li>
+          <li>Si no hi ha cap ple:</li>
+          <ul>
+            <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
+            <li>El 50% restant es divideix a parts iguals entre el club i el premi setmanal de la jornada següent.</li>
+          </ul>
+        </ul>
+      </details>
+
+      <details>
+        <summary>🏆 Premi de temporada</summary>
+        <ul>
+          <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi general</strong>.</li>
+          <li>Si hi ha empat, el premi es dividirà a parts iguals entre els empatats.</li>
+        </ul>
+      </details>
+    </details>
+  </div>
+</div>
 
 <p>Consulta els punts totals o filtra per jornada:</p>
 
@@ -261,6 +386,20 @@ a.back-btn:hover {
   <a href="participante.html" class="menu-link">Participant</a>
   <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
 </div>
+
+<script>
+// Desplegable
+const infoPanel = document.getElementById("infoPanel");
+const btnInfo = document.getElementById("btnInfo");
+
+if (btnInfo && infoPanel) {
+  btnInfo.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    infoPanel.classList.toggle("open");
+  });
+}
+</script>
 
 <script type="module">
 import { supabase } from './supabaseClient.js';
