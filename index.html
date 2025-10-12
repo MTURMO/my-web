@@ -318,11 +318,35 @@ a.menu-link:hover { transform: translateY(-2px); }
   padding: 10px 20px;
   border-radius: 0 0 8px 8px;
 }
+
+.participant-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#10b981,#059669);
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: transform 0.2s;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  text-decoration: none;
+}
+.participant-btn:hover {
+  transform: translateY(-2px);
+}
+
 </style>
 </head>
 <body>
 
 <button id="btnInfo" class="info-btn">ℹ️ Informació</button>
+<a href="participante.html" class="participant-btn">Login</a>
+
 
 <h1>🏆 Rànquing General</h1>
 
@@ -423,7 +447,6 @@ a.menu-link:hover { transform: translateY(-2px); }
 </div>
 
 <div class="menu">
-  <a href="participante.html" class="menu-link">Participant</a>
   <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
 </div>
 
