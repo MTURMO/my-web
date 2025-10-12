@@ -88,27 +88,6 @@ tbody tr:nth-child(odd) { background: #fafbff; }
   color: #c2410c; font-weight: 700; font-size: 1.1rem;
 }
 
-/* Menú inferior */
-.menu {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-a.menu-link {
-  padding: 10px 20px;
-  background: linear-gradient(90deg,#4f46e5,#3b82f6);
-  color: white;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
-a.menu-link:hover { transform: translateY(-2px); }
-
-#tablaRanking { margin-top: 30px; }
-
 /* Select bonic */
 .select-xulo {
   padding: 10px 14px;
@@ -132,62 +111,31 @@ a.menu-link:hover { transform: translateY(-2px); }
   box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
 }
 
-/* Disseny paral·lel */
-.tablas-lado {
+/* Altres estils */
+.menu {
+  margin-top: 20px;
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 30px;
-  width: 100%;
-  max-width: 1400px;
 }
+a.menu-link {
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+a.menu-link:hover { transform: translateY(-2px); }
+
+.tablas-lado { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 100%; max-width: 1400px; }
 .tabla { flex: 1 1 600px; }
 
 .table-scroll { overflow-x: auto; width: 100%; }
 .table-scroll table { min-width: 100%; }
 
-/* Barres percentuals */
-.barra {
-  height: 30px;
-  border-radius: 10px;
-  background: #e5e7eb;
-  position: relative;
-  overflow: hidden;
-  margin: 6px auto;
-  width: 180px;
-}
-.barra-inner { height: 100%; border-radius: 10px; transition: width 0.8s ease-in-out; }
-.barra-1 { background: #22c55e; }
-.barra-X { background: #3b82f6; }
-.barra-2 { background: #ef4444; }
-.percent-text {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-}
-.label-equip, .label-vs { text-align: center; margin-bottom: 5px; }
-.label-equip { font-weight: 600; font-size: 0.9rem; color: #1e3a8a; }
-.label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
-
-/* Panell info */
-.info-panel {
-  position: fixed; top: 70px; left: 20px;
-  width: 550px; max-width: calc(100vw - 40px);
-  background: white; border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  z-index: 999; opacity: 0; visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease-in-out;
-  max-height: 500px; overflow-y: auto;
-}
-.info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
-.info-content { padding: 20px; }
-.info-content h2 { color: #4f46e5; margin-top: 0; margin-bottom: 15px; }
-.info-content p { line-height: 1.6; color: #1f2937; }
-.alerta {
-  background: #fff3cd; color: #92400e; padding: 12px;
-  border-radius: 10px; border: 1px solid #fcd34d;
-  margin: 15px 0; font-weight: 600; text-align: center;
-}
 </style>
 </head>
 <body>
@@ -196,14 +144,6 @@ a.menu-link:hover { transform: translateY(-2px); }
 <a href="participante.html" class="login-btn">🔐 Login</a>
 
 <h1>🏆 Rànquing General</h1>
-
-<div id="infoPanel" class="info-panel">
-  <div class="info-content">
-    <h2>ℹ️ Com funciona la Quiniela</h2>
-    <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
-    <p>Consulta com funciona el sistema de punts i els premis a la pàgina d'informació completa.</p>
-  </div>
-</div>
 
 <p>Consulta els punts totals o filtra per jornada:</p>
 <select id="filtroQuiniela" class="select-xulo">
@@ -215,170 +155,88 @@ a.menu-link:hover { transform: translateY(-2px); }
   <tbody></tbody>
 </table>
 
-<div class="tablas-lado">
-  <div class="tabla">
-    <h2>📋 Participants i Quinieles Fetes</h2>
-    <div class="table-scroll">
-      <table id="tablaActivos">
-        <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="tabla">
-    <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
-    <div class="table-scroll">
-      <table id="tablaEstadisticas">
-        <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
 <div class="menu">
   <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
 </div>
-
-<script>
-// Panell informatiu
-const infoPanel = document.getElementById("infoPanel");
-const btnInfo = document.getElementById("btnInfo");
-btnInfo.addEventListener("click", e => {
-  e.stopPropagation();
-  infoPanel.classList.toggle("open");
-});
-document.addEventListener("click", e => {
-  if (!infoPanel.contains(e.target) && !btnInfo.contains(e.target)) {
-    infoPanel.classList.remove("open");
-  }
-});
-</script>
 
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
 const filtro = document.getElementById("filtroQuiniela");
 const tbodyRanking = document.querySelector("#tablaRanking tbody");
-const tbodyActivos = document.querySelector("#tablaActivos tbody");
-const tbodyEstadisticas = document.querySelector("#tablaEstadisticas tbody");
 const adminLink = document.getElementById("adminLink");
 
 const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
-// --- Carrega les quinieles
+// --- Carrega quinieles
 async function cargarQuinielas() {
   const { data } = await supabase.from("quiniela_oficial")
-    .select("id, nombre").order("creada_el", { ascending: false });
+    .select("id, nombre")
+    .order("creada_el", { ascending: false });
   if (data) data.forEach(q => {
     const opt = document.createElement("option");
-    opt.value = q.id;
+    opt.value = `${q.id}|${q.nombre}`;
     opt.textContent = q.nombre;
     filtro.appendChild(opt);
   });
 }
 
-// --- Rànquing
-async function cargarRanking(quinielaId = "") {
+// --- Carrega ranking
+async function cargarRanking(seleccio = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
   let data = [];
 
-  if (quinielaId) {
-    // Obtenim punts per participant i sumem si té més d'una quiniela
-    const { data: detalle } = await supabase
+  if (seleccio) {
+    const [quinielaId, quinielaNom] = seleccio.split("|");
+    let detalle;
+
+    // Primer intentem per ID
+    const { data: perId } = await supabase
       .from("resultados_detalle")
       .select("participante_id, nombre, puntos, quiniela_id")
       .eq("quiniela_id", quinielaId);
 
+    detalle = perId;
+
+    // Si no troba res per ID, provem pel nom
+    if (!detalle?.length) {
+      const { data: perNom } = await supabase
+        .from("resultados_detalle")
+        .select("participante_id, nombre, puntos, quiniela_nombre")
+        .eq("quiniela_nombre", quinielaNom);
+      detalle = perNom;
+    }
+
     if (detalle?.length) {
-      const perJugador = {};
+      const agrupat = {};
       detalle.forEach(d => {
-        if (!perJugador[d.participante_id]) perJugador[d.participante_id] = { nombre: d.nombre, puntos: 0 };
-        perJugador[d.participante_id].puntos += d.puntos;
+        if (!agrupat[d.participante_id])
+          agrupat[d.participante_id] = { nom: d.nombre, punts: 0 };
+        agrupat[d.participante_id].punts += d.puntos;
       });
-      data = Object.values(perJugador).sort((a, b) => b.puntos - a.puntos);
+      data = Object.values(agrupat).sort((a, b) => b.punts - a.punts);
     }
   } else {
     const { data: general } = await supabase
       .from("resultados_generales")
       .select("nombre, puntos_totales")
       .order("puntos_totales", { ascending: false });
-    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totales }));
+    data = (general || []).map(d => ({ nom: d.nombre, punts: d.puntos_totales }));
   }
 
-  if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
+  if (!data.length)
+    return (tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>");
 
-  tbodyRanking.innerHTML = data.map((r, i) => `
-    <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>
-  `).join("");
+  tbodyRanking.innerHTML = data
+    .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nom}</td><td>${r.punts}</td></tr>`)
+    .join("");
 }
 
-// --- Participants i quinieles
-async function cargarActivos() {
-  const { data } = await supabase.from("quinielas_participantes").select("participante_id, nombre");
-  if (!data?.length) return;
-  const conteo = {};
-  data.forEach(q => {
-    if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
-    conteo[q.participante_id].count++;
-  });
-  const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
-  tbodyActivos.innerHTML = lista.map((p, i) => `
-    <tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>
-  `).join("");
-}
-
-// --- Estadístiques
-async function cargarEstadisticas() {
-  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
-  const { data: quinielaActiva } = await supabase
-    .from("quiniela_oficial").select("id, data").eq("activa", true).single();
-  if (!quinielaActiva) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
-
-  const { data: apostes } = await supabase
-    .from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
-  if (!apostes?.length) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
-
-  const partits = quinielaActiva.data;
-  const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
-  apostes.forEach(a => Object.entries(a.resultados || {}).forEach(([i, v]) => {
-    if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
-  }));
-
-  tbodyEstadisticas.innerHTML = stats.map((r, i) => {
-    const total = r["1"] + r["X"] + r["2"];
-    if (!total) return "";
-    const p1 = ((r["1"] / total) * 100).toFixed(1);
-    const px = ((r["X"] / total) * 100).toFixed(1);
-    const p2 = ((r["2"] / total) * 100).toFixed(1);
-    const match = partits[i];
-    return `
-      <tr class="partit-barres">
-        <td>
-          <div class="label-equip">${match.local}</div>
-          <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
-        </td>
-        <td>
-          <div class="label-vs">vs.</div>
-          <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
-        </td>
-        <td>
-          <div class="label-equip">${match.visitante}</div>
-          <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
-        </td>
-      </tr>`;
-  }).join("");
-}
-
-// --- Event listeners
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
 
 await cargarQuinielas();
 await cargarRanking();
-await cargarActivos();
-await cargarEstadisticas();
 </script>
 </body>
 </html>
