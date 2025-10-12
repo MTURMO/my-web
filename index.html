@@ -167,26 +167,46 @@ a.menu-link:hover { transform: translateY(-2px); }
   margin-bottom: 5px;
 }
 
-/* Desplegable Informació */
+/* Desplegable Informació - Globus */
 .info-panel {
-  width: 100%;
-  max-width: 700px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease-in-out;
-  margin-bottom: 20px;
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  width: 550px;
+  max-width: calc(100vw - 40px);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease-in-out;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .info-panel.open {
-  max-height: 2000px;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Fletxa del globus */
+.info-panel::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
 }
 
 .info-content {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   padding: 20px;
-  margin-top: 10px;
 }
 
 .info-content h2 {
@@ -388,7 +408,7 @@ a.menu-link:hover { transform: translateY(-2px); }
 </div>
 
 <script>
-// Desplegable
+// Desplegable tipus globus
 const infoPanel = document.getElementById("infoPanel");
 const btnInfo = document.getElementById("btnInfo");
 
@@ -397,6 +417,13 @@ if (btnInfo && infoPanel) {
     e.preventDefault();
     e.stopPropagation();
     infoPanel.classList.toggle("open");
+  });
+  
+  // Tancar si cliques fora
+  document.addEventListener('click', (e) => {
+    if (!infoPanel.contains(e.target) && !btnInfo.contains(e.target)) {
+      infoPanel.classList.remove("open");
+    }
   });
 }
 </script>
