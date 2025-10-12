@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8">
 <title>Rànquing General</title>
@@ -149,26 +149,23 @@ details[open] summary::after {
   flex: 1 1 600px;
 }
 
-/* 🔵 Barres de percentatge */
+/* 🔵 Barres de percentatge millorades */
 .barra {
-  height: 28px; /* abans 16px */
+  height: 28px;
   border-radius: 8px;
   background: #e5e7eb;
   position: relative;
   overflow: hidden;
   margin: 4px 0;
 }
-
 .barra-inner {
   height: 100%;
   border-radius: 8px;
-  transition: width 0.4s ease;
+  transition: width 0.8s ease-in-out;
 }
-
-.barra-1 { background: #22c55e; }  /* verd per "1" */
-.barra-X { background: #3b82f6; }  /* blau per "X" */
-.barra-2 { background: #ef4444; }  /* vermell per "2" */
-
+.barra-1 { background: #22c55e; }  /* verd */
+.barra-X { background: #3b82f6; }  /* blau */
+.barra-2 { background: #ef4444; }  /* vermell */
 .percent-text {
   position: absolute;
   top: 50%;
@@ -179,12 +176,6 @@ details[open] summary::after {
   color: white;
   text-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
-
-/* ✨ Millora visual general de la taula d'estadístiques */
-#tablaEstadisticas td {
-  padding: 12px 10px;
-}
-
 </style>
 </head>
 <body>
@@ -195,7 +186,59 @@ details[open] summary::after {
   <h2>ℹ️ Com funciona la Quiniela</h2>
   <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
   <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions a cada jornada.</p>
-  <!-- Detalls iguals que abans -->
+  
+  <details open>
+    <summary>🎟️ Apostes</summary>
+    <ul>
+      <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
+      <li>Pots realitzar tantes apostes com vulguis a cada jornada.</li>
+      <li>Només la teva aposta amb <strong>millor puntuació</strong> de la jornada comptarà per la classificació general.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>📊 Puntuació per Jornada</summary>
+    <ul>
+      <li>Encert de <strong>1</strong> o <strong>2</strong>: <strong>1 punt</strong>.</li>
+      <li>Encert de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
+      <li>Només la millor aposta de cada participant suma per al total general.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>🏅 Premis</summary>
+    <ul>
+      <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
+      <li>Els premis provenen exclusivament de la recaptació de les apostes:</li>
+      <ul>
+        <li>50% per al <strong>premi setmanal</strong>.</li>
+        <li>15% per al <strong>premi general</strong>.</li>
+        <li>35% per al <strong>club</strong>.</li>
+      </ul>
+    </ul>
+
+    <details>
+      <summary>💰 Premi per Jornada</summary>
+      <ul>
+        <li>Per guanyar el premi setmanal cal fer <strong>pleno d’encerts (8)</strong>.</li>
+        <li>Si hi ha diversos plens, el premi es divideix entre tots.</li>
+        <li>Si no hi ha cap ple:
+          <ul>
+            <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
+            <li>L’altre 50% es reparteix entre el club i el premi de la setmana següent.</li>
+          </ul>
+        </li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>🏆 Premi de Temporada</summary>
+      <ul>
+        <li>El participant amb la puntuació acumulada més alta guanya el <strong>premi general</strong>.</li>
+        <li>Si hi ha empat, el premi es divideix a parts iguals.</li>
+      </ul>
+    </details>
+  </details>
 </div>
 
 <p>Consulta els punts totals o filtra per jornada:</p>
