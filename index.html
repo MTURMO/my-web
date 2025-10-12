@@ -8,45 +8,11 @@
 <style>
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  background: #f3f4f6;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-}
-
-.container {
-  background: #f3f4f6;
-  border-radius: 20px;
-  padding: 20px;
-  width: 100%;
-  max-width: 1400px;
-  margin-top: 60px;
-}
-
-.team-header {
-  text-align: center;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: linear-gradient(135deg, #1f2937 0%, #3b82f6 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.team-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-  letter-spacing: 3px;
-}
-
-.team-subtitle {
-  font-size: 0.9rem;
-  color: #e5e7eb;
-  margin: 5px 0 0 0;
-  font-weight: 500;
 }
 
 .info-btn {
@@ -55,20 +21,18 @@ body {
   left: 20px;
   z-index: 1000;
   padding: 10px 20px;
-  background: linear-gradient(90deg, #1f2937, #374151);
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
   color: white;
   border-radius: 10px;
   font-weight: 600;
-  transition: all 0.2s;
-  border: 2px solid #4b5563;
+  transition: transform 0.2s;
+  border: none;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
 }
 .info-btn:hover { 
   transform: translateY(-2px);
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .login-btn {
@@ -77,41 +41,25 @@ body {
   right: 20px;
   z-index: 1000;
   padding: 10px 20px;
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
   color: white;
   border-radius: 10px;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: transform 0.2s;
   text-decoration: none;
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   display: inline-block;
-  border: 2px solid #1d4ed8;
 }
 .login-btn:hover { 
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
-h1 { font-size: 2rem; color: #111827; margin-bottom: 10px; text-align:center; margin-top: 20px; font-weight: 700; }
+h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; margin-top: 20px; }
 h2 { 
-  color: #1f2937; 
+  color: #2563eb; 
   margin-top: 40px; 
-  text-align: center; 
-  font-weight: 700;
-  position: relative;
-  padding-bottom: 10px;
-}
-h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #1f2937);
-  border-radius: 2px;
+  text-align: center;
 }
 table {
   border-collapse: collapse;
@@ -122,7 +70,6 @@ table {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   margin-bottom: 20px;
   overflow: hidden;
-  border: 2px solid #e5e7eb;
 }
 th, td {
   padding: 12px;
@@ -130,7 +77,7 @@ th, td {
   border-bottom: 1px solid #f3f4f6;
 }
 th { 
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
   color: white;
   font-weight: 600;
   text-transform: uppercase;
@@ -184,18 +131,15 @@ tbody tr:nth-child(3) td:first-child {
 }
 a.menu-link {
   padding: 10px 20px;
-  background: linear-gradient(90deg, #1f2937, #374151);
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
   color: white;
   text-decoration: none;
   border-radius: 10px;
   font-weight: 600;
-  transition: all 0.2s;
-  border: 2px solid #4b5563;
+  transition: transform 0.2s;
 }
 a.menu-link:hover { 
   transform: translateY(-2px);
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 #tablaRanking {
@@ -533,8 +477,6 @@ a.menu-link:hover {
 
 <div class="menu">
   <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
-</div>
-
 </div>
 
 <script>
