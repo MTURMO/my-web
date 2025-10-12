@@ -194,8 +194,11 @@ a.menu-link:hover {
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -10px;
-  padding: 0 10px;
+  width: 100%;
+}
+
+.table-scroll table {
+  min-width: 100%;
 }
 
 .table-scroll::-webkit-scrollbar {
@@ -488,10 +491,12 @@ a.menu-link:hover {
 <div class="tablas-lado">
   <div class="tabla">
     <h2>📋 Participants i Quinieles Fetes</h2>
-    <table id="tablaActivos">
-      <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="tablaActivos">
+        <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="tabla">
