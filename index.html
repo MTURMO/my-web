@@ -151,29 +151,40 @@ details[open] summary::after {
 
 /* 🔵 Barres de percentatge */
 .barra {
-  height: 16px;
-  border-radius: 6px;
+  height: 28px; /* abans 16px */
+  border-radius: 8px;
   background: #e5e7eb;
   position: relative;
   overflow: hidden;
+  margin: 4px 0;
 }
+
 .barra-inner {
   height: 100%;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: width 0.4s ease;
 }
+
 .barra-1 { background: #22c55e; }  /* verd per "1" */
 .barra-X { background: #3b82f6; }  /* blau per "X" */
 .barra-2 { background: #ef4444; }  /* vermell per "2" */
+
 .percent-text {
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8rem;
-  font-weight: 600;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: 700;
   color: white;
+  text-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
+
+/* ✨ Millora visual general de la taula d'estadístiques */
+#tablaEstadisticas td {
+  padding: 12px 10px;
+}
+
 </style>
 </head>
 <body>
