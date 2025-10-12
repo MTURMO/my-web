@@ -390,6 +390,8 @@ a.menu-link:hover { transform: translateY(-2px); }
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
+console.log('Script carregat!');
+
 const filtro = document.getElementById("filtroQuiniela");
 const tbodyRanking = document.querySelector("#tablaRanking tbody");
 const tbodyActivos = document.querySelector("#tablaActivos tbody");
@@ -398,14 +400,21 @@ const adminLink = document.getElementById("adminLink");
 const infoPanel = document.getElementById("infoPanel");
 const btnInfo = document.getElementById("btnInfo");
 
-// Desplegable controls
-btnInfo.addEventListener('click', (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  console.log('Botó clicat!');
-  infoPanel.classList.toggle("open");
-  console.log('Classe open:', infoPanel.classList.contains('open'));
-});
+console.log('Elements trobats:', { btnInfo, infoPanel });
+
+// Desplegable controls - Configurar ABANS de res
+if (btnInfo && infoPanel) {
+  btnInfo.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Botó clicat!');
+    infoPanel.classList.toggle("open");
+    console.log('Classe open:', infoPanel.classList.contains('open'));
+  });
+  console.log('Event listener afegit correctament');
+} else {
+  console.error('No s\'han trobat els elements!', { btnInfo, infoPanel });
+}
 
 const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
