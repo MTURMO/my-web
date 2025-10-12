@@ -190,6 +190,32 @@ a.menu-link:hover {
   flex: 1 1 600px;
 }
 
+/* Contenidor amb scroll per mòbils */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -10px;
+  padding: 0 10px;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
 /* Barres percentuals llargues */
 .barra {
   height: 30px;
@@ -470,10 +496,12 @@ a.menu-link:hover {
 
   <div class="tabla">
     <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
-    <table id="tablaEstadisticas">
-      <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table id="tablaEstadisticas">
+        <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
