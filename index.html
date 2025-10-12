@@ -67,6 +67,24 @@ a.menu-link {
 }
 a.menu-link:hover { transform: translateY(-2px); }
 
+a.back-btn {
+  position: fixed;      /* Fixat a la pantalla */
+  top: 20px;            /* Separació del top */
+  left: 20px;           /* Separació de l’esquerra */
+  z-index: 1000;        /* Que estigui per sobre de la resta */
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+a.back-btn:hover { 
+  transform: translateY(-2px); 
+}
+
+
 .select-xulo {
   padding: 10px 14px;
   border-radius: 10px;
