@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8">
-<title>Resultados y Ranking</title>
+<title>Resultats i Rànquing</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -73,11 +73,11 @@ select {
 </style>
 </head>
 <body>
-<h1>Gestión de Resultados</h1>
+<h1>Gestió de Resultats</h1>
 
 <div>
   <button id="btnAfegir">📝 Afegir Resultats</button>
-  <button id="btnRanking">🏆 Calcular Ranking</button>
+  <button id="btnRanking">🏆 Calcular Rànquing</button>
 </div>
 
 <div id="partidosContainer" class="hidden"></div>
@@ -95,7 +95,7 @@ import { supabase } from './supabaseClient.js';
   const isSupabaseAdmin = session?.user?.email === "admin@quiniela.com";
 
   if (!isLocalAdmin && !isSupabaseAdmin) {
-    alert("Acceso restringido. Debes iniciar sesión como administrador.");
+    alert("Accés restringit. Has d'iniciar sessió com a administrador.");
     window.location.href = "admin.html";
     return;
   }
@@ -108,7 +108,7 @@ import { supabase } from './supabaseClient.js';
   let quinielaActiva = null;
 
   // 🟢 Carrega la quiniela activa
-  async function cargarQuinielaActiva() {
+  async function carregarQuinielaActiva() {
     const { data, error } = await supabase
       .from("quiniela_oficial")
       .select("*")
@@ -128,7 +128,7 @@ import { supabase } from './supabaseClient.js';
   btnAfegir.addEventListener("click", async () => {
     rankingDiv.classList.add("hidden");
 
-    const quiniela = await cargarQuinielaActiva();
+    const quiniela = await carregarQuinielaActiva();
     if (!quiniela) return;
 
     cont.classList.remove("hidden");
@@ -150,18 +150,17 @@ import { supabase } from './supabaseClient.js';
 
     cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats</button>`;
 
-    document.getElementById("guardarResultados").addEventListener("click", guardarResultados);
+    document.getElementById("guardarResultados").addEventListener("click", guardarResultats);
   });
 
   // 💾 Guardar resultats vàlids
-  async function guardarResultados() {
+  async function guardarResultats() {
     const resultados_validos = [];
     quinielaActiva.data.forEach((_, i) => {
       const val = document.getElementById(`res-${i}`).value;
       resultados_validos.push(val || null);
     });
 
-    // Guarda resultats a la taula auxiliar
     const { error: insertError } = await supabase
       .from("resultados_quiniela")
       .insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
@@ -171,7 +170,6 @@ import { supabase } from './supabaseClient.js';
       return;
     }
 
-    // Actualitza la quiniela oficial
     const { error } = await supabase
       .from("quiniela_oficial")
       .update({ resultados_validos })
@@ -181,13 +179,13 @@ import { supabase } from './supabaseClient.js';
     else alert("✅ Resultats guardats correctament!");
   }
 
-  // 🏆 Calcular ranking
+  // 🏆 Calcular rànquing
   btnRanking.addEventListener("click", async () => {
     cont.classList.add("hidden");
     rankingDiv.classList.remove("hidden");
     rankingDiv.innerHTML = "<p>Calculant rànquing...</p>";
 
-    const quiniela = await cargarQuinielaActiva();
+    const quiniela = await carregarQuinielaActiva();
     if (!quiniela || !quiniela.resultados_validos) {
       rankingDiv.innerHTML = "<p style='color:red;'>❌ No hi ha resultats vàlids definits.</p>";
       return;
@@ -215,7 +213,6 @@ import { supabase } from './supabaseClient.js';
       quiniela.resultados_validos.forEach((res, i) => {
         const resposta = p.resultados?.[i];
         if (res && resposta && resposta.trim().toUpperCase() === res.trim().toUpperCase()) {
-          // Si és un empat (“X”), val 2 punts
           encerts += (res.trim().toUpperCase() === "X" ? 2 : 1);
         }
       });
@@ -226,11 +223,13 @@ import { supabase } from './supabaseClient.js';
       };
     });
 
-    // 🔁 Agrupar per correu (si hi ha duplicats)
+    // 🔁 Agrupar per correu — conservar només la millor quiniela
     const rankingMap = new Map();
     rankingTemp.forEach(r => {
-      if (!rankingMap.has(r.correu)) rankingMap.set(r.correu, { ...r });
-      else rankingMap.get(r.correu).encerts += r.encerts;
+      const actual = rankingMap.get(r.correu);
+      if (!actual || r.encerts > actual.encerts) {
+        rankingMap.set(r.correu, { ...r });
+      }
     });
 
     const ranking = Array.from(rankingMap.values()).sort((a, b) => b.encerts - a.encerts);
@@ -242,7 +241,7 @@ import { supabase } from './supabaseClient.js';
       html += `<tr><td>${i + 1}</td><td>${r.nom}</td><td>${r.correu}</td><td>${r.encerts}</td></tr>`;
     });
     html += "</table>";
-    html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Ranking General</button>`;
+    html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Rànquing General</button>`;
     rankingDiv.innerHTML = html;
 
     // 💾 Desa el ranking global i detallat
@@ -273,7 +272,7 @@ import { supabase } from './supabaseClient.js';
         });
       }
 
-      alert("✅ Ranking guardat correctament al total i al detall per jornada!");
+      alert("✅ Rànquing guardat correctament al total i al detall per jornada!");
     });
   });
 })();
