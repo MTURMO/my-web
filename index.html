@@ -149,7 +149,17 @@ details[open] summary::after {
   flex: 1 1 600px;
 }
 
-/* 🔵 Barres de percentatge millorades */
+/* 🔵 Barres de percentatge millorades i més llargues */
+#tablaEstadisticas td:nth-child(1) {
+  width: 25%;
+  text-align: left;
+}
+#tablaEstadisticas td:nth-child(2),
+#tablaEstadisticas td:nth-child(3),
+#tablaEstadisticas td:nth-child(4) {
+  width: 25%;
+}
+
 .barra {
   height: 28px;
   border-radius: 8px;
@@ -157,6 +167,7 @@ details[open] summary::after {
   position: relative;
   overflow: hidden;
   margin: 4px 0;
+  width: 100%;
 }
 .barra-inner {
   height: 100%;
