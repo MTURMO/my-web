@@ -107,9 +107,7 @@ a.menu-link {
 }
 a.menu-link:hover { transform: translateY(-2px); }
 
-#tablaRanking {
-  margin-top: 30px;
-}
+#tablaRanking { margin-top: 30px; }
 
 /* Select bonic */
 .select-xulo {
@@ -166,11 +164,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
-
-.label-equip, .label-vs {
-  text-align: center;
-  margin-bottom: 5px;
-}
+.label-equip, .label-vs { text-align: center; margin-bottom: 5px; }
 .label-equip { font-weight: 600; font-size: 0.9rem; color: #1e3a8a; }
 .label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
 
@@ -212,7 +206,6 @@ a.menu-link:hover { transform: translateY(-2px); }
 </div>
 
 <p>Consulta els punts totals o filtra per jornada:</p>
-
 <select id="filtroQuiniela" class="select-xulo">
   <option value="">🔹 Totes les quinieles</option>
 </select>
@@ -275,38 +268,37 @@ const adminLink = document.getElementById("adminLink");
 const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
-// --- Carrega les quinieles disponibles
+// --- Carrega les quinieles
 async function cargarQuinielas() {
   const { data } = await supabase.from("quiniela_oficial")
-    .select("nombre").order("creada_el", { ascending: false });
+    .select("id, nombre").order("creada_el", { ascending: false });
   if (data) data.forEach(q => {
     const opt = document.createElement("option");
-    opt.value = q.nombre;
+    opt.value = q.id;
     opt.textContent = q.nombre;
     filtro.appendChild(opt);
   });
 }
 
-// --- Carrega el rànquing (general o per jornada)
-async function cargarRanking(nombreQuiniela = "") {
+// --- Rànquing
+async function cargarRanking(quinielaId = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
   let data = [];
 
-  if (nombreQuiniela) {
-    // Cas filtrat per jornada → pren la millor puntuació de cada jugador
+  if (quinielaId) {
+    // Obtenim punts per participant i sumem si té més d'una quiniela
     const { data: detalle } = await supabase
       .from("resultados_detalle")
-      .select("nombre, puntos, participante_id, quiniela_nombre")
-      .eq("quiniela_nombre", nombreQuiniela);
+      .select("participante_id, nombre, puntos, quiniela_id")
+      .eq("quiniela_id", quinielaId);
 
     if (detalle?.length) {
-      const millor = {};
+      const perJugador = {};
       detalle.forEach(d => {
-        if (!millor[d.participante_id] || d.puntos > millor[d.participante_id].puntos) {
-          millor[d.participante_id] = d;
-        }
+        if (!perJugador[d.participante_id]) perJugador[d.participante_id] = { nombre: d.nombre, puntos: 0 };
+        perJugador[d.participante_id].puntos += d.puntos;
       });
-      data = Object.values(millor).sort((a, b) => b.puntos - a.puntos);
+      data = Object.values(perJugador).sort((a, b) => b.puntos - a.puntos);
     }
   } else {
     const { data: general } = await supabase
@@ -323,7 +315,7 @@ async function cargarRanking(nombreQuiniela = "") {
   `).join("");
 }
 
-// --- Participants i quinieles fetes
+// --- Participants i quinieles
 async function cargarActivos() {
   const { data } = await supabase.from("quinielas_participantes").select("participante_id, nombre");
   if (!data?.length) return;
@@ -338,7 +330,7 @@ async function cargarActivos() {
   `).join("");
 }
 
-// --- Estadístiques de la quiniela activa
+// --- Estadístiques
 async function cargarEstadisticas() {
   tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
   const { data: quinielaActiva } = await supabase
@@ -388,6 +380,5 @@ await cargarRanking();
 await cargarActivos();
 await cargarEstadisticas();
 </script>
-
 </body>
 </html>
