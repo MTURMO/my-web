@@ -15,10 +15,9 @@ body {
   align-items: center;
 }
 
-.info-btn {
+.info-btn, .login-btn {
   position: fixed;
   top: 20px;
-  left: 20px;
   z-index: 1000;
   padding: 10px 20px;
   background: linear-gradient(90deg,#4f46e5,#3b82f6);
@@ -31,36 +30,13 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
 }
-.info-btn:hover { 
-  transform: translateY(-2px);
-}
+.info-btn:hover, .login-btn:hover { transform: translateY(-2px); }
+.info-btn { left: 20px; }
+.login-btn { right: 20px; text-decoration: none; display: inline-block; }
 
-.login-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  padding: 10px 20px;
-  background: linear-gradient(90deg,#4f46e5,#3b82f6);
-  color: white;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: transform 0.2s;
-  text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  display: inline-block;
-}
-.login-btn:hover { 
-  transform: translateY(-2px);
-}
+h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; margin-top: 60px; }
+h2 { color: #2563eb; margin-top: 40px; text-align: center; }
 
-h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; margin-top: 20px; }
-h2 { 
-  color: #2563eb; 
-  margin-top: 40px; 
-  text-align: center;
-}
 table {
   border-collapse: collapse;
   width: 100%;
@@ -76,7 +52,7 @@ th, td {
   text-align: center;
   border-bottom: 1px solid #f3f4f6;
 }
-th { 
+th {
   background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
   color: white;
   font-weight: 600;
@@ -85,45 +61,34 @@ th {
   letter-spacing: 0.5px;
   border-bottom: 3px solid #3b82f6;
 }
-tbody tr {
-  transition: all 0.2s ease;
-}
-tbody tr:hover {
-  background: #f0f9ff;
-  transform: scale(1.01);
-}
-tbody tr:nth-child(odd) {
-  background: #fafbff;
-}
+tbody tr { transition: all 0.2s ease; }
+tbody tr:hover { background: #f0f9ff; transform: scale(1.01); }
+tbody tr:nth-child(odd) { background: #fafbff; }
 
-/* Només el rànquing principal té colors de pòdium */
+/* Colors de pòdium */
 #tablaRanking tbody tr:nth-child(1) {
   background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
   font-weight: 600;
 }
 #tablaRanking tbody tr:nth-child(1) td:first-child {
-  color: #d97706;
-  font-weight: 700;
-  font-size: 1.2rem;
+  color: #d97706; font-weight: 700; font-size: 1.2rem;
 }
 #tablaRanking tbody tr:nth-child(2) {
   background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
   font-weight: 600;
 }
 #tablaRanking tbody tr:nth-child(2) td:first-child {
-  color: #6b7280;
-  font-weight: 700;
-  font-size: 1.1rem;
+  color: #6b7280; font-weight: 700; font-size: 1.1rem;
 }
 #tablaRanking tbody tr:nth-child(3) {
   background: linear-gradient(90deg, #fed7aa 0%, #fdba74 100%);
   font-weight: 600;
 }
 #tablaRanking tbody tr:nth-child(3) td:first-child {
-  color: #c2410c;
-  font-weight: 700;
-  font-size: 1.1rem;
+  color: #c2410c; font-weight: 700; font-size: 1.1rem;
 }
+
+/* Menú inferior */
 .menu {
   margin-top: 20px;
   display: flex;
@@ -140,21 +105,13 @@ a.menu-link {
   font-weight: 600;
   transition: transform 0.2s;
 }
-a.menu-link:hover { 
-  transform: translateY(-2px);
-}
+a.menu-link:hover { transform: translateY(-2px); }
 
 #tablaRanking {
-  border-collapse: collapse;
-  width: 100%;
-  max-width: 700px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-  margin-top: 15px;
+  margin-top: 30px;
 }
 
+/* Select bonic */
 .select-xulo {
   padding: 10px 14px;
   border-radius: 10px;
@@ -177,7 +134,7 @@ a.menu-link:hover {
   box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
 }
 
-/* Taules en paral·lel */
+/* Disseny paral·lel */
 .tablas-lado {
   display: flex;
   flex-wrap: wrap;
@@ -186,40 +143,12 @@ a.menu-link:hover {
   width: 100%;
   max-width: 1400px;
 }
-.tabla {
-  flex: 1 1 600px;
-}
+.tabla { flex: 1 1 600px; }
 
-/* Contenidor amb scroll per mòbils */
-.table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-}
+.table-scroll { overflow-x: auto; width: 100%; }
+.table-scroll table { min-width: 100%; }
 
-.table-scroll table {
-  min-width: 100%;
-}
-
-.table-scroll::-webkit-scrollbar {
-  height: 8px;
-}
-
-.table-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.table-scroll::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 10px;
-}
-
-.table-scroll::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-}
-
-/* Barres percentuals llargues */
+/* Barres percentuals */
 .barra {
   height: 30px;
   border-radius: 10px;
@@ -229,177 +158,41 @@ a.menu-link:hover {
   margin: 6px auto;
   width: 180px;
 }
-.barra-inner {
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.8s ease-in-out;
-}
+.barra-inner { height: 100%; border-radius: 10px; transition: width 0.8s ease-in-out; }
 .barra-1 { background: #22c55e; }
 .barra-X { background: #3b82f6; }
 .barra-2 { background: #ef4444; }
 .percent-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
-/* Files de les barres */
-.partit-barres td {
-  vertical-align: middle;
-  padding: 5px 10px;
-}
-
-/* Etiqueta sobre cada barra */
-.label-equip {
+.label-equip, .label-vs {
   text-align: center;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #1e3a8a;
   margin-bottom: 5px;
 }
-.label-vs {
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-bottom: 5px;
-}
+.label-equip { font-weight: 600; font-size: 0.9rem; color: #1e3a8a; }
+.label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
 
-/* Desplegable Informació - Globus */
+/* Panell info */
 .info-panel {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  width: 550px;
-  max-width: calc(100vw - 40px);
-  background: white;
-  border-radius: 12px;
+  position: fixed; top: 70px; left: 20px;
+  width: 550px; max-width: calc(100vw - 40px);
+  background: white; border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
+  z-index: 999; opacity: 0; visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.3s ease-in-out;
-  max-height: 500px;
-  overflow-y: auto;
+  max-height: 500px; overflow-y: auto;
 }
-
-.info-panel.open {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Fletxa del globus */
-.info-panel::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 30px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid white;
-}
-
-.info-content {
-  padding: 20px;
-}
-
-.info-content h2 {
-  color: #4f46e5;
-  margin-top: 0;
-  margin-bottom: 15px;
-}
-
-.info-content p {
-  line-height: 1.6;
-  color: #1f2937;
-}
-
+.info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.info-content { padding: 20px; }
+.info-content h2 { color: #4f46e5; margin-top: 0; margin-bottom: 15px; }
+.info-content p { line-height: 1.6; color: #1f2937; }
 .alerta {
-  background: #fff3cd;
-  color: #92400e;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #fcd34d;
-  margin: 15px 0;
-  font-weight: 600;
-  text-align: center;
-}
-
-.info-content details {
-  background: #f9fafb;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  transition: all 0.3s ease;
-}
-
-.info-content details[open] {
-  background: #eef2ff;
-  border-color: #4f46e5;
-}
-
-.info-content summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: #333;
-  list-style: none;
-  position: relative;
-  padding-right: 25px;
-}
-
-.info-content summary::marker {
-  display: none;
-}
-
-.info-content summary::after {
-  content: "▾";
-  position: absolute;
-  right: 0;
-  top: 0;
-  font-size: 1.2rem;
-  transition: transform 0.3s ease;
-  color: #4f46e5;
-}
-
-.info-content details[open] summary::after {
-  transform: rotate(180deg);
-}
-
-.info-content details ul {
-  margin-top: 10px;
-  padding-left: 20px;
-  color: #374151;
-  line-height: 1.6;
-}
-
-.info-content details details {
-  background: #f3f4f6;
-  border: 1px dashed #cbd5e1;
-  margin-top: 10px;
-  border-radius: 8px;
-}
-
-.info-content details details summary {
-  background: #6366f1;
-  color: white;
-  padding: 10px 14px;
-  border-radius: 8px;
-}
-
-.info-content details details ul {
-  background: #f9fafb;
-  padding: 10px 20px;
-  border-radius: 0 0 8px 8px;
+  background: #fff3cd; color: #92400e; padding: 12px;
+  border-radius: 10px; border: 1px solid #fcd34d;
+  margin: 15px 0; font-weight: 600; text-align: center;
 }
 </style>
 </head>
@@ -410,67 +203,11 @@ a.menu-link:hover {
 
 <h1>🏆 Rànquing General</h1>
 
-<!-- Desplegable Informació -->
 <div id="infoPanel" class="info-panel">
   <div class="info-content">
     <h2>ℹ️ Com funciona la Quiniela</h2>
-    
     <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
-    
-    <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions a cada jornada.</p>
-
-    <details open>
-      <summary>🎟️ Apostes</summary>
-      <ul>
-        <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
-        <li>Pots fer tantes apostes com vulguis a cada jornada.</li>
-        <li>Només la teva aposta amb <strong>la millor puntuació</strong> de la jornada sumarà per a la classificació general.</li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>📊 Puntuació per jornada</summary>
-      <ul>
-        <li>Encert de <strong>1</strong> (guanyador local) o <strong>2</strong> (guanyador visitant): <strong>1 punt</strong>.</li>
-        <li>Encert de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
-        <li>Es sumen els punts de totes les apostes de cada participant.</li>
-        <li>Només comptarà <strong>l'aposta amb més punts</strong> de cada participant per al total general.</li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>🏅 Premis</summary>
-      <ul>
-        <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
-        <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
-        <ul>
-          <li>50% destinat al <strong>premi setmanal</strong>.</li>
-          <li>15% destinat al <strong>premi general</strong>.</li>
-          <li>35% destinat al <strong>club</strong>.</li>
-        </ul>
-      </ul>
-
-      <details>
-        <summary>💰 Premi per jornada</summary>
-        <ul>
-          <li>Per obtenir el premi setmanal cal fer <strong>ple d'encerts (8 encerts)</strong>.</li>
-          <li>Si hi ha diversos participants amb ple, el premi es divideix entre tots.</li>
-          <li>Si no hi ha cap ple:</li>
-          <ul>
-            <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
-            <li>El 50% restant es divideix a parts iguals entre el club i el premi setmanal de la jornada següent.</li>
-          </ul>
-        </ul>
-      </details>
-
-      <details>
-        <summary>🏆 Premi de temporada</summary>
-        <ul>
-          <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi general</strong>.</li>
-          <li>Si hi ha empat, el premi es dividirà a parts iguals entre els empatats.</li>
-        </ul>
-      </details>
-    </details>
+    <p>Consulta com funciona el sistema de punts i els premis a la pàgina d'informació completa.</p>
   </div>
 </div>
 
@@ -481,13 +218,10 @@ a.menu-link:hover {
 </select>
 
 <table id="tablaRanking">
-  <thead>
-    <tr id="headerRow"><th>#</th><th>Nom</th><th>Punts</th></tr>
-  </thead>
+  <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
   <tbody></tbody>
 </table>
 
-<!-- Taules paral·leles -->
 <div class="tablas-lado">
   <div class="tabla">
     <h2>📋 Participants i Quinieles Fetes</h2>
@@ -515,24 +249,18 @@ a.menu-link:hover {
 </div>
 
 <script>
-// Desplegable tipus globus
+// Panell informatiu
 const infoPanel = document.getElementById("infoPanel");
 const btnInfo = document.getElementById("btnInfo");
-
-if (btnInfo && infoPanel) {
-  btnInfo.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    infoPanel.classList.toggle("open");
-  });
-  
-  // Tancar si cliques fora
-  document.addEventListener('click', (e) => {
-    if (!infoPanel.contains(e.target) && !btnInfo.contains(e.target)) {
-      infoPanel.classList.remove("open");
-    }
-  });
-}
+btnInfo.addEventListener("click", e => {
+  e.stopPropagation();
+  infoPanel.classList.toggle("open");
+});
+document.addEventListener("click", e => {
+  if (!infoPanel.contains(e.target) && !btnInfo.contains(e.target)) {
+    infoPanel.classList.remove("open");
+  }
+});
 </script>
 
 <script type="module">
@@ -547,8 +275,10 @@ const adminLink = document.getElementById("adminLink");
 const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
+// --- Carrega les quinieles disponibles
 async function cargarQuinielas() {
-  const { data } = await supabase.from("quiniela_oficial").select("nombre").order("creada_el", { ascending: false });
+  const { data } = await supabase.from("quiniela_oficial")
+    .select("nombre").order("creada_el", { ascending: false });
   if (data) data.forEach(q => {
     const opt = document.createElement("option");
     opt.value = q.nombre;
@@ -557,28 +287,43 @@ async function cargarQuinielas() {
   });
 }
 
+// --- Carrega el rànquing (general o per jornada)
 async function cargarRanking(nombreQuiniela = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
   let data = [];
+
   if (nombreQuiniela) {
+    // Cas filtrat per jornada → pren la millor puntuació de cada jugador
     const { data: detalle } = await supabase
-      .from("resultados_detalle").select("nombre, puntos")
-      .eq("quiniela_nombre", nombreQuiniela)
-      .order("puntos", { ascending: false });
-    data = detalle || [];
+      .from("resultados_detalle")
+      .select("nombre, puntos, participante_id, quiniela_nombre")
+      .eq("quiniela_nombre", nombreQuiniela);
+
+    if (detalle?.length) {
+      const millor = {};
+      detalle.forEach(d => {
+        if (!millor[d.participante_id] || d.puntos > millor[d.participante_id].puntos) {
+          millor[d.participante_id] = d;
+        }
+      });
+      data = Object.values(millor).sort((a, b) => b.puntos - a.puntos);
+    }
   } else {
     const { data: general } = await supabase
-      .from("resultados_generales").select("nombre, puntos_totales")
+      .from("resultados_generales")
+      .select("nombre, puntos_totales")
       .order("puntos_totales", { ascending: false });
-    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totals }));
+    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totales }));
   }
 
   if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
+
   tbodyRanking.innerHTML = data.map((r, i) => `
     <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>
   `).join("");
 }
 
+// --- Participants i quinieles fetes
 async function cargarActivos() {
   const { data } = await supabase.from("quinielas_participantes").select("participante_id, nombre");
   if (!data?.length) return;
@@ -593,12 +338,15 @@ async function cargarActivos() {
   `).join("");
 }
 
+// --- Estadístiques de la quiniela activa
 async function cargarEstadisticas() {
   tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
-  const { data: quinielaActiva } = await supabase.from("quiniela_oficial").select("id, data").eq("activa", true).single();
+  const { data: quinielaActiva } = await supabase
+    .from("quiniela_oficial").select("id, data").eq("activa", true).single();
   if (!quinielaActiva) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
 
-  const { data: apostes } = await supabase.from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
+  const { data: apostes } = await supabase
+    .from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
   if (!apostes?.length) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
 
   const partits = quinielaActiva.data;
@@ -632,6 +380,7 @@ async function cargarEstadisticas() {
   }).join("");
 }
 
+// --- Event listeners
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
 
 await cargarQuinielas();
