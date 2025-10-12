@@ -138,7 +138,7 @@ a.back-btn:hover {
   position: relative;
   overflow: hidden;
   margin: 6px auto;
-  max-width: 200px;
+  width: 180px;
 }
 .barra-inner {
   height: 100%;
@@ -156,7 +156,7 @@ a.back-btn:hover {
   font-size: 0.9rem;
   font-weight: 700;
   color: white;
-  text-shadow: 0 0 4px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
 /* Partit a sobre */
@@ -197,7 +197,23 @@ a.back-btn:hover {
 /* Files de les barres */
 .partit-barres td {
   vertical-align: middle;
-  padding: 15px 10px;
+  padding: 5px 10px;
+}
+
+/* Etiqueta sobre cada barra */
+.label-equip {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e3a8a;
+  margin-bottom: 5px;
+}
+.label-vs {
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 5px;
 }
 </style>
 </head>
@@ -326,19 +342,19 @@ async function cargarEstadisticas() {
     const p2 = ((r["2"] / total) * 100).toFixed(1);
     const match = partits[i];
     return `
-      <tr class="partit-header">
-        <td colspan="3">
-          <div class="partit-equipos">
-            <div class="equip equip-local">${match.local}</div>
-            <div class="vs">vs.</div>
-            <div class="equip equip-visitant">${match.visitante}</div>
-          </div>
-        </td>
-      </tr>
       <tr class="partit-barres">
-        <td><div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div></td>
-        <td><div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div></td>
-        <td><div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div></td>
+        <td>
+          <div class="label-equip">${match.local}</div>
+          <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
+        </td>
+        <td>
+          <div class="label-vs">vs.</div>
+          <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
+        </td>
+        <td>
+          <div class="label-equip">${match.visitante}</div>
+          <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
+        </td>
       </tr>`;
   }).join("");
 }
