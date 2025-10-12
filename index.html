@@ -117,9 +117,26 @@ a:hover { transform: translateY(-2px); }
   background: #f9fafb;
   font-weight: 600;
   text-align: center;
-  padding: 10px;
+  padding: 12px;
   color: #1e3a8a;
   border-top: 2px solid #e0e7ff;
+}
+
+/* ⚽ Format net per als equips */
+.equipes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+.equipes span {
+  font-weight: 600;
+}
+.vs {
+  color: #6b7280;
+  font-weight: 500;
 }
 </style>
 </head>
@@ -153,7 +170,6 @@ a:hover { transform: translateY(-2px); }
   <div class="tabla">
     <h2>⚽ Repartiment d’Apostes (Quiniela Activa)</h2>
     <table id="tablaEstadisticas">
-      <!-- ✅ Eliminada la columna 'Partit' -->
       <thead><tr><th>1</th><th>X</th><th>2</th></tr></thead>
       <tbody></tbody>
     </table>
@@ -245,7 +261,9 @@ async function cargarEstadisticas() {
     const p2 = ((r["2"] / total) * 100).toFixed(1);
     const match = partits[i];
     return `
-      <tr><td colspan="3" class="partit-header">🏟️ ${match.local} vs ${match.visitante}</td></tr>
+      <tr><td colspan="3" class="partit-header">
+        <div class="equipes"><span>${match.local}</span><span class="vs">vs.</span><span>${match.visitante}</span></div>
+      </td></tr>
       <tr>
         <td><div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div></td>
         <td><div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div></td>
