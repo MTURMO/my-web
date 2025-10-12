@@ -84,6 +84,17 @@ a.back-btn:hover {
   transform: translateY(-2px); 
 }
 
+#tablaRanking {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  margin-top: 15px; /* <-- afegim marge superior */
+}
+
 
 .select-xulo {
   padding: 10px 14px;
@@ -177,7 +188,9 @@ a.back-btn:hover {
 <body>
 
 <div class="top-bar">
-  <a href="info.html" target="_blank" class="info-btn">ℹ️ Informació</a>
+  <!-- Eliminem el div .top-bar i deixem només el botó fixat -->
+<a href="info.html" target="_blank" class="info-btn back-btn">ℹ️ Informació</a>
+
 </div>
 
 <h1>🏆 Rànquing General</h1>
