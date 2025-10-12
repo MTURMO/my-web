@@ -14,6 +14,24 @@ body {
   flex-direction: column;
   align-items: center;
 }
+.top-bar {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+.info-btn {
+  padding: 8px 16px;
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+.info-btn:hover { transform: translateY(-2px); }
+
 h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; }
 h2 { color: #2563eb; margin-top: 40px; }
 table {
@@ -38,7 +56,7 @@ th { background: #e0e7ff; }
   flex-wrap: wrap;
   justify-content: center;
 }
-a {
+a.menu-link {
   padding: 10px 20px;
   background: linear-gradient(90deg,#4f46e5,#3b82f6);
   color: white;
@@ -47,7 +65,7 @@ a {
   font-weight: 600;
   transition: transform 0.2s;
 }
-a:hover { transform: translateY(-2px); }
+a.menu-link:hover { transform: translateY(-2px); }
 
 .select-xulo {
   padding: 10px 14px;
@@ -71,7 +89,7 @@ a:hover { transform: translateY(-2px); }
   box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
 }
 
-/* 📊 Taules en paral·lel */
+/* Taules en paral·lel */
 .tablas-lado {
   display: flex;
   flex-wrap: wrap;
@@ -84,7 +102,7 @@ a:hover { transform: translateY(-2px); }
   flex: 1 1 600px;
 }
 
-/* 🔵 Barres percentuals llargues */
+/* Barres percentuals llargues */
 .barra {
   height: 30px;
   border-radius: 10px;
@@ -112,7 +130,7 @@ a:hover { transform: translateY(-2px); }
   text-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
-/* 🏟️ Partit a sobre */
+/* Partit a sobre */
 .partit-header {
   background: #f9fafb;
   font-weight: 600;
@@ -121,7 +139,7 @@ a:hover { transform: translateY(-2px); }
   border-top: 2px solid #e0e7ff;
 }
 
-/* ⚽ Equips alineats amb 3 columnes (1 / X / 2) */
+/* Equips alineats amb 3 columnes (1 / X / 2) */
 .partit-fila {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -140,6 +158,10 @@ a:hover { transform: translateY(-2px); }
 </head>
 <body>
 
+<div class="top-bar">
+  <a href="info.html" target="_blank" class="info-btn">ℹ️ Informació</a>
+</div>
+
 <h1>🏆 Rànquing General</h1>
 
 <p>Consulta els punts totals o filtra per jornada:</p>
@@ -155,7 +177,7 @@ a:hover { transform: translateY(-2px); }
   <tbody></tbody>
 </table>
 
-<!-- 🧮 Taules paral·leles -->
+<!-- Taules paral·leles -->
 <div class="tablas-lado">
   <div class="tabla">
     <h2>📋 Participants i Quinieles Fetes</h2>
@@ -175,8 +197,8 @@ a:hover { transform: translateY(-2px); }
 </div>
 
 <div class="menu">
-  <a href="participante.html">Participant</a>
-  <a href="admin.html" id="adminLink">Administrador</a>
+  <a href="participante.html" class="menu-link">Participant</a>
+  <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
 </div>
 
 <script type="module">
@@ -214,7 +236,7 @@ async function cargarRanking(nombreQuiniela = "") {
     const { data: general } = await supabase
       .from("resultados_generales").select("nombre, puntos_totales")
       .order("puntos_totales", { ascending: false });
-    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totales }));
+    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totals }));
   }
 
   if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";

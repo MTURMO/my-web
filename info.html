@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Informació Quiniela</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f4f6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 { font-size: 2rem; color: #333; margin-bottom: 20px; text-align:center; }
+h2 { color: #2563eb; margin-top: 30px; margin-bottom: 10px; }
+p { line-height: 1.6; color: #1f2937; }
+ul { line-height: 1.6; margin-left: 20px; color: #1f2937; }
+a.back-btn {
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: transform 0.2s;
+  margin-bottom: 20px;
+}
+a.back-btn:hover { transform: translateY(-2px); }
+.info-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 700px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">⬅️ Tornar enrere</a>
+
+<h1>ℹ️ Informació Quiniela</h1>
+
+<div class="info-section">
+  <h2>Com funciona?</h2>
+  <p>La quiniela és un joc en què els participants prediuen els resultats dels partits. Cada aposta pot ser:</p>
+  <ul>
+    <li><strong>1</strong> - victòria del local</li>
+    <li><strong>X</strong> - empat</li>
+    <li><strong>2</strong> - victòria del visitant</li>
+  </ul>
+
+  <h2>Puntuació</h2>
+  <p>Els punts es calculen segons l’encert en els resultats:</p>
+  <ul>
+    <li>Acierta el resultat exacte: màxima puntuació.</li>
+    <li>Acierta només el resultat final (1/X/2): puntuació menor.</li>
+  </ul>
+
+  <h2>Filtrar per jornada</h2>
+  <p>Al rànquing principal pots seleccionar la quiniela d’una jornada concreta per veure els punts de cada participant només d’aquella jornada.</p>
+
+  <h2>Rànquing general</h2>
+  <p>El rànquing general mostra els punts totals acumulats per cada participant a totes les quinieles actives.</p>
+
+  <h2>Repartiment d’apostes</h2>
+  <p>La secció de repartiment mostra, per a cada partit, el percentatge de participants que han apostat per 1, X o 2. Això et permet veure quins resultats són més previsibles o més disputats.</p>
+</div>
+
+</body>
+</html>
