@@ -49,28 +49,6 @@ a {
 }
 a:hover { transform: translateY(-2px); }
 
-.instruccions {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 20px;
-  max-width: 700px;
-  margin: 20px 0;
-  line-height: 1.6;
-}
-.instruccions h2 { color: #4f46e5; margin-top: 0; }
-
-.alerta {
-  background: #fff3cd;
-  color: #92400e;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #fcd34d;
-  margin-bottom: 15px;
-  font-weight: 600;
-  text-align: center;
-}
-
 .select-xulo {
   padding: 10px 14px;
   border-radius: 10px;
@@ -175,7 +153,8 @@ a:hover { transform: translateY(-2px); }
   <div class="tabla">
     <h2>⚽ Repartiment d’Apostes (Quiniela Activa)</h2>
     <table id="tablaEstadisticas">
-      <thead><tr><th>Partit</th><th>1</th><th>X</th><th>2</th></tr></thead>
+      <!-- ✅ Eliminada la columna 'Partit' -->
+      <thead><tr><th>1</th><th>X</th><th>2</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -245,12 +224,12 @@ async function cargarActivos() {
 }
 
 async function cargarEstadisticas() {
-  tbodyEstadisticas.innerHTML = "<tr><td colspan='4'>Carregant...</td></tr>";
+  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
   const { data: quinielaActiva } = await supabase.from("quiniela_oficial").select("id, data").eq("activa", true).single();
-  if (!quinielaActiva) return tbodyEstadisticas.innerHTML = "<tr><td colspan='4'>No hi ha cap quiniela activa.</td></tr>";
+  if (!quinielaActiva) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
 
   const { data: apostes } = await supabase.from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
-  if (!apostes?.length) return tbodyEstadisticas.innerHTML = "<tr><td colspan='4'>Encara no hi ha apostes.</td></tr>";
+  if (!apostes?.length) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
 
   const partits = quinielaActiva.data;
   const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
@@ -266,9 +245,8 @@ async function cargarEstadisticas() {
     const p2 = ((r["2"] / total) * 100).toFixed(1);
     const match = partits[i];
     return `
-      <tr><td colspan="4" class="partit-header">${match.local} vs ${match.visitante}</td></tr>
+      <tr><td colspan="3" class="partit-header">🏟️ ${match.local} vs ${match.visitante}</td></tr>
       <tr>
-        <td></td>
         <td><div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div></td>
         <td><div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div></td>
         <td><div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div></td>
