@@ -271,32 +271,31 @@ if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "no
 // --- Carrega les quinieles
 async function cargarQuinielas() {
   const { data } = await supabase.from("quiniela_oficial")
-    .select("id, nombre").order("creada_el", { ascending: false });
+    .select("nombre").order("creada_el", { ascending: false });
   if (data) data.forEach(q => {
     const opt = document.createElement("option");
-    opt.value = q.id;
+    opt.value = q.nombre;
     opt.textContent = q.nombre;
     filtro.appendChild(opt);
   });
 }
 
 // --- Rànquing
-async function cargarRanking(quinielaId = "") {
+async function cargarRanking(quinielaNom = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
   let data = [];
 
-  if (quinielaId) {
-    // Obtenim punts per participant i sumem si té més d'una quiniela
+  if (quinielaNom) {
     const { data: detalle } = await supabase
       .from("resultados_detalle")
-      .select("participante_id, nombre, puntos, quiniela_id")
-      .eq("quiniela_id", quinielaId);
+      .select("nombre, puntos, quiniela_nombre")
+      .eq("quiniela_nombre", quinielaNom);
 
     if (detalle?.length) {
       const perJugador = {};
       detalle.forEach(d => {
-        if (!perJugador[d.participante_id]) perJugador[d.participante_id] = { nombre: d.nombre, puntos: 0 };
-        perJugador[d.participante_id].puntos += d.puntos;
+        if (!perJugador[d.nombre]) perJugador[d.nombre] = { nombre: d.nombre, puntos: 0 };
+        perJugador[d.nombre].puntos += d.puntos;
       });
       data = Object.values(perJugador).sort((a, b) => b.puntos - a.puntos);
     }
@@ -308,7 +307,13 @@ async function cargarRanking(quinielaId = "") {
     data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totales }));
   }
 
-  if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
+  if (!data.length) {
+    tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
+    return;
+  }
+
+  // Mostrar també els que tenen 0 punts
+  data = data.map(d => ({ ...d, puntos: d.puntos || 0 }));
 
   tbodyRanking.innerHTML = data.map((r, i) => `
     <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>

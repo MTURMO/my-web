@@ -49,9 +49,7 @@ button:hover {
   border-bottom: 1px solid #ddd;
   padding: 10px 0;
 }
-.match span {
-  flex: 1;
-}
+.match span { flex: 1; }
 select {
   padding: 6px;
   border-radius: 6px;
@@ -66,9 +64,7 @@ select {
   padding: 8px;
   text-align: center;
 }
-#ranking th {
-  background: #eef2ff;
-}
+#ranking th { background: #eef2ff; }
 .hidden { display: none; }
 </style>
 </head>
@@ -89,11 +85,9 @@ select {
 import { supabase } from './supabaseClient.js';
 
 (async () => {
-  // 🔐 Comprovació sessió i admin
   const { data: { session } } = await supabase.auth.getSession();
   const isLocalAdmin = localStorage.getItem("isAdmin") === "true";
   const isSupabaseAdmin = session?.user?.email === "admin@quiniela.com";
-
   if (!isLocalAdmin && !isSupabaseAdmin) {
     alert("Accés restringit. Has d'iniciar sessió com a administrador.");
     window.location.href = "admin.html";
@@ -104,22 +98,15 @@ import { supabase } from './supabaseClient.js';
   const btnRanking = document.getElementById("btnRanking");
   const cont = document.getElementById("partidosContainer");
   const rankingDiv = document.getElementById("ranking");
-
   let quinielaActiva = null;
 
-  // 🟢 Carrega la quiniela activa
   async function carregarQuinielaActiva() {
     const { data, error } = await supabase
-      .from("quiniela_oficial")
-      .select("*")
-      .eq("activa", true)
-      .single();
-
+      .from("quiniela_oficial").select("*").eq("activa", true).single();
     if (error || !data) {
       alert("❌ No s'ha trobat cap quiniela activa.");
       return null;
     }
-
     quinielaActiva = data;
     return data;
   }
@@ -127,13 +114,11 @@ import { supabase } from './supabaseClient.js';
   // 📝 Afegir resultats
   btnAfegir.addEventListener("click", async () => {
     rankingDiv.classList.add("hidden");
-
     const quiniela = await carregarQuinielaActiva();
     if (!quiniela) return;
 
     cont.classList.remove("hidden");
     cont.innerHTML = "<h2 style='text-align:center;margin-bottom:10px;'>Introdueix els resultats</h2>";
-
     quiniela.data.forEach((p, i) => {
       const val = quiniela.resultados_validos?.[i] || "";
       cont.innerHTML += `
@@ -149,34 +134,18 @@ import { supabase } from './supabaseClient.js';
     });
 
     cont.innerHTML += `<button id="guardarResultados" style="margin-top:15px;width:100%;">💾 Guardar Resultats</button>`;
-
     document.getElementById("guardarResultados").addEventListener("click", guardarResultats);
   });
 
-  // 💾 Guardar resultats vàlids
   async function guardarResultats() {
     const resultados_validos = [];
     quinielaActiva.data.forEach((_, i) => {
       const val = document.getElementById(`res-${i}`).value;
       resultados_validos.push(val || null);
     });
-
-    const { error: insertError } = await supabase
-      .from("resultados_quiniela")
-      .insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
-
-    if (insertError) {
-      alert("❌ Error guardant resultats: " + insertError.message);
-      return;
-    }
-
-    const { error } = await supabase
-      .from("quiniela_oficial")
-      .update({ resultados_validos })
-      .eq("id", quinielaActiva.id);
-
-    if (error) alert("❌ Error guardant resultats a quiniela_oficial: " + error.message);
-    else alert("✅ Resultats guardats correctament!");
+    await supabase.from("resultados_quiniela").insert([{ quiniela_id: quinielaActiva.id, resultados_validos }]);
+    await supabase.from("quiniela_oficial").update({ resultados_validos }).eq("id", quinielaActiva.id);
+    alert("✅ Resultats guardats correctament!");
   }
 
   // 🏆 Calcular rànquing
@@ -191,23 +160,16 @@ import { supabase } from './supabaseClient.js';
       return;
     }
 
-    const { data: participants, error } = await supabase
+    const { data: participants } = await supabase
       .from("quinielas_participantes")
-      .select("*")
-      .eq("pagado", true)
-      .eq("quiniela_id", quinielaActiva.id);
+      .select("*").eq("pagado", true).eq("quiniela_id", quinielaActiva.id);
 
-    if (error) {
-      rankingDiv.innerHTML = "<p style='color:red;'>Error carregant participants.</p>";
-      return;
-    }
-
-    if (!participants || participants.length === 0) {
+    if (!participants?.length) {
       rankingDiv.innerHTML = "<p>No hi ha participants pagats per aquesta quiniela.</p>";
       return;
     }
 
-    // 💯 Calcular punts (2 per empat encertat)
+    // 💯 Calcula punts (també mostra 0)
     const rankingTemp = participants.map(p => {
       let encerts = 0;
       quiniela.resultados_validos.forEach((res, i) => {
@@ -223,13 +185,10 @@ import { supabase } from './supabaseClient.js';
       };
     });
 
-    // 🔁 Agrupar per correu — conservar només la millor quiniela
     const rankingMap = new Map();
     rankingTemp.forEach(r => {
       const actual = rankingMap.get(r.correu);
-      if (!actual || r.encerts > actual.encerts) {
-        rankingMap.set(r.correu, { ...r });
-      }
+      if (!actual || r.encerts > actual.encerts) rankingMap.set(r.correu, { ...r });
     });
 
     const ranking = Array.from(rankingMap.values()).sort((a, b) => b.encerts - a.encerts);
@@ -244,26 +203,19 @@ import { supabase } from './supabaseClient.js';
     html += `<button id="guardarRanking" style="margin-top:15px;width:100%;">💾 Guardar Rànquing General</button>`;
     rankingDiv.innerHTML = html;
 
-    // 💾 Desa el ranking global i detallat
+    // 💾 Desa els resultats
     document.getElementById("guardarRanking").addEventListener("click", async () => {
       for (const r of ranking) {
         if (!r.correu) continue;
-
         const { data: existent } = await supabase
-          .from("resultados_generales")
-          .select("puntos_totales")
-          .eq("correo", r.correu)
-          .single();
-
+          .from("resultados_generales").select("puntos_totales").eq("correo", r.correu).single();
         const puntsTotals = (existent?.puntos_totales || 0) + r.encerts;
-
         await supabase.from("resultados_generales").upsert({
           correo: r.correu,
           nombre: r.nom,
           puntos_totales: puntsTotals,
           ultima_actualizacion: new Date().toISOString()
         }, { onConflict: "correo" });
-
         await supabase.from("resultados_detalle").insert({
           correo: r.correu,
           nombre: r.nom,
@@ -271,12 +223,10 @@ import { supabase } from './supabaseClient.js';
           puntos: r.encerts
         });
       }
-
-      alert("✅ Rànquing guardat correctament al total i al detall per jornada!");
+      alert("✅ Rànquing (incloent 0 punts) guardat correctament!");
     });
   });
 })();
 </script>
-
 </body>
 </html>
