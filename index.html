@@ -68,10 +68,10 @@ a.menu-link {
 a.menu-link:hover { transform: translateY(-2px); }
 
 a.back-btn {
-  position: fixed;      /* Fixat a la pantalla */
-  top: 20px;            /* Separació del top */
-  left: 20px;           /* Separació de l’esquerra */
-  z-index: 1000;        /* Que estigui per sobre de la resta */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
   padding: 10px 20px;
   background: linear-gradient(90deg,#4f46e5,#3b82f6);
   color: white;
@@ -92,9 +92,8 @@ a.back-btn:hover {
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   margin-bottom: 20px;
-  margin-top: 15px; /* <-- afegim marge superior */
+  margin-top: 15px;
 }
-
 
 .select-xulo {
   padding: 10px 14px;
@@ -138,7 +137,8 @@ a.back-btn:hover {
   background: #e5e7eb;
   position: relative;
   overflow: hidden;
-  margin: 6px 0;
+  margin: 6px auto;
+  max-width: 200px;
 }
 .barra-inner {
   height: 100%;
@@ -168,29 +168,43 @@ a.back-btn:hover {
   border-top: 2px solid #e0e7ff;
 }
 
-/* Equips alineats amb 3 columnes (1 / X / 2) */
-.partit-fila {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+/* Capçalera del partit amb els equips */
+.partit-equipos {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-items: center;
-  padding: 10px 0;
+  padding: 12px 20px;
+  gap: 15px;
 }
-.partit-fila span {
+.partit-equipos .equip {
+  flex: 1;
   font-weight: 600;
+  font-size: 0.95rem;
 }
-.partit-fila .vs {
+.partit-equipos .equip-local {
+  text-align: right;
+}
+.partit-equipos .equip-visitant {
+  text-align: left;
+}
+.partit-equipos .vs {
   color: #6b7280;
   font-weight: 500;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* Files de les barres */
+.partit-barres td {
+  vertical-align: middle;
+  padding: 15px 10px;
 }
 </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <!-- Eliminem el div .top-bar i deixem només el botó fixat -->
 <a href="info.html" target="_blank" class="info-btn back-btn">ℹ️ Informació</a>
-
 </div>
 
 <h1>🏆 Rànquing General</h1>
@@ -219,9 +233,9 @@ a.back-btn:hover {
   </div>
 
   <div class="tabla">
-    <h2>⚽ Repartiment d’Apostes (Quiniela Activa)</h2>
+    <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
     <table id="tablaEstadisticas">
-      <thead><tr><th>1</th><th>X</th><th>2</th></tr></thead>
+      <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -314,14 +328,14 @@ async function cargarEstadisticas() {
     return `
       <tr class="partit-header">
         <td colspan="3">
-          <div class="partit-fila">
-            <span>${match.local}</span>
-            <span class="vs">vs.</span>
-            <span>${match.visitante}</span>
+          <div class="partit-equipos">
+            <div class="equip equip-local">${match.local}</div>
+            <div class="vs">vs.</div>
+            <div class="equip equip-visitant">${match.visitante}</div>
           </div>
         </td>
       </tr>
-      <tr>
+      <tr class="partit-barres">
         <td><div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div></td>
         <td><div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div></td>
         <td><div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div></td>
