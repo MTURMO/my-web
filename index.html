@@ -117,24 +117,22 @@ a:hover { transform: translateY(-2px); }
   background: #f9fafb;
   font-weight: 600;
   text-align: center;
-  padding: 12px;
   color: #1e3a8a;
   border-top: 2px solid #e0e7ff;
 }
 
-/* ⚽ Format net per als equips */
-.equipes {
-  display: flex;
-  justify-content: center;
+/* ⚽ Equips alineats amb 3 columnes (1 / X / 2) */
+.partit-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  gap: 30px;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
+  justify-items: center;
+  padding: 10px 0;
 }
-.equipes span {
+.partit-fila span {
   font-weight: 600;
 }
-.vs {
+.partit-fila .vs {
   color: #6b7280;
   font-weight: 500;
 }
@@ -261,9 +259,15 @@ async function cargarEstadisticas() {
     const p2 = ((r["2"] / total) * 100).toFixed(1);
     const match = partits[i];
     return `
-      <tr><td colspan="3" class="partit-header">
-        <div class="equipes"><span>${match.local}</span><span class="vs">vs.</span><span>${match.visitante}</span></div>
-      </td></tr>
+      <tr class="partit-header">
+        <td colspan="3">
+          <div class="partit-fila">
+            <span>${match.local}</span>
+            <span class="vs">vs.</span>
+            <span>${match.visitante}</span>
+          </div>
+        </td>
+      </tr>
       <tr>
         <td><div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div></td>
         <td><div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div></td>
