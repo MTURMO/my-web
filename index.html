@@ -258,15 +258,12 @@ async function cargarRanking(quinielaId = "") {
 
   try {
     if (quinielaId) {
-      console.log("Filtrant per quiniela ID:", quinielaId);
-
-      // Convertim a número si cal
-      const quinielaIdNum = isNaN(quinielaId) ? quinielaId : Number(quinielaId);
+      const quinielaNom = filtro.options[filtro.selectedIndex].text;
 
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
-        .select("participante_id, nombre, puntos, quiniela_id")
-        .eq("quiniela_id", quinielaIdNum);
+        .select("participante_id, nombre, puntos, quiniela_nombre")
+        .eq("quiniela_nombre", quinielaNom);
 
       if (error) console.error("Error Supabase:", error);
 
@@ -280,7 +277,6 @@ async function cargarRanking(quinielaId = "") {
         data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
       }
     } else {
-      // Sense filtre: mostrar rànquing general
       const { data: general, error } = await supabase
         .from("resultados_generales")
         .select("nombre, puntos_totales")
@@ -295,13 +291,7 @@ async function cargarRanking(quinielaId = "") {
     }
 
     tbodyRanking.innerHTML = data
-      .map((r, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${r.nombre}</td>
-          <td>${r.punts}</td>
-        </tr>
-      `)
+      .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`)
       .join("");
 
   } catch (err) {
@@ -309,6 +299,7 @@ async function cargarRanking(quinielaId = "") {
     tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
   }
 }
+
 
 
 // --- Participants de la quiniela activa
