@@ -368,6 +368,8 @@ async function cargarRanking(quinielaId = "") {
     if (quinielaId) {
       const quinielaNom = filtro.options[filtro.selectedIndex].text;
 
+      console.log("Carregant rànquing per a quiniela:", quinielaNom);
+
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
         .select("participante_id, nombre, puntos, quiniela_nombre")
