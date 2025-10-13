@@ -391,15 +391,14 @@ async function cargarRanking(quinielaId = "") {
 
   try {
     if (quinielaId) {
-      // Agafem el nom de la jornada seleccionada al desplegable
       const quinielaNom = filtro.options[filtro.selectedIndex].text;
 
       console.log("Carregant rànquing per a quiniela:", quinielaNom);
 
-      // Consulta a Supabase amb el filtre correcte
+      // Fem la consulta amb el filtre correcte
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
-        .select("id_participante, nombre, puntos, quiniela_nombre")
+        .select("correo, nombre, puntos, quiniela_nombre")
         .eq("quiniela_nombre", quinielaNom);
 
       if (error) {
@@ -409,11 +408,11 @@ async function cargarRanking(quinielaId = "") {
       }
 
       if (detalle?.length) {
-        // Guardem només la millor puntuació de cada participant
+        // Guardem només la millor puntuació per participant
         const perJugador = {};
         detalle.forEach(d => {
-          if (!perJugador[d.id_participante] || d.puntos > perJugador[d.id_participante].punts) {
-            perJugador[d.id_participante] = { nombre: d.nombre, punts: d.puntos };
+          if (!perJugador[d.correo] || d.puntos > perJugador[d.correo].punts) {
+            perJugador[d.correo] = { nombre: d.nombre, punts: d.puntos };
           }
         });
 
@@ -451,8 +450,6 @@ async function cargarRanking(quinielaId = "") {
     tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
   }
 }
-
-
 
 
 // --- Participants de la quiniela activa
