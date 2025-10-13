@@ -204,6 +204,31 @@ a.menu-link:hover { transform: translateY(-2px); }
   line-height: 1.6;
   color: #1f2937;
 }
+
+.info-content details {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  transition: background 0.2s;
+}
+.info-content details[open] {
+  background: #eef2ff;
+}
+.info-content summary {
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+.info-content ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+.info-content details summary::-webkit-details-marker {
+  display: none; /* opcional per treure el triangle per defecte */
+}
+
 </style>
 </head>
 <body>
@@ -372,7 +397,7 @@ async function cargarRanking(quinielaId = "") {
 
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
-        .select("participante_id, nombre, puntos, quiniela_nombre")
+        .select("nombre, puntos, quiniela_nombre")
         .eq("quiniela_nombre", quinielaNom);
 
       if (error) console.error("Error Supabase:", error);
