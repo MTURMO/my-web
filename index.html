@@ -167,6 +167,8 @@ a.menu-link:hover { transform: translateY(-2px); }
   width: 100%; max-width: 1400px; margin-top: 40px;
 }
 .tabla { flex: 1 1 600px; min-width: 0; max-width: 100%; }
+.tabla-participants { flex: 0 1 400px; }
+.tabla-estadistiques { flex: 1 1 700px; }
 
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 
@@ -360,17 +362,17 @@ a.menu-link:hover { transform: translateY(-2px); }
 </table>
 
 <div class="tablas-lado">
-  <div class="tabla">
-    <h2>📋 Participants i Quinieles Fetes (Quiniela activa)</h2>
+  <div class="tabla tabla-participants">
+    <h2>📋 Participants i Quinieles Fetes</h2>
     <div class="table-scroll">
       <table id="tablaActivos">
-        <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
+        <thead><tr><th>#</th><th>Nom</th><th>Quinieles</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
   </div>
 
-  <div class="tabla">
+  <div class="tabla tabla-estadistiques">
     <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
     <div class="table-scroll">
       <table id="tablaEstadisticas">
@@ -528,7 +530,11 @@ async function cargarEstadisticas() {
 
   const { data: apostes } = await supabase
     .from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
-  if (!apostes?.length) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
+  
+  // Comprovar que hi hagi mínim 3 quinieles
+  if (!apostes?.length || apostes.length < 3) {
+    return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
+  }
 
   const partits = quinielaActiva.data;
   const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
