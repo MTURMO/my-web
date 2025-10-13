@@ -6,6 +6,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background: #f3f4f6;
@@ -13,6 +17,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
+  min-height: 100vh;
 }
 
 .info-btn, .login-btn {
@@ -34,23 +40,49 @@ body {
 .info-btn { left: 20px; }
 .login-btn { right: 20px; text-decoration: none; display: inline-block; }
 
-h1 { font-size: 2rem; color: #333; margin-bottom: 10px; text-align:center; margin-top: 60px; }
-h2 { color: #2563eb; margin-top: 40px; text-align: center; }
+h1 { 
+  font-size: 2rem; 
+  color: #333; 
+  margin-bottom: 20px; 
+  text-align: center; 
+  margin-top: 60px;
+  width: 100%;
+  max-width: 1400px;
+}
+
+h2 { 
+  color: #2563eb; 
+  margin-top: 40px; 
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 table {
   border-collapse: collapse;
   width: 100%;
+  max-width: 700px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   margin-bottom: 20px;
   overflow: hidden;
 }
+
 th, td {
   padding: 12px;
   text-align: center;
   border-bottom: 1px solid #f3f4f6;
 }
+
 th {
   background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
   color: white;
@@ -60,8 +92,9 @@ th {
   letter-spacing: 0.5px;
   border-bottom: 3px solid #3b82f6;
 }
+
 tbody tr { transition: all 0.2s ease; }
-tbody tr:hover { background: #f0f9ff; transform: scale(1.01); }
+tbody tr:hover { background: #f0f9ff; }
 tbody tr:nth-child(odd) { background: #fafbff; }
 
 /* Colors de pòdium */
@@ -89,12 +122,14 @@ tbody tr:nth-child(odd) { background: #fafbff; }
 
 /* Menú inferior */
 .menu {
-  margin-top: 20px;
+  margin-top: 40px;
+  margin-bottom: 20px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
 }
+
 a.menu-link {
   padding: 10px 20px;
   background: linear-gradient(90deg,#4f46e5,#3b82f6);
@@ -105,8 +140,6 @@ a.menu-link {
   transition: transform 0.2s;
 }
 a.menu-link:hover { transform: translateY(-2px); }
-
-#tablaRanking { margin-top: 30px; }
 
 /* Select bonic */
 .select-xulo {
@@ -120,6 +153,9 @@ a.menu-link:hover { transform: translateY(-2px); }
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  margin-bottom: 20px;
+  max-width: 700px;
+  width: 100%;
 }
 .select-xulo:hover {
   border-color: #4f46e5;
@@ -139,11 +175,38 @@ a.menu-link:hover { transform: translateY(-2px); }
   gap: 30px;
   width: 100%;
   max-width: 1400px;
+  margin-top: 40px;
 }
-.tabla { flex: 1 1 600px; }
 
-.table-scroll { overflow-x: auto; width: 100%; }
-.table-scroll table { min-width: 100%; }
+.tabla { 
+  flex: 1 1 600px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table-scroll { 
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
 
 /* Barres percentuals */
 .barra {
@@ -154,6 +217,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   overflow: hidden;
   margin: 6px auto;
   width: 180px;
+  max-width: 100%;
 }
 .barra-inner { height: 100%; border-radius: 10px; transition: width 0.8s ease-in-out; }
 .barra-1 { background: #22c55e; }
@@ -164,21 +228,20 @@ a.menu-link:hover { transform: translateY(-2px); }
   font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 .label-equip, .label-vs { text-align: center; margin-bottom: 5px; }
-.label-equip { font-weight: 600; font-size: 0.9rem; color: #1e3a8a; }
+.label-equip { 
+  font-weight: 600; 
+  font-size: 0.9rem; 
+  color: #1e3a8a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 5px;
+}
 .label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
 
-/* Responsivitat mòbil */
-@media (max-width: 700px) {
-  .tablas-lado { flex-direction: column; gap: 20px; }
-  .tabla h2 { font-size: 1.2rem; }
-  .barra { width: 100%; max-width: 250px; height: 24px; }
-  .label-equip, .label-vs { font-size: 0.8rem; }
-  th, td { padding: 8px; font-size: 0.85rem; }
-  body { padding: 12px; }
-  #tablaEstadisticas table { width: 100%; display: block; }
-  #tablaEstadisticas tbody tr { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
-  #tablaEstadisticas td { border-bottom: none; width: 100%; }
-  .table-scroll { overflow-x: hidden; }
+.partit-barres td {
+  vertical-align: middle;
+  padding: 10px 8px;
 }
 
 /* Panell info */
@@ -193,6 +256,17 @@ a.menu-link:hover { transform: translateY(-2px); }
   max-height: 500px; overflow-y: auto;
 }
 .info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.info-panel::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}
 .info-content { padding: 20px; }
 .info-content h2 { color: #4f46e5; margin-top: 0; margin-bottom: 15px; }
 .info-content p { line-height: 1.6; color: #1f2937; }
@@ -201,6 +275,139 @@ a.menu-link:hover { transform: translateY(-2px); }
   border-radius: 10px; border: 1px solid #fcd34d;
   margin: 15px 0; font-weight: 600; text-align: center;
 }
+
+/* Responsivitat mòbil */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-top: 70px;
+    padding: 0 10px;
+  }
+  
+  h2 {
+    font-size: 1.2rem;
+    margin-top: 30px;
+  }
+  
+  .info-btn, .login-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .info-panel {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+  }
+  
+  .tablas-lado {
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  
+  .tabla {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 8px 4px;
+    font-size: 0.85rem;
+  }
+  
+  .select-xulo {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+  
+  .barra {
+    width: 150px;
+    height: 28px;
+  }
+  
+  .label-equip {
+    font-size: 0.8rem;
+    max-width: 140px;
+  }
+  
+  .label-vs {
+    font-size: 0.75rem;
+  }
+  
+  .percent-text {
+    font-size: 0.85rem;
+  }
+  
+  .partit-barres td {
+    padding: 8px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3rem;
+    margin-top: 65px;
+  }
+  
+  h2 {
+    font-size: 1.1rem;
+  }
+  
+  .info-btn, .login-btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    top: 15px;
+  }
+  
+  .info-btn {
+    left: 10px;
+  }
+  
+  .login-btn {
+    right: 10px;
+  }
+  
+  table {
+    font-size: 0.8rem;
+  }
+  
+  th {
+    font-size: 0.75rem;
+    padding: 8px 2px;
+  }
+  
+  td {
+    padding: 8px 4px;
+  }
+  
+  .barra {
+    width: 120px;
+    height: 25px;
+  }
+  
+  .label-equip {
+    font-size: 0.75rem;
+    max-width: 110px;
+  }
+  
+  .label-vs {
+    font-size: 0.7rem;
+  }
+  
+  .percent-text {
+    font-size: 0.75rem;
+  }
+}
 </style>
 </head>
 <body>
@@ -208,50 +415,52 @@ a.menu-link:hover { transform: translateY(-2px); }
 <button id="btnInfo" class="info-btn">ℹ️ Informació</button>
 <a href="participante.html" class="login-btn">🔐 Login</a>
 
-<h1>🏆 Rànquing General</h1>
+<div class="content-wrapper">
+  <h1>🏆 Rànquing General</h1>
 
-<div id="infoPanel" class="info-panel">
-  <div class="info-content">
-    <h2>ℹ️ Com funciona la Quiniela</h2>
-    <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
-    <p>Consulta com funciona el sistema de punts i els premis a la pàgina d’informació completa.</p>
-  </div>
-</div>
-
-<p>Consulta els punts totals o filtra per jornada:</p>
-<select id="filtroQuiniela" class="select-xulo">
-  <option value="">🔹 Totes les quinieles</option>
-</select>
-
-<table id="tablaRanking">
-  <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
-  <tbody></tbody>
-</table>
-
-<div class="tablas-lado">
-  <div class="tabla">
-    <h2>📋 Participants i Quinieles Fetes</h2>
-    <div class="table-scroll">
-      <table id="tablaActivos">
-        <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
-        <tbody></tbody>
-      </table>
+  <div id="infoPanel" class="info-panel">
+    <div class="info-content">
+      <h2>ℹ️ Com funciona la Quiniela</h2>
+      <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
+      <p>Consulta com funciona el sistema de punts i els premis a la pàgina d'informació completa.</p>
     </div>
   </div>
 
-  <div class="tabla">
-    <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
-    <div class="table-scroll">
-      <table id="tablaEstadisticas">
-        <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
-        <tbody></tbody>
-      </table>
+  <p>Consulta els punts totals o filtra per jornada:</p>
+  <select id="filtroQuiniela" class="select-xulo">
+    <option value="">🔹 Totes les quinieles</option>
+  </select>
+
+  <table id="tablaRanking">
+    <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="tablas-lado">
+    <div class="tabla">
+      <h2>📋 Participants i Quinieles Fetes</h2>
+      <div class="table-scroll">
+        <table id="tablaActivos">
+          <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tabla">
+      <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
+      <div class="table-scroll">
+        <table id="tablaEstadisticas">
+          <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="menu">
-  <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
+  <div class="menu">
+    <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
+  </div>
 </div>
 
 <script>
