@@ -253,23 +253,24 @@ async function cargarRanking(quinielaId = "") {
   if (quinielaId) {
     const { data: detalle } = await supabase
       .from("resultados_detalle")
-      .select("participante_id, nombre, puntos, quiniela_nombre")
-      .eq("quiniela_nombre", filtro.selectedOptions[0].textContent);
+      .select("participante_id, nombre, puntos, quiniela_id")
+      .eq("quiniela_id", quinielaId);
 
     if (detalle?.length) {
       const perJugador = {};
       detalle.forEach(d => {
-        if (!perJugador[d.participante_id]) perJugador[d.participante_id] = { nombre: d.nombre, puntos: 0 };
-        perJugador[d.participante_id].puntos += d.puntos;
+        if (!perJugador[d.participante_id])
+          perJugador[d.participante_id] = { nombre: d.nombre, punts: 0 };
+        perJugador[d.participante_id].punts += d.puntos;
       });
-      data = Object.values(perJugador).sort((a, b) => b.puntos - a.puntos);
+      data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
     }
   } else {
     const { data: general } = await supabase
       .from("resultados_generales")
       .select("nombre, puntos_totales")
       .order("puntos_totales", { ascending: false });
-    data = (general || []).map(d => ({ nombre: d.nombre, punts: d.punts_totales }));
+    data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
   }
 
   if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
