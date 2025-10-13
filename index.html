@@ -162,44 +162,44 @@ a.menu-link:hover { transform: translateY(-2px); }
   <h1>🏆 Rànquing General</h1>
 
   <div id="infoPanel" class="info-panel">
-    <div class="info-content">
-      <h2>ℹ️ Com funciona la Quiniela</h2>
-      <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
-      <p>Consulta com funciona el sistema de punts i els premis a la pàgina d'informació completa.</p>
+  <div class="info-content">
+    <h2>ℹ️ Com funciona la Quiniela</h2>
+    <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
+    <p>Consulta com funciona el sistema de punts i els premis a la pàgina d’informació completa.</p>
+  </div>
+</div>
+
+<p>Consulta els punts totals o filtra per jornada:</p>
+<select id="filtroQuiniela" class="select-xulo">
+  <option value="">🔹 Totes les quinieles</option>
+</select>
+
+<table id="tablaRanking">
+  <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
+  <tbody></tbody>
+</table>
+
+<div class="tablas-lado">
+  <div class="tabla">
+    <h2>📋 Participants i Quinieles Fetes</h2>
+    <div class="table-scroll">
+      <table id="tablaActivos">
+        <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
-  <p>Consulta els punts totals o filtra per jornada:</p>
-  <select id="filtroQuiniela" class="select-xulo">
-    <option value="">🔹 Totes les quinieles</option>
-  </select>
-
-  <table id="tablaRanking">
-    <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <div class="tablas-lado">
-    <div class="tabla">
-      <h2>📋 Participants i Quinieles Fetes (Només Activa)</h2>
-      <div class="table-scroll">
-        <table id="tablaActivos">
-          <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="tabla">
-      <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
-      <div class="table-scroll">
-        <table id="tablaEstadisticas">
-          <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+  <div class="tabla">
+    <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
+    <div class="table-scroll">
+      <table id="tablaEstadisticas">
+        <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
+</div>
 
   <div class="menu">
     <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
