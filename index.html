@@ -233,52 +233,83 @@ const adminLink = document.getElementById("adminLink");
 const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
-// --- Carrega les quinieles
 async function cargarQuinielas() {
-  const { data } = await supabase.from("quiniela_oficial")
-    .select("id, nombre").order("creada_el", { ascending: false });
-  if (data) data.forEach(q => {
-    const opt = document.createElement("option");
-    opt.value = q.id;
-    opt.textContent = q.nombre;
-    filtro.appendChild(opt);
-  });
+  const { data, error } = await supabase
+    .from("quiniela_oficial")
+    .select("id, nombre")
+    .order("creada_el", { ascending: false });
+  
+  if (error) console.error("Error carregant quinieles:", error);
+  if (data) {
+    data.forEach(q => {
+      const opt = document.createElement("option");
+      opt.value = q.id; // <-- aquest valor s'utilitza a cargarRanking
+      opt.textContent = q.nombre;
+      filtro.appendChild(opt);
+    });
+  }
 }
+
 
 // --- Rànquing
 async function cargarRanking(quinielaId = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
   let data = [];
 
-  if (quinielaId) {
-    const { data: detalle } = await supabase
-      .from("resultados_detalle")
-      .select("participante_id, nombre, puntos, quiniela_id")
-      .eq("quiniela_id", quinielaId);
+  try {
+    if (quinielaId) {
+      console.log("Filtrant per quiniela ID:", quinielaId);
 
-    if (detalle?.length) {
-      const perJugador = {};
-      detalle.forEach(d => {
-        if (!perJugador[d.participante_id])
-          perJugador[d.participante_id] = { nombre: d.nombre, punts: 0 };
-        perJugador[d.participante_id].punts += d.puntos;
-      });
-      data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
+      // Convertim a número si cal
+      const quinielaIdNum = isNaN(quinielaId) ? quinielaId : Number(quinielaId);
+
+      const { data: detalle, error } = await supabase
+        .from("resultados_detalle")
+        .select("participante_id, nombre, puntos, quiniela_id")
+        .eq("quiniela_id", quinielaIdNum);
+
+      if (error) console.error("Error Supabase:", error);
+
+      if (detalle?.length) {
+        const perJugador = {};
+        detalle.forEach(d => {
+          if (!perJugador[d.participante_id])
+            perJugador[d.participante_id] = { nombre: d.nombre, punts: 0 };
+          perJugador[d.participante_id].punts += d.puntos || 0;
+        });
+        data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
+      }
+    } else {
+      // Sense filtre: mostrar rànquing general
+      const { data: general, error } = await supabase
+        .from("resultados_generales")
+        .select("nombre, puntos_totales")
+        .order("puntos_totales", { ascending: false });
+      if (error) console.error("Error Supabase:", error);
+      data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
     }
-  } else {
-    const { data: general } = await supabase
-      .from("resultados_generales")
-      .select("nombre, puntos_totales")
-      .order("puntos_totales", { ascending: false });
-    data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
+
+    if (!data.length) {
+      tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades per aquesta jornada.</td></tr>";
+      return;
+    }
+
+    tbodyRanking.innerHTML = data
+      .map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${r.nombre}</td>
+          <td>${r.punts}</td>
+        </tr>
+      `)
+      .join("");
+
+  } catch (err) {
+    console.error("Error carregant rànquing:", err);
+    tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
   }
-
-  if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
-
-  tbodyRanking.innerHTML = data.map((r, i) => `
-    <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>
-  `).join("");
 }
+
 
 // --- Participants de la quiniela activa
 async function cargarActivos() {
