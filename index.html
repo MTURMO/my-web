@@ -570,44 +570,47 @@ async function cargarEstadisticas() {
 // --- Carregar recaptació
 async function cargarRecaptacio() {
   const recaptacioEl = document.getElementById("recaptacioAmount");
-  
+  if (!recaptacioEl) return;
+
   try {
-    // Obtenir la quiniela activa
+    // 1) Obtenir la quiniela activa (només l'id)
     const { data: quinielaActiva, error: errorActiva } = await supabase
       .from("quiniela_oficial")
       .select("id")
       .eq("activa", true)
       .single();
-    
-    if (errorActiva || !quinielaActiva) {
+
+    if (errorActiva || !quinielaActiva?.id) {
+      // No hi ha quiniela activa o error
       recaptacioEl.textContent = "0 €";
       return;
     }
-    
-    // Comptar quinieles pagades
-    const { data: quinielasPagades, error: errorPagades } = await supabase
+
+    // 2) Comptar quinieles pagades per a aquesta quiniela (head: true -> tenim 'count')
+    const { count, error: errorPagades } = await supabase
       .from("quinielas_participantes")
       .select("id", { count: 'exact', head: true })
       .eq("quiniela_id", quinielaActiva.id)
       .eq("pagado", true);
-    
+
     if (errorPagades) {
       console.error("Error carregant recaptació:", errorPagades);
       recaptacioEl.textContent = "0 €";
       return;
     }
-    
-    // Calcular total (2€ per quiniela pagada)
-    const totalQuinieles = quinielasPagades?.count || 0;
+
+    const totalQuinieles = (typeof count === "number") ? count : 0;
     const totalRecaptat = totalQuinieles * 2;
-    
-    recaptacioEl.textContent = `${totalRecaptat} €`;
-    
+
+    // Format amb separador de milers si vols (opcional)
+    recaptacioEl.textContent = `${totalRecaptat.toLocaleString('ca-ES')} €`;
+
   } catch (err) {
     console.error("Error carregant recaptació:", err);
     recaptacioEl.textContent = "0 €";
   }
 }
+
 
 // --- Event listeners
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
