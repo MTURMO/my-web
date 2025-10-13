@@ -391,32 +391,48 @@ async function cargarRanking(quinielaId = "") {
 
   try {
     if (quinielaId) {
+      // Agafem el nom de la jornada seleccionada al desplegable
       const quinielaNom = filtro.options[filtro.selectedIndex].text;
 
       console.log("Carregant rànquing per a quiniela:", quinielaNom);
 
+      // Consulta a Supabase amb el filtre correcte
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
-        .select("id, nombre, puntos, quiniela_nombre")
+        .select("id_participante, nombre, puntos, quiniela_nombre")
         .eq("quiniela_nombre", quinielaNom);
 
-      if (error) console.error("Error Supabase:", error);
+      if (error) {
+        console.error("Error Supabase:", error);
+        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
+        return;
+      }
 
       if (detalle?.length) {
+        // Guardem només la millor puntuació de cada participant
         const perJugador = {};
         detalle.forEach(d => {
-          if (!perJugador[d.participante_id])
-            perJugador[d.participante_id] = { nombre: d.nombre, punts: 0 };
-          perJugador[d.participante_id].punts += d.puntos || 0;
+          if (!perJugador[d.id_participante] || d.puntos > perJugador[d.id_participante].punts) {
+            perJugador[d.id_participante] = { nombre: d.nombre, punts: d.puntos };
+          }
         });
+
         data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
       }
+
     } else {
+      // Sense filtre: mostrar rànquing general
       const { data: general, error } = await supabase
         .from("resultados_generales")
         .select("nombre, puntos_totales")
         .order("puntos_totales", { ascending: false });
-      if (error) console.error("Error Supabase:", error);
+
+      if (error) {
+        console.error("Error Supabase:", error);
+        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
+        return;
+      }
+
       data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
     }
 
@@ -425,6 +441,7 @@ async function cargarRanking(quinielaId = "") {
       return;
     }
 
+    // Mostrem la taula
     tbodyRanking.innerHTML = data
       .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`)
       .join("");
@@ -434,6 +451,7 @@ async function cargarRanking(quinielaId = "") {
     tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
   }
 }
+
 
 
 
