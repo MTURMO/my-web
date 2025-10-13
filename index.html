@@ -6,10 +6,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-* {
-  box-sizing: border-box;
-}
-
+/* --- ESTILS GENERALS --- */
+* { box-sizing: border-box; }
 body {
   font-family: 'Inter', sans-serif;
   background: #f3f4f6;
@@ -21,6 +19,7 @@ body {
   min-height: 100vh;
 }
 
+/* Botons superiors */
 .info-btn, .login-btn {
   position: fixed;
   top: 20px;
@@ -40,32 +39,18 @@ body {
 .info-btn { left: 20px; }
 .login-btn { right: 20px; text-decoration: none; display: inline-block; }
 
+/* Títols */
 h1 { 
-  font-size: 2rem; 
-  color: #333; 
-  margin-bottom: 20px; 
-  text-align: center; 
-  margin-top: 60px;
-  width: 100%;
-  max-width: 1400px;
+  font-size: 2rem; color: #333; margin-bottom: 20px; text-align: center; 
+  margin-top: 60px; width: 100%; max-width: 1400px;
 }
-
-h2 { 
-  color: #2563eb; 
-  margin-top: 40px; 
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 1.5rem;
-}
+h2 { color: #2563eb; margin-top: 40px; margin-bottom: 20px; text-align: center; font-size: 1.5rem; }
 
 .content-wrapper {
-  width: 100%;
-  max-width: 1400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center;
 }
 
+/* Taules generals */
 table {
   border-collapse: collapse;
   width: 100%;
@@ -76,24 +61,12 @@ table {
   margin-bottom: 20px;
   overflow: hidden;
 }
-
-th, td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #f3f4f6;
-}
-
+th, td { padding: 12px; text-align: center; border-bottom: 1px solid #f3f4f6; }
 th {
   background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-  color: white;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-  border-bottom: 3px solid #3b82f6;
+  color: white; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;
+  letter-spacing: 0.5px; border-bottom: 3px solid #3b82f6;
 }
-
-tbody tr { transition: all 0.2s ease; }
 tbody tr:hover { background: #f0f9ff; }
 tbody tr:nth-child(odd) { background: #fafbff; }
 
@@ -102,147 +75,57 @@ tbody tr:nth-child(odd) { background: #fafbff; }
   background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
   font-weight: 600;
 }
-#tablaRanking tbody tr:nth-child(1) td:first-child {
-  color: #d97706; font-weight: 700; font-size: 1.2rem;
-}
+#tablaRanking tbody tr:nth-child(1) td:first-child { color: #d97706; font-weight: 700; font-size: 1.2rem; }
 #tablaRanking tbody tr:nth-child(2) {
   background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
   font-weight: 600;
 }
-#tablaRanking tbody tr:nth-child(2) td:first-child {
-  color: #6b7280; font-weight: 700; font-size: 1.1rem;
-}
+#tablaRanking tbody tr:nth-child(2) td:first-child { color: #6b7280; font-weight: 700; font-size: 1.1rem; }
 #tablaRanking tbody tr:nth-child(3) {
   background: linear-gradient(90deg, #fed7aa 0%, #fdba74 100%);
   font-weight: 600;
 }
-#tablaRanking tbody tr:nth-child(3) td:first-child {
-  color: #c2410c; font-weight: 700; font-size: 1.1rem;
-}
+#tablaRanking tbody tr:nth-child(3) td:first-child { color: #c2410c; font-weight: 700; font-size: 1.1rem; }
 
 /* Menú inferior */
 .menu {
-  margin-top: 40px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
+  margin-top: 40px; margin-bottom: 20px; display: flex; gap: 10px;
+  flex-wrap: wrap; justify-content: center;
 }
-
 a.menu-link {
-  padding: 10px 20px;
-  background: linear-gradient(90deg,#4f46e5,#3b82f6);
-  color: white;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 10px 20px; background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white; text-decoration: none; border-radius: 10px; font-weight: 600;
   transition: transform 0.2s;
 }
 a.menu-link:hover { transform: translateY(-2px); }
 
 /* Select bonic */
 .select-xulo {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 2px solid #3b82f6;
-  background: white;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #1e3a8a;
+  padding: 10px 14px; border-radius: 10px; border: 2px solid #3b82f6;
+  background: white; font-size: 1rem; font-weight: 500; color: #1e3a8a;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  margin-bottom: 20px;
-  max-width: 700px;
-  width: 100%;
+  cursor: pointer; transition: all 0.2s ease-in-out;
+  margin-bottom: 20px; max-width: 700px; width: 100%;
 }
-.select-xulo:hover {
-  border-color: #4f46e5;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-}
-.select-xulo:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
-}
+.select-xulo:hover { border-color: #4f46e5; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
 
 /* Disseny paral·lel */
 .tablas-lado {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  width: 100%;
-  max-width: 1400px;
-  margin-top: 40px;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;
+  width: 100%; max-width: 1400px; margin-top: 40px;
 }
+.tabla { flex: 1 1 600px; min-width: 0; max-width: 100%; }
 
-.tabla { 
-  flex: 1 1 600px;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.table-scroll { 
-  overflow-x: auto; 
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-}
-
-.table-scroll::-webkit-scrollbar {
-  height: 8px;
-}
-
-.table-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.table-scroll::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 10px;
-}
-
-.table-scroll::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-}
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 
 /* Barres percentuals */
-.barra {
-  height: 30px;
-  border-radius: 10px;
-  background: #e5e7eb;
-  position: relative;
-  overflow: hidden;
-  margin: 6px auto;
-  width: 180px;
-  max-width: 100%;
-}
+.barra { height: 30px; border-radius: 10px; background: #e5e7eb; position: relative; overflow: hidden; margin: 6px auto; width: 180px; max-width: 100%; }
 .barra-inner { height: 100%; border-radius: 10px; transition: width 0.8s ease-in-out; }
-.barra-1 { background: #22c55e; }
-.barra-X { background: #3b82f6; }
-.barra-2 { background: #ef4444; }
-.percent-text {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-}
+.barra-1 { background: #22c55e; } .barra-X { background: #3b82f6; } .barra-2 { background: #ef4444; }
+.percent-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 .label-equip, .label-vs { text-align: center; margin-bottom: 5px; }
-.label-equip { 
-  font-weight: 600; 
-  font-size: 0.9rem; 
-  color: #1e3a8a;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0 5px;
-}
+.label-equip { font-weight: 600; font-size: 0.9rem; color: #1e3a8a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 5px; }
 .label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
-
-.partit-barres td {
-  vertical-align: middle;
-  padding: 10px 8px;
-}
 
 /* Panell info */
 .info-panel {
@@ -256,20 +139,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   max-height: 500px; overflow-y: auto;
 }
 .info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
-.info-panel::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 30px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid white;
-}
 .info-content { padding: 20px; }
-.info-content h2 { color: #4f46e5; margin-top: 0; margin-bottom: 15px; }
-.info-content p { line-height: 1.6; color: #1f2937; }
 .alerta {
   background: #fff3cd; color: #92400e; padding: 12px;
   border-radius: 10px; border: 1px solid #fcd34d;
@@ -278,135 +148,8 @@ a.menu-link:hover { transform: translateY(-2px); }
 
 /* Responsivitat mòbil */
 @media (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-  
-  h1 {
-    font-size: 1.5rem;
-    margin-top: 70px;
-    padding: 0 10px;
-  }
-  
-  h2 {
-    font-size: 1.2rem;
-    margin-top: 30px;
-  }
-  
-  .info-btn, .login-btn {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-  }
-  
-  .info-panel {
-    left: 10px;
-    right: 10px;
-    width: auto;
-    max-width: none;
-  }
-  
-  .tablas-lado {
-    flex-direction: column;
-    gap: 30px;
-    margin-top: 20px;
-  }
-  
-  .tabla {
-    flex: 1 1 100%;
-    width: 100%;
-  }
-  
-  table {
-    font-size: 0.9rem;
-  }
-  
-  th, td {
-    padding: 8px 4px;
-    font-size: 0.85rem;
-  }
-  
-  .select-xulo {
-    font-size: 0.9rem;
-    padding: 8px 10px;
-  }
-  
-  .barra {
-    width: 150px;
-    height: 28px;
-  }
-  
-  .label-equip {
-    font-size: 0.8rem;
-    max-width: 140px;
-  }
-  
-  .label-vs {
-    font-size: 0.75rem;
-  }
-  
-  .percent-text {
-    font-size: 0.85rem;
-  }
-  
-  .partit-barres td {
-    padding: 8px 4px;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.3rem;
-    margin-top: 65px;
-  }
-  
-  h2 {
-    font-size: 1.1rem;
-  }
-  
-  .info-btn, .login-btn {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-    top: 15px;
-  }
-  
-  .info-btn {
-    left: 10px;
-  }
-  
-  .login-btn {
-    right: 10px;
-  }
-  
-  table {
-    font-size: 0.8rem;
-  }
-  
-  th {
-    font-size: 0.75rem;
-    padding: 8px 2px;
-  }
-  
-  td {
-    padding: 8px 4px;
-  }
-  
-  .barra {
-    width: 120px;
-    height: 25px;
-  }
-  
-  .label-equip {
-    font-size: 0.75rem;
-    max-width: 110px;
-  }
-  
-  .label-vs {
-    font-size: 0.7rem;
-  }
-  
-  .percent-text {
-    font-size: 0.75rem;
-  }
+  .tablas-lado { flex-direction: column; gap: 30px; margin-top: 20px; }
+  .tabla { flex: 1 1 100%; width: 100%; }
 }
 </style>
 </head>
@@ -438,7 +181,7 @@ a.menu-link:hover { transform: translateY(-2px); }
 
   <div class="tablas-lado">
     <div class="tabla">
-      <h2>📋 Participants i Quinieles Fetes</h2>
+      <h2>📋 Participants i Quinieles Fetes (Només Activa)</h2>
       <div class="table-scroll">
         <table id="tablaActivos">
           <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
@@ -526,26 +269,35 @@ async function cargarRanking(quinielaId = "") {
       .from("resultados_generales")
       .select("nombre, puntos_totales")
       .order("puntos_totales", { ascending: false });
-    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totales }));
+    data = (general || []).map(d => ({ nombre: d.nombre, punts: d.punts_totales }));
   }
 
   if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
 
   tbodyRanking.innerHTML = data.map((r, i) => `
-    <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>
+    <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>
   `).join("");
 }
 
-// --- Participants i quinieles
+// --- Participants de la quiniela activa
 async function cargarActivos() {
-  const { data } = await supabase.from("quinielas_participantes").select("participante_id, nombre");
-  if (!data?.length) return;
+  const { data: activa } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
+  if (!activa) return tbodyActivos.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
+
+  const { data } = await supabase
+    .from("quinielas_participantes")
+    .select("participante_id, nombre")
+    .eq("quiniela_id", activa.id);
+
+  if (!data?.length) return tbodyActivos.innerHTML = "<tr><td colspan='3'>Encara no hi ha participants.</td></tr>";
+
   const conteo = {};
   data.forEach(q => {
     if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
     conteo[q.participante_id].count++;
   });
   const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
+
   tbodyActivos.innerHTML = lista.map((p, i) => `
     <tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>
   `).join("");
