@@ -50,6 +50,58 @@ h2 { color: #2563eb; margin-top: 40px; margin-bottom: 20px; text-align: center; 
   width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center;
 }
 
+/* Comptador de recaptació */
+.recaptacio-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.recaptacio-card {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 16px;
+  padding: 20px 30px;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: transform 0.3s ease;
+  min-width: 280px;
+}
+
+.recaptacio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+}
+
+.recaptacio-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.recaptacio-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.recaptacio-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recaptacio-amount {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 /* Taules generals */
 table {
   border-collapse: collapse;
@@ -146,37 +198,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   margin: 15px 0; font-weight: 600; text-align: center;
 }
 
-/* Responsivitat mòbil */
-@media (max-width: 768px) {
-  .tablas-lado { flex-direction: column; gap: 30px; margin-top: 20px; }
-  .tabla { flex: 1 1 100%; width: 100%; }
-}
-
-/* Desplegable Informació - Globus */
-.info-panel {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  width: 550px;
-  max-width: calc(100vw - 40px);
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease-in-out;
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.info-panel.open {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
 /* Fletxa del globus */
 .info-panel::before {
   content: '';
@@ -188,10 +209,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 10px solid white;
-}
-
-.info-content {
-  padding: 20px;
 }
 
 .info-content h2 {
@@ -226,7 +243,26 @@ a.menu-link:hover { transform: translateY(-2px); }
   padding: 0;
 }
 .info-content details summary::-webkit-details-marker {
-  display: none; /* opcional per treure el triangle per defecte */
+  display: none;
+}
+
+/* Responsivitat mòbil */
+@media (max-width: 768px) {
+  .tablas-lado { flex-direction: column; gap: 30px; margin-top: 20px; }
+  .tabla { flex: 1 1 100%; width: 100%; }
+  
+  .recaptacio-card {
+    padding: 15px 20px;
+    min-width: auto;
+  }
+  
+  .recaptacio-icon {
+    font-size: 2.5rem;
+  }
+  
+  .recaptacio-amount {
+    font-size: 1.5rem;
+  }
 }
 
 </style>
@@ -238,6 +274,17 @@ a.menu-link:hover { transform: translateY(-2px); }
 
 <div class="content-wrapper">
   <h1>🏆 Rànquing General</h1>
+
+  <!-- Comptador de recaptació -->
+  <div class="recaptacio-container">
+    <div class="recaptacio-card">
+      <div class="recaptacio-icon">💰</div>
+      <div class="recaptacio-content">
+        <div class="recaptacio-label">Recaptació Actual</div>
+        <div class="recaptacio-amount" id="recaptacioAmount">0 €</div>
+      </div>
+    </div>
+  </div>
 
   <div id="infoPanel" class="info-panel">
   <div class="info-content">
@@ -376,7 +423,7 @@ async function cargarQuinielas() {
   if (data) {
     data.forEach(q => {
       const opt = document.createElement("option");
-      opt.value = q.id; // <-- aquest valor s'utilitza a cargarRanking
+      opt.value = q.id;
       opt.textContent = q.nombre;
       filtro.appendChild(opt);
     });
@@ -395,7 +442,6 @@ async function cargarRanking(quinielaId = "") {
 
       console.log("Carregant rànquing per a quiniela:", quinielaNom);
 
-      // Fem la consulta amb el filtre correcte
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
         .select("correo, nombre, puntos, quiniela_nombre")
@@ -408,7 +454,6 @@ async function cargarRanking(quinielaId = "") {
       }
 
       if (detalle?.length) {
-        // Guardem només la millor puntuació per participant
         const perJugador = {};
         detalle.forEach(d => {
           if (!perJugador[d.correo] || d.puntos > perJugador[d.correo].punts) {
@@ -420,7 +465,6 @@ async function cargarRanking(quinielaId = "") {
       }
 
     } else {
-      // Sense filtre: mostrar rànquing general
       const { data: general, error } = await supabase
         .from("resultados_generales")
         .select("nombre, puntos_totales")
@@ -440,7 +484,6 @@ async function cargarRanking(quinielaId = "") {
       return;
     }
 
-    // Mostrem la taula
     tbodyRanking.innerHTML = data
       .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`)
       .join("");
@@ -518,6 +561,48 @@ async function cargarEstadisticas() {
   }).join("");
 }
 
+// --- Carregar recaptació
+async function cargarRecaptacio() {
+  const recaptacioEl = document.getElementById("recaptacioAmount");
+  
+  try {
+    // Obtenir la quiniela activa
+    const { data: quinielaActiva, error: errorActiva } = await supabase
+      .from("quiniela_oficial")
+      .select("id")
+      .eq("activa", true)
+      .single();
+    
+    if (errorActiva || !quinielaActiva) {
+      recaptacioEl.textContent = "0 €";
+      return;
+    }
+    
+    // Comptar quinieles pagades
+    const { data: quinielasPagades, error: errorPagades } = await supabase
+      .from("quinielas_participantes")
+      .select("id", { count: 'exact', head: true })
+      .eq("quiniela_id", quinielaActiva.id)
+      .eq("pagado", true);
+    
+    if (errorPagades) {
+      console.error("Error carregant recaptació:", errorPagades);
+      recaptacioEl.textContent = "0 €";
+      return;
+    }
+    
+    // Calcular total (2€ per quiniela pagada)
+    const totalQuinieles = quinielasPagades?.count || 0;
+    const totalRecaptat = totalQuinieles * 2;
+    
+    recaptacioEl.textContent = `${totalRecaptat} €`;
+    
+  } catch (err) {
+    console.error("Error carregant recaptació:", err);
+    recaptacioEl.textContent = "0 €";
+  }
+}
+
 // --- Event listeners
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
 
@@ -525,6 +610,7 @@ await cargarQuinielas();
 await cargarRanking();
 await cargarActivos();
 await cargarEstadisticas();
+await cargarRecaptacio();
 </script>
 </body>
 </html>
