@@ -397,7 +397,7 @@ async function cargarRanking(quinielaId = "") {
 
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
-        .select("nombre, puntos, quiniela_nombre")
+        .select("id, nombre, puntos, quiniela_nombre")
         .eq("quiniela_nombre", quinielaNom);
 
       if (error) console.error("Error Supabase:", error);
