@@ -166,6 +166,54 @@ a.menu-link:hover { transform: translateY(-2px); }
   display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;
   width: 100%; max-width: 1400px; margin-top: 40px;
 }
+
+/* ---- Nova zona taules paral·leles ---- */
+.zona-taules {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  max-width: 1400px;
+  margin-top: 40px;
+}
+
+/* Cada bloc */
+.taula-esquerra, .taula-dreta {
+  background: transparent;
+  flex: 0 0 48%;
+  max-width: 48%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Evitem que les taules canviïn de mida */
+.taula-esquerra table, .taula-dreta table {
+  table-layout: fixed;
+  width: 100%;
+  max-width: 600px;
+  min-width: 400px;
+}
+
+/* Responsivitat mòbil */
+@media (max-width: 900px) {
+  .zona-taules {
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .taula-esquerra, .taula-dreta {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .taula-esquerra table, .taula-dreta table {
+    min-width: auto;
+  }
+}
+
 .tabla { flex: 1 1 600px; min-width: 0; max-width: 100%; }
 .tabla-participants { flex: 0 1 400px; }
 .tabla-estadistiques { flex: 1 1 700px; }
@@ -361,8 +409,8 @@ a.menu-link:hover { transform: translateY(-2px); }
   <tbody></tbody>
 </table>
 
-<div class="tablas-lado">
-  <div class="tabla tabla-participants">
+<div class="zona-taules">
+  <div class="taula-esquerra">
     <h2>📋 Participants i Quinieles Fetes</h2>
     <div class="table-scroll">
       <table id="tablaActivos">
@@ -372,7 +420,7 @@ a.menu-link:hover { transform: translateY(-2px); }
     </div>
   </div>
 
-  <div class="tabla tabla-estadistiques">
+  <div class="taula-dreta">
     <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
     <div class="table-scroll">
       <table id="tablaEstadisticas">
