@@ -167,7 +167,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   width: 100%; max-width: 1400px; margin-top: 40px;
 }
 
-/* ---- Nova zona taules paral·leles ---- */
+/* ---- Zona de taules paral·leles ---- */
 .zona-taules {
   display: flex;
   justify-content: center;
@@ -178,6 +178,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   margin-top: 40px;
 }
 
+/* Bloc esquerre (ranking) */
 .taula-esquerra {
   background: transparent;
   flex: 0 0 38%;
@@ -187,6 +188,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   align-items: center;
 }
 
+/* Bloc dret (repartiment d'apostes) */
 .taula-dreta {
   background: transparent;
   flex: 0 0 60%;
@@ -196,16 +198,24 @@ a.menu-link:hover { transform: translateY(-2px); }
   align-items: center;
 }
 
-
-/* Evitem que les taules canviïn de mida */
-.taula-esquerra table, .taula-dreta table {
+/* Assegurem que les taules interiors ocupin tot l'espai assignat */
+.taula-esquerra table, 
+.taula-dreta table {
   table-layout: fixed;
   width: 100%;
-  max-width: 600px;
-  min-width: 400px;
+  max-width: 100%;
+  min-width: 100%;
 }
 
-/* Responsivitat mòbil */
+/* Evitem que les cel·les quedin tallades i fem que s’ajustin */
+.taula-dreta table td, 
+.taula-dreta table th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsivitat per mòbils */
 @media (max-width: 900px) {
   .zona-taules {
     flex-direction: column;
@@ -213,15 +223,18 @@ a.menu-link:hover { transform: translateY(-2px); }
     align-items: center;
   }
 
-  .taula-esquerra, .taula-dreta {
+  .taula-esquerra, 
+  .taula-dreta {
     flex: 1 1 100%;
     max-width: 100%;
   }
 
-  .taula-esquerra table, .taula-dreta table {
+  .taula-esquerra table, 
+  .taula-dreta table {
     min-width: auto;
   }
 }
+
 
 .tabla { flex: 1 1 600px; min-width: 0; max-width: 100%; }
 .tabla-participants { flex: 0 1 400px; }
