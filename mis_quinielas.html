@@ -1,187 +1,605 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
-  <meta charset="UTF-8">
-  <title>Les meves Quinieles</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f4f8;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    h1 { color: #333; margin-bottom: 5px; }
-    h2 { color: #2563eb; margin-top: 10px; }
-    .quiniela-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 500px;
-      margin: 10px 0;
-      padding: 20px;
-    }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { padding: 6px; border-bottom: 1px solid #eee; text-align: center; }
-    th { background: #eef2ff; }
-    #nueva {
-      margin-top: 20px;
-      padding: 12px 20px;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: transform 0.2s;
-    }
-    #nueva:hover { transform: translateY(-2px); background: #3b82f6; }
-    #message { margin-top: 10px; font-size: 14px; text-align:center; }
-    a { margin-top: 20px; color: #3b82f6; text-decoration: none; font-weight: 500; }
-  </style>
+<meta charset="UTF-8">
+<title>Rànquing General</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f4f6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.info-btn, .login-btn {
+  position: fixed;
+  top: 20px;
+  z-index: 1000;
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: transform 0.2s;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+}
+.info-btn:hover, .login-btn:hover { transform: translateY(-2px); }
+.info-btn { left: 20px; }
+.login-btn { right: 20px; text-decoration: none; display: inline-block; }
+
+h1 { 
+  font-size: 2rem; 
+  color: #333; 
+  margin-bottom: 20px; 
+  text-align: center; 
+  margin-top: 60px;
+  width: 100%;
+  max-width: 1400px;
+}
+
+h2 { 
+  color: #2563eb; 
+  margin-top: 40px; 
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+th {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-bottom: 3px solid #3b82f6;
+}
+
+tbody tr { transition: all 0.2s ease; }
+tbody tr:hover { background: #f0f9ff; }
+tbody tr:nth-child(odd) { background: #fafbff; }
+
+/* Colors de pòdium */
+#tablaRanking tbody tr:nth-child(1) {
+  background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+  font-weight: 600;
+}
+#tablaRanking tbody tr:nth-child(1) td:first-child {
+  color: #d97706; font-weight: 700; font-size: 1.2rem;
+}
+#tablaRanking tbody tr:nth-child(2) {
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
+  font-weight: 600;
+}
+#tablaRanking tbody tr:nth-child(2) td:first-child {
+  color: #6b7280; font-weight: 700; font-size: 1.1rem;
+}
+#tablaRanking tbody tr:nth-child(3) {
+  background: linear-gradient(90deg, #fed7aa 0%, #fdba74 100%);
+  font-weight: 600;
+}
+#tablaRanking tbody tr:nth-child(3) td:first-child {
+  color: #c2410c; font-weight: 700; font-size: 1.1rem;
+}
+
+/* Menú inferior */
+.menu {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+a.menu-link {
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+a.menu-link:hover { transform: translateY(-2px); }
+
+/* Select bonic */
+.select-xulo {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid #3b82f6;
+  background: white;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e3a8a;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 20px;
+  max-width: 700px;
+  width: 100%;
+}
+.select-xulo:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+.select-xulo:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+}
+
+/* Disseny paral·lel */
+.tablas-lado {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 1400px;
+  margin-top: 40px;
+}
+
+.tabla { 
+  flex: 1 1 600px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table-scroll { 
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Barres percentuals */
+.barra {
+  height: 30px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  position: relative;
+  overflow: hidden;
+  margin: 6px auto;
+  width: 180px;
+  max-width: 100%;
+}
+.barra-inner { height: 100%; border-radius: 10px; transition: width 0.8s ease-in-out; }
+.barra-1 { background: #22c55e; }
+.barra-X { background: #3b82f6; }
+.barra-2 { background: #ef4444; }
+.percent-text {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.label-equip, .label-vs { text-align: center; margin-bottom: 5px; }
+.label-equip { 
+  font-weight: 600; 
+  font-size: 0.9rem; 
+  color: #1e3a8a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 5px;
+}
+.label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
+
+.partit-barres td {
+  vertical-align: middle;
+  padding: 10px 8px;
+}
+
+/* Panell info */
+.info-panel {
+  position: fixed; top: 70px; left: 20px;
+  width: 550px; max-width: calc(100vw - 40px);
+  background: white; border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 999; opacity: 0; visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease-in-out;
+  max-height: 500px; overflow-y: auto;
+}
+.info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.info-panel::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}
+.info-content { padding: 20px; }
+.info-content h2 { color: #4f46e5; margin-top: 0; margin-bottom: 15px; }
+.info-content p { line-height: 1.6; color: #1f2937; }
+.alerta {
+  background: #fff3cd; color: #92400e; padding: 12px;
+  border-radius: 10px; border: 1px solid #fcd34d;
+  margin: 15px 0; font-weight: 600; text-align: center;
+}
+
+/* Responsivitat mòbil */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-top: 70px;
+    padding: 0 10px;
+  }
+  
+  h2 {
+    font-size: 1.2rem;
+    margin-top: 30px;
+  }
+  
+  .info-btn, .login-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .info-panel {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+  }
+  
+  .tablas-lado {
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  
+  .tabla {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 8px 4px;
+    font-size: 0.85rem;
+  }
+  
+  .select-xulo {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+  
+  .barra {
+    width: 150px;
+    height: 28px;
+  }
+  
+  .label-equip {
+    font-size: 0.8rem;
+    max-width: 140px;
+  }
+  
+  .label-vs {
+    font-size: 0.75rem;
+  }
+  
+  .percent-text {
+    font-size: 0.85rem;
+  }
+  
+  .partit-barres td {
+    padding: 8px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3rem;
+    margin-top: 65px;
+  }
+  
+  h2 {
+    font-size: 1.1rem;
+  }
+  
+  .info-btn, .login-btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    top: 15px;
+  }
+  
+  .info-btn {
+    left: 10px;
+  }
+  
+  .login-btn {
+    right: 10px;
+  }
+  
+  table {
+    font-size: 0.8rem;
+  }
+  
+  th {
+    font-size: 0.75rem;
+    padding: 8px 2px;
+  }
+  
+  td {
+    padding: 8px 4px;
+  }
+  
+  .barra {
+    width: 120px;
+    height: 25px;
+  }
+  
+  .label-equip {
+    font-size: 0.75rem;
+    max-width: 110px;
+  }
+  
+  .label-vs {
+    font-size: 0.7rem;
+  }
+  
+  .percent-text {
+    font-size: 0.75rem;
+  }
+}
+</style>
 </head>
 <body>
 
-  <h1>Benvingut/da a la teva zona de participant 👋</h1>
-  <h2 id="nombreUsuario"></h2>
+<button id="btnInfo" class="info-btn">ℹ️ Informació</button>
+<a href="participante.html" class="login-btn">🔐 Login</a>
 
-  <div id="quinielasContainer">Carregant les teves quinieles...</div>
+<div class="content-wrapper">
+  <h1>🏆 Rànquing General</h1>
 
-  <button id="nueva">➕ Nova Quiniela</button>
+  <div id="infoPanel" class="info-panel">
+    <div class="info-content">
+      <h2>ℹ️ Com funciona la Quiniela</h2>
+      <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
+      <p>Consulta com funciona el sistema de punts i els premis a la pàgina d'informació completa.</p>
+    </div>
+  </div>
 
-  <div id="message"></div>
-  <a href="index.html">⬅ Tornar al menú principal</a>
+  <p>Consulta els punts totals o filtra per jornada:</p>
+  <select id="filtroQuiniela" class="select-xulo">
+    <option value="">🔹 Totes les quinieles</option>
+  </select>
 
-  <script type="module">
-    import { supabase } from './supabaseClient.js';
+  <table id="tablaRanking">
+    <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
+    <tbody></tbody>
+  </table>
 
-    const container = document.getElementById('quinielasContainer');
-    const btnNueva = document.getElementById('nueva');
-    const msg = document.getElementById('message');
-    const nombreUsuario = document.getElementById('nombreUsuario');
+  <div class="tablas-lado">
+    <div class="tabla">
+      <h2>📋 Participants i Quinieles Fetes</h2>
+      <div class="table-scroll">
+        <table id="tablaActivos">
+          <thead><tr><th>#</th><th>Nom</th><th>Quinieles fetes</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
 
-    let participante = null;
-    let quinielaActiva = null;
-    let quinielaActivaId = null;
+    <div class="tabla">
+      <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
+      <div class="table-scroll">
+        <table id="tablaEstadisticas">
+          <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    // ✅ Comprovar sessió
-    async function checkLogin() {
-      const { data: { session } } = await supabase.auth.getSession();
-      participante = JSON.parse(localStorage.getItem('participante') || '{}');
+  <div class="menu">
+    <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
+  </div>
+</div>
 
-      if (!session || !participante?.id) {
-        alert('⚠️ Has d’iniciar sessió abans de veure les teves quinieles.');
-        window.location.href = 'participante.html';
-        return false;
-      }
+<script>
+// Panell informatiu
+const infoPanel = document.getElementById("infoPanel");
+const btnInfo = document.getElementById("btnInfo");
+btnInfo.addEventListener("click", e => {
+  e.stopPropagation();
+  infoPanel.classList.toggle("open");
+});
+document.addEventListener("click", e => {
+  if (!infoPanel.contains(e.target) && !btnInfo.contains(e.target)) {
+    infoPanel.classList.remove("open");
+  }
+});
+</script>
 
-      nombreUsuario.textContent = `${participante.nombre}`;
-      return true;
-    }
+<script type="module">
+import { supabase } from './supabaseClient.js';
 
-    // 🟦 Obtenir quiniela activa (amb partits)
-    async function getQuinielaActiva() {
-      const { data, error } = await supabase
-        .from('quiniela_oficial')
-        .select('*')
-        .eq('activa', true)
-        .single();
+const filtro = document.getElementById("filtroQuiniela");
+const tbodyRanking = document.querySelector("#tablaRanking tbody");
+const tbodyActivos = document.querySelector("#tablaActivos tbody");
+const tbodyEstadisticas = document.querySelector("#tablaEstadisticas tbody");
+const adminLink = document.getElementById("adminLink");
 
-      if (error || !data) {
-        msg.textContent = '❌ No hi ha cap quiniela activa actualment.';
-        msg.style.color = 'red';
-        btnNueva.disabled = true;
-        return null;
-      }
+const { data: { session } } = await supabase.auth.getSession();
+if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
-      quinielaActiva = data;
-      quinielaActivaId = data.id;
-      console.log('🟢 Quiniela activa carregada:', quinielaActiva);
-      return data;
-    }
+// --- Carrega les quinieles
+async function cargarQuinielas() {
+  const { data } = await supabase.from("quiniela_oficial")
+    .select("id, nombre").order("creada_el", { ascending: false });
+  if (data) data.forEach(q => {
+    const opt = document.createElement("option");
+    opt.value = q.id;
+    opt.textContent = q.nombre;
+    filtro.appendChild(opt);
+  });
+}
 
-    // 🏆 Mostrar partits amb equips
-    function renderPartidos(resultados, partidos) {
-      if (!resultados) return '<p>Sense resultats</p>';
+// --- Rànquing
+async function cargarRanking(quinielaId = "") {
+  tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
+  let data = [];
 
-      // Si els partits venen a la columna "data", no "partidos"
-      const llista = partidos || quinielaActiva?.data;
+  if (quinielaId) {
+    const { data: detalle } = await supabase
+      .from("resultados_detalle")
+      .select("participante_id, nombre, puntos, quiniela_nombre")
+      .eq("quiniela_nombre", filtro.selectedOptions[0].textContent);
 
-      if (!llista) {
-        return `<pre>${JSON.stringify(resultados, null, 2)}</pre>`;
-      }
-
-      let html = '<table>';
-      html += '<tr><th>Partit</th><th>Selecció</th></tr>';
-
-      llista.forEach((p, i) => {
-        const seleccio = resultados[i] || '-';
-        html += `
-          <tr>
-            <td>${p.local || p.equip1} vs ${p.visitante || p.equip2}</td>
-            <td>${seleccio}</td>
-          </tr>`;
+    if (detalle?.length) {
+      const perJugador = {};
+      detalle.forEach(d => {
+        if (!perJugador[d.participante_id]) perJugador[d.participante_id] = { nombre: d.nombre, puntos: 0 };
+        perJugador[d.participante_id].puntos += d.puntos;
       });
-
-      html += '</table>';
-      return html;
+      data = Object.values(perJugador).sort((a, b) => b.puntos - a.puntos);
     }
+  } else {
+    const { data: general } = await supabase
+      .from("resultados_generales")
+      .select("nombre, puntos_totales")
+      .order("puntos_totales", { ascending: false });
+    data = (general || []).map(d => ({ nombre: d.nombre, puntos: d.puntos_totales }));
+  }
 
-    // 📋 Carregar quinieles del participant
-    async function cargarMisQuinielas() {
-      container.innerHTML = 'Carregant les teves quinieles...';
+  if (!data.length) return tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades.</td></tr>";
 
-      const { data, error } = await supabase
-        .from('quinielas_participantes')
-        .select('id, resultados, fecha, pagado, quiniela_id')
-        .eq('participante_id', participante.id)
-        .order('fecha', { ascending: false });
+  tbodyRanking.innerHTML = data.map((r, i) => `
+    <tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>
+  `).join("");
+}
 
-      if (error) {
-        container.innerHTML = `<p style="color:red;">❌ Error carregant les teves quinieles: ${error.message}</p>`;
-        return;
-      }
+// --- Participants i quinieles
+async function cargarActivos() {
+  const { data } = await supabase.from("quinielas_participantes").select("participante_id, nombre");
+  if (!data?.length) return;
+  const conteo = {};
+  data.forEach(q => {
+    if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
+    conteo[q.participante_id].count++;
+  });
+  const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
+  tbodyActivos.innerHTML = lista.map((p, i) => `
+    <tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>
+  `).join("");
+}
 
-      if (!data || data.length === 0) {
-        container.innerHTML = '<p>Encara no has fet cap quiniela.</p>';
-        return;
-      }
+// --- Estadístiques
+async function cargarEstadisticas() {
+  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
+  const { data: quinielaActiva } = await supabase
+    .from("quiniela_oficial").select("id, data").eq("activa", true).single();
+  if (!quinielaActiva) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
 
-      container.innerHTML = '';
-      data.forEach(q => {
-        const esActiva = q.quiniela_id === quinielaActivaId;
-        const card = document.createElement('div');
-        card.className = 'quiniela-card';
-        card.innerHTML = `
-          <h3>${esActiva ? '⚽ Quiniela Activa' : '📜 Quiniela anterior'}</h3>
-          <p><strong>Data:</strong> ${new Date(q.fecha).toLocaleString()}</p>
-          <p><strong>Pagat:</strong> ${q.pagado ? '✅ Sí' : '❌ No'}</p>
-          ${renderPartidos(q.resultados, quinielaActiva?.data)}
-        `;
-        container.appendChild(card);
-      });
-    }
+  const { data: apostes } = await supabase
+    .from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
+  if (!apostes?.length) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
 
-    // ➕ Botó nova quiniela (ara funcional amb id activa)
-    btnNueva.addEventListener('click', () => {
-      if (!quinielaActivaId) {
-        alert('⚠️ No hi ha cap quiniela activa.');
-        return;
-      }
-      window.location.href = `quiniela_participante.html?quiniela_id=${quinielaActivaId}`;
-    });
+  const partits = quinielaActiva.data;
+  const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
+  apostes.forEach(a => Object.entries(a.resultados || {}).forEach(([i, v]) => {
+    if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
+  }));
 
-    // 🔄 Execució inicial
-    if (await checkLogin()) {
-      await getQuinielaActiva();
-      await cargarMisQuinielas();
-    }
-  </script>
+  tbodyEstadisticas.innerHTML = stats.map((r, i) => {
+    const total = r["1"] + r["X"] + r["2"];
+    if (!total) return "";
+    const p1 = ((r["1"] / total) * 100).toFixed(1);
+    const px = ((r["X"] / total) * 100).toFixed(1);
+    const p2 = ((r["2"] / total) * 100).toFixed(1);
+    const match = partits[i];
+    return `
+      <tr class="partit-barres">
+        <td>
+          <div class="label-equip">${match.local}</div>
+          <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
+        </td>
+        <td>
+          <div class="label-vs">vs.</div>
+          <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
+        </td>
+        <td>
+          <div class="label-equip">${match.visitante}</div>
+          <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
+        </td>
+      </tr>`;
+  }).join("");
+}
+
+// --- Event listeners
+filtro.addEventListener("change", e => cargarRanking(e.target.value));
+
+await cargarQuinielas();
+await cargarRanking();
+await cargarActivos();
+await cargarEstadisticas();
+</script>
 </body>
 </html>
