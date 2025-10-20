@@ -44,6 +44,53 @@
     #nueva:hover { transform: translateY(-2px); background: #3b82f6; }
     #message { margin-top: 10px; font-size: 14px; text-align:center; }
     a { margin-top: 20px; color: #3b82f6; text-decoration: none; font-weight: 500; }
+
+    .popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.popup-content h3 {
+  margin-top: 0;
+  color: #4f46e5;
+}
+
+.popup-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.popup-content button:hover {
+  background: #3b82f6;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
   </style>
 </head>
 <body>
@@ -174,14 +221,36 @@
         alert('⚠️ No hi ha cap quiniela activa.');
         return;
       }
-      window.location.href = `quiniela_participante.html?quiniela_id=${quinielaActivaId}`;
+
+      // Mostrar el popup
+      document.getElementById('popupBizum').style.display = 'flex';
+
+      // Quan es tanca el popup, redirigir
+      document.getElementById('popupClose').onclick = () => {
+        document.getElementById('popupBizum').style.display = 'none';
+        window.location.href = `quiniela_participante.html?quiniela_id=${quinielaActivaId}`;
+      };
     });
+
 
     // 🔄 Execució inicial
     if (await checkLogin()) {
       await getQuinielaActiva();
       await cargarMisQuinielas();
     }
+
+    
   </script>
+
+  <div id="popupBizum" class="popup-overlay" style="display:none;">
+  <div class="popup-content">
+    <h3>Informació important 🧾</h3>
+    <p>Per tal que la quiniela sigui vàlida, cal fer un <strong>Bizum de 2€</strong> un cop completada al número:</p>
+    <p style="font-size: 18px; font-weight: bold; color: #2563eb;">📱 612 345 678</p>
+    <p>Gràcies per participar i molta sort! 🍀</p>
+    <button id="popupClose">Entès!</button>
+  </div>
+</div>
+
 </body>
 </html>
