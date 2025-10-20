@@ -770,10 +770,9 @@ async function cargarPremis() {
       return;
     }
 
-    // Dades de recaptació i premis
     const { data, error } = await supabase
       .from("recaudacion_quinielas")
-      .select("premi_ple, premi_guanyador, acumulado_ple, acumulado_guanyador")
+      .select("recaudado, acumulado")
       .eq("quiniela_id", activa.id)
       .single();
 
@@ -782,11 +781,11 @@ async function cargarPremis() {
       return;
     }
 
-    // Assignar valors
-    document.querySelector("#premiPle .amount").textContent = `${(data?.premi_ple || 0).toFixed(2)} €`;
-    document.querySelector("#premiGuanyador .amount").textContent = `${(data?.premi_guanyador || 0).toFixed(2)} €`;
-    document.querySelector("#acumulatPle .amount").textContent = `${(data?.acumulado_ple || 0).toFixed(2)} €`;
-    document.querySelector("#acumulatGuanyador .amount").textContent = `${(data?.acumulado_guanyador || 0).toFixed(2)} €`;
+    document.querySelector("#premiPle .amount").textContent = `${(data?.recaudado * 0.5).toFixed(2)} €`; // ex. 50% pel ple
+    document.querySelector("#premiGuanyador .amount").textContent = `${(data?.recaudado * 0.3).toFixed(2)} €`; // ex. 30% pel guanyador
+    document.querySelector("#acumulatPle .amount").textContent = `${(data?.acumulado * 1).toFixed(2)} €`;
+    document.querySelector("#acumulatGuanyador .amount").textContent = `${(data?.acumulado * 0.5).toFixed(2)} €`;
+
 
   } catch (err) {
     console.error("Error carregant repartiment de premis:", err);
