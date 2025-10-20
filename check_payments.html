@@ -185,16 +185,86 @@ async function cargarPagos() {
 
 }
 
-// 🟢 Marcar o desmarcar pago
+// 🟢 Marcar o desmarcar pago i actualitzar recaptació
 window.togglePago = async function(id, actual) {
-  const { error } = await supabase
-    .from("quinielas_participantes")
-    .update({ pagado: !actual })
-    .eq("id", id);
+  try {
+    // 1️⃣ Obtenir la quiniela activa
+    const { data: quinielaActiva, error: errorActiva } = await supabase
+      .from("quiniela_oficial")
+      .select("id")
+      .eq("activa", true)
+      .single();
 
-  if (error) alert("❌ Error actualizando pago: " + error.message);
-  else cargarPagos();
+    if (errorActiva || !quinielaActiva) {
+      alert("❌ No s'ha trobat la quiniela activa.");
+      return;
+    }
+
+    const quinielaId = quinielaActiva.id;
+
+    // 2️⃣ Actualitzar estat de pagament del participant
+    const { error: updateError } = await supabase
+      .from("quinielas_participantes")
+      .update({ pagado: !actual })
+      .eq("id", id);
+
+    if (updateError) {
+      alert("❌ Error actualitzant pagament: " + updateError.message);
+      return;
+    }
+
+    // 3️⃣ Buscar registre de recaptació de la quiniela
+    const { data: recData, error: recError } = await supabase
+      .from("recaudacion_quinielas")
+      .select("*")
+      .eq("quiniela_id", quinielaId)
+      .single();
+
+    if (recError && recError.code !== "PGRST116") { // "no record found"
+      console.error("Error consultant recaptació:", recError);
+    }
+
+    let recaudado = recData?.recaudado || 0;
+    let acumulado = recData?.acumulado || 0;
+
+    // 4️⃣ Sumar o restar 2€
+    if (!actual) recaudado += 2; // si ara marquem com pagat
+    else recaudado = Math.max(0, recaudado - 2); // si desmarquem
+
+    acumulado = Math.max(acumulado, recaudado); // acumulat sempre >= recaudat
+
+    // 5️⃣ Actualitzar o inserir registre
+    if (recData) {
+      await supabase
+        .from("recaudacion_quinielas")
+        .update({
+          recaudado,
+          acumulado,
+          actualizado_en: new Date().toISOString(),
+        })
+        .eq("quiniela_id", quinielaId);
+    } else {
+      await supabase
+        .from("recaudacion_quinielas")
+        .insert([
+          {
+            quiniela_id: quinielaId,
+            recaudado,
+            acumulado,
+            actualizado_en: new Date().toISOString(),
+          },
+        ]);
+    }
+
+    // 6️⃣ Tornem a carregar la taula
+    cargarPagos();
+
+  } catch (err) {
+    console.error("Error a togglePago:", err);
+    alert("❌ Error actualitzant pagament: " + err.message);
+  }
 };
+
 
 // 🔑 Inicialitzar
 document.addEventListener("DOMContentLoaded", async () => {
