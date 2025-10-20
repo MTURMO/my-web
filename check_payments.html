@@ -216,30 +216,26 @@ window.togglePago = async function(id, actual) {
     // 3️⃣ Buscar registre de recaptació de la quiniela
     const { data: recData, error: recError } = await supabase
       .from("recaudacion_quinielas")
-      .select("*")
+      .select("id, recaudado")
       .eq("quiniela_id", quinielaId)
-      .single();
+      .maybeSingle();
 
-    if (recError && recError.code !== "PGRST116") { // "no record found"
+    if (recError && recError.code !== "PGRST116") {
       console.error("Error consultant recaptació:", recError);
     }
 
     let recaudado = recData?.recaudado || 0;
-    let acumulado = recData?.acumulado || 0;
 
     // 4️⃣ Sumar o restar 2€
-    if (!actual) recaudado += 2; // si ara marquem com pagat
-    else recaudado = Math.max(0, recaudado - 2); // si desmarquem
+    if (!actual) recaudado += 2; // Si ara marquem com pagat
+    else recaudado = Math.max(0, recaudado - 2); // Si desmarquem
 
-    acumulado = Math.max(acumulado, recaudado); // acumulat sempre >= recaudat
-
-    // 5️⃣ Actualitzar o inserir registre
+    // 5️⃣ Actualitzar o inserir registre (sense tocar acumulado)
     if (recData) {
       await supabase
         .from("recaudacion_quinielas")
         .update({
           recaudado,
-          acumulado,
           actualizado_en: new Date().toISOString(),
         })
         .eq("quiniela_id", quinielaId);
@@ -250,7 +246,6 @@ window.togglePago = async function(id, actual) {
           {
             quiniela_id: quinielaId,
             recaudado,
-            acumulado,
             actualizado_en: new Date().toISOString(),
           },
         ]);
@@ -264,6 +259,7 @@ window.togglePago = async function(id, actual) {
     alert("❌ Error actualitzant pagament: " + err.message);
   }
 };
+
 
 
 // 🔑 Inicialitzar
