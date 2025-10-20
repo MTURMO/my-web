@@ -842,10 +842,23 @@ async function cargarPremis() {
       return;
     }
 
+    const { data: totesRecaptacions, error: errTotals } = await supabase
+    .from("recaudacion_quinielas")
+    .select("recaudado");
+    if (errTotals) throw errTotals;
+    if (!totesRecaptacions?.length) {
+      document.querySelector("#acumulatGuanyador .amount").textContent = "0 €";
+      return;
+    }
+
+    const totalRecaptatGlobal = totesRecaptacions.reduce((sum, r) => sum + (r.recaudado || 0), 0);
+    const acumulatGuanyador = totalRecaptatGlobal * 0.15;
+
+
     document.querySelector("#premiPle .amount").textContent = `${(data?.recaudado * 0.5).toFixed(2)} €`; // ex. 50% pel ple
     document.querySelector("#premiGuanyador .amount").textContent = `${(data?.recaudado * 0.3).toFixed(2)} €`; // ex. 30% pel guanyador
     document.querySelector("#acumulatPle .amount").textContent = `${(data?.acumulado * 1).toFixed(2)} €`;
-    document.querySelector("#acumulatGuanyador .amount").textContent = `${(data?.acumulado * 0.5).toFixed(2)} €`;
+    document.querySelector("#acumulatGuanyador .amount").textContent = `${acumulatGuanyador.toFixed(2)} €`;
 
 
   } catch (err) {
