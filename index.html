@@ -337,6 +337,63 @@ a.menu-link:hover { transform: translateY(-2px); }
   }
 }
 
+/* === Repartiment de Premis === */
+.premis-container {
+  text-align: center;
+  margin: 30px auto 50px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.premis-container h2 {
+  color: #065f46;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.premis-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.premi-card {
+  flex: 1 1 220px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+}
+
+.premi-card .emoji {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.premi-card .label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.premi-card .amount {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .premi-card { flex: 1 1 100%; }
+}
+
+
 </style>
 </head>
 <body>
@@ -347,16 +404,33 @@ a.menu-link:hover { transform: translateY(-2px); }
 <div class="content-wrapper">
   <h1>🏆 Rànquing General</h1>
 
-  <!-- Comptador de recaptació -->
-  <div class="recaptacio-container">
-    <div class="recaptacio-card">
-      <div class="recaptacio-icon">💰</div>
-      <div class="recaptacio-content">
-        <div class="recaptacio-label">Recaptació Actual</div>
-        <div class="recaptacio-amount" id="recaptacioAmount">0 €</div>
+  <!-- 💰 Repartiment de Premis -->
+  <div class="premis-container">
+    <h2>💰 Repartiment de Premis</h2>
+    <div class="premis-grid">
+      <div class="premi-card" id="premiPle">
+        <div class="emoji">🥇</div>
+        <div class="label">Premi per fer PLE</div>
+        <div class="amount">0 €</div>
+      </div>
+      <div class="premi-card" id="premiGuanyador">
+        <div class="emoji">🏆</div>
+        <div class="label">Premi pel Guanyador</div>
+        <div class="amount">0 €</div>
+      </div>
+      <div class="premi-card" id="acumulatPle">
+        <div class="emoji">💎</div>
+        <div class="label">Bote Ple Acumulat</div>
+        <div class="amount">0 €</div>
+      </div>
+      <div class="premi-card" id="acumulatGuanyador">
+        <div class="emoji">🔁</div>
+        <div class="label">Bote Guanyador Acumulat</div>
+        <div class="amount">0 €</div>
       </div>
     </div>
   </div>
+
 
   <div id="infoPanel" class="info-panel">
   <div class="info-content">
@@ -681,6 +755,45 @@ async function cargarRecaptacio() {
   }
 }
 
+// 💰 Carregar Repartiment de Premis
+async function cargarPremis() {
+  try {
+    // Quiniela activa
+    const { data: activa, error: errActiva } = await supabase
+      .from("quiniela_oficial")
+      .select("id")
+      .eq("activa", true)
+      .single();
+
+    if (errActiva || !activa?.id) {
+      console.warn("No hi ha quiniela activa per mostrar premis.");
+      return;
+    }
+
+    // Dades de recaptació i premis
+    const { data, error } = await supabase
+      .from("recaudacion_quinielas")
+      .select("premi_ple, premi_guanyador, acumulado_ple, acumulado_guanyador")
+      .eq("quiniela_id", activa.id)
+      .single();
+
+    if (error) {
+      console.error("Error carregant premis:", error);
+      return;
+    }
+
+    // Assignar valors
+    document.querySelector("#premiPle .amount").textContent = `${(data?.premi_ple || 0).toFixed(2)} €`;
+    document.querySelector("#premiGuanyador .amount").textContent = `${(data?.premi_guanyador || 0).toFixed(2)} €`;
+    document.querySelector("#acumulatPle .amount").textContent = `${(data?.acumulado_ple || 0).toFixed(2)} €`;
+    document.querySelector("#acumulatGuanyador .amount").textContent = `${(data?.acumulado_guanyador || 0).toFixed(2)} €`;
+
+  } catch (err) {
+    console.error("Error carregant repartiment de premis:", err);
+  }
+}
+
+
 
 // --- Event listeners
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
@@ -690,6 +803,8 @@ await cargarRanking();
 await cargarActivos();
 await cargarEstadisticas();
 await cargarRecaptacio();
+await cargarPremis();
+
 </script>
 </body>
 </html>
