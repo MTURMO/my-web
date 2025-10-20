@@ -440,26 +440,31 @@ a.menu-link:hover { transform: translateY(-2px); }
 <div class="content-wrapper">
   <h1>🏆 Rànquing General</h1>
 
-  <!-- 💰 Repartiment de Premis -->
-  <!-- Nova secció de premis -->
-<div class="zona-premis">
-  <div class="premi-card" id="premiPle">
-    <h3>🏅 Premi Ple (jornada)</h3>
-    <div class="amount">0 €</div>
+  <!-- Mostrador de recaptació i premis -->
+  <div id="zonaPremis">
+    <h2>💶 Estat de la Quiniela</h2>
+    <p>Total recaptat aquesta jornada: <strong id="recaptacioAmount">0 €</strong></p>
+
+    <div class="zona-premis">
+      <div class="premi-card" id="premiPle">
+        <h3>🏅 Premi Ple (jornada)</h3>
+        <div class="amount">0 €</div>
+      </div>
+      <div class="premi-card" id="premiGuanyador">
+        <h3>🥇 Premi Guanyador (sense ple)</h3>
+        <div class="amount">0 €</div>
+      </div>
+      <div class="premi-card" id="acumulatPle">
+        <h3>💰 Bote Ple Acumulat</h3>
+        <div class="amount">0 €</div>
+      </div>
+      <div class="premi-card" id="acumulatGuanyador">
+        <h3>🏆 Bote Guanyador Acumulat</h3>
+        <div class="amount">0 €</div>
+      </div>
+    </div>
   </div>
-  <div class="premi-card" id="premiGuanyador">
-    <h3>🥇 Premi Guanyador (sense ple)</h3>
-    <div class="amount">0 €</div>
-  </div>
-  <div class="premi-card" id="acumulatPle">
-    <h3>💰 Bote Ple Acumulat</h3>
-    <div class="amount">0 €</div>
-  </div>
-  <div class="premi-card" id="acumulatGuanyador">
-    <h3>🏆 Bote Guanyador Acumulat</h3>
-    <div class="amount">0 €</div>
-  </div>
-</div>
+
 
 
 
