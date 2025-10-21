@@ -443,18 +443,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   <!-- Mostrador de recaptació i premis -->
   <div id="zonaPremis">
     <h2>💶 Estat de la Quiniela</h2>
-
-    <div class="recaptacio-container">
-      <div class="recaptacio-card">
-        <div class="recaptacio-icon">💶</div>
-        <div class="recaptacio-content">
-          <div class="recaptacio-label">Recaptació actual</div>
-          <div class="recaptacio-amount" id="recaptacioAmount">0 €</div>
-        </div>
-      </div>
-    </div>
-
-
+    
     <div class="zona-premis">
       <div class="premi-card" id="premiPle">
         <h3>🏅 Premi Ple (jornada)</h3>
@@ -760,7 +749,6 @@ async function cargarEstadisticas() {
 // --- Carregar recaptació
 // --- Carregar recaptació i premis
 async function cargarRecaptacio() {
-  const recaptacioEl = document.getElementById("recaptacioAmount");
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
   const premiGuanyadorEl = document.getElementById("premiGuanyador")?.querySelector(".amount");
   const acumulatPleEl = document.getElementById("acumulatPle")?.querySelector(".amount");
@@ -776,7 +764,6 @@ async function cargarRecaptacio() {
 
     if (errorActiva || !quinielaActiva?.id) {
       console.warn("No hi ha quiniela activa.");
-      recaptacioEl.textContent = "0 €";
       if (premiPleEl) premiPleEl.textContent = "0 €";
       if (premiGuanyadorEl) premiGuanyadorEl.textContent = "0 €";
       if (acumulatPleEl) acumulatPleEl.textContent = "0 €";
@@ -806,14 +793,13 @@ async function cargarRecaptacio() {
     if (errTotals) throw errTotals;
 
     const totalRecaptatGlobal = totesRecaptacions?.reduce((sum, r) => sum + (r.recaudado || 0), 0) || 0;
-    const acumulatGuanyador = totalRecaptatGlobal * 0.15; // 15% del total global per al premi general
+    const acumulatGuanyador = totalRecaptatGlobal * 0.15; // 15% del total global
 
-    // 4️⃣ Calcul dels premis actuals (de la jornada activa)
-    const premiPle = recaptatActual * 0.5;       // 50% pel ple
-    const premiGuanyador = recaptatActual * 0.25; // 25% pel guanyador (la resta va al club)
+    // 4️⃣ Calcul dels premis actuals
+    const premiPle = recaptatActual * 0.5;
+    const premiGuanyador = recaptatActual * 0.25;
 
-    // 5️⃣ Actualitzar visuals
-    recaptacioEl.textContent = `${recaptatActual.toLocaleString("ca-ES")} €`;
+    // 5️⃣ Actualitzar visuals (sense recaptació actual)
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
     if (premiGuanyadorEl) premiGuanyadorEl.textContent = `${premiGuanyador.toFixed(2)} €`;
     if (acumulatPleEl) acumulatPleEl.textContent = `${acumulatPle.toFixed(2)} €`;
@@ -821,9 +807,9 @@ async function cargarRecaptacio() {
 
   } catch (err) {
     console.error("Error carregant premis:", err);
-    recaptacioEl.textContent = "0 €";
   }
 }
+
 
 
 // 💰 Carregar Repartiment de Premis
