@@ -800,7 +800,7 @@ async function cargarEstadisticas() {
 
   const { data: quinielaActiva, error: errorActiva } = await supabase
     .from("quiniela_oficial")
-    .select("id, nombre, data, activa")
+    .select("id, nombre, data, activa, blocked")
     .eq("activa", true)
     .single();
 
@@ -810,7 +810,6 @@ async function cargarEstadisticas() {
     return;
   }
 
-  // Mostrem el nom i data de la quiniela activa
   const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
     weekday: "long", day: "numeric", month: "long"
   });
@@ -821,10 +820,9 @@ async function cargarEstadisticas() {
     </div>
   `;
 
-  // Carreguem les apostes
   const { data: apostes, error: errApostes } = await supabase
     .from("quinielas_participantes")
-    .select("resultados")
+    .select("nombre, resultados")
     .eq("quiniela_id", quinielaActiva.id);
 
   if (errApostes) {
@@ -833,49 +831,65 @@ async function cargarEstadisticas() {
     return;
   }
 
-  if (!apostes?.length || apostes.length < 3) {
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
+  if (!apostes?.length) {
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
     return;
   }
 
-  // Dades dels partits
-  const partits = quinielaActiva.data;
-  const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
+  // Identificació de partits (agafem els equips de la primera aposta)
+  const primer = apostes.find(a => a.resultados)?.resultados || {};
+  const partits = Object.keys(primer).map(i => ({
+    index: i,
+    local: `Partit ${parseInt(i) + 1}`,
+    visitante: ""
+  }));
+
+  // Calcular percentatges i noms
+  const stats = partits.map(() => ({ "1": [], "X": [], "2": [] }));
 
   apostes.forEach(a => {
     Object.entries(a.resultados || {}).forEach(([i, v]) => {
-      if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
+      if (stats[i] && stats[i][v] !== undefined) stats[i][v].push(a.nombre);
     });
   });
 
   // Renderitzar la taula
   tbodyEstadisticas.innerHTML = stats.map((r, i) => {
-    const total = r["1"] + r["X"] + r["2"];
+    const total = r["1"].length + r["X"].length + r["2"].length;
     if (!total) return "";
-    const p1 = ((r["1"] / total) * 100).toFixed(1);
-    const px = ((r["X"] / total) * 100).toFixed(1);
-    const p2 = ((r["2"] / total) * 100).toFixed(1);
+
+    const p1 = ((r["1"].length / total) * 100).toFixed(1);
+    const px = ((r["X"].length / total) * 100).toFixed(1);
+    const p2 = ((r["2"].length / total) * 100).toFixed(1);
+
+    const mostrarVots = quinielaActiva.blocked; // només si està tancada
+
+    const noms1 = mostrarVots ? `<div class="vots-llista">${r["1"].map(n => `<div class='vot-item'>${n}</div>`).join("") || "<div class='vot-item vot-buit'>–</div>"}</div>` : "";
+    const nomsX = mostrarVots ? `<div class="vots-llista">${r["X"].map(n => `<div class='vot-item'>${n}</div>`).join("") || "<div class='vot-item vot-buit'>–</div>"}</div>` : "";
+    const noms2 = mostrarVots ? `<div class="vots-llista">${r["2"].map(n => `<div class='vot-item'>${n}</div>`).join("") || "<div class='vot-item vot-buit'>–</div>"}</div>` : "";
+
     const match = partits[i];
     return `
       <tr class="partit-row" data-index="${i}">
         <td>
           <div class="label-equip">${match.local}</div>
           <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
+          ${noms1}
         </td>
         <td>
           <div class="label-vs">vs.</div>
           <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
+          ${nomsX}
         </td>
         <td>
           <div class="label-equip">${match.visitante}</div>
           <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
+          ${noms2}
         </td>
       </tr>`;
   }).join("");
-
-  // Afegim la funcionalitat de desplegable
-  activarDesplegablesRepartiment();
 }
+
 
 
 async function activarDesplegablesRepartiment() {
