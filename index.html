@@ -443,18 +443,9 @@ a.menu-link:hover { transform: translateY(-2px); }
   <!-- Mostrador de recaptació i premis -->
   <div id="zonaPremis">
     <h2>💶 Estat de la Quiniela</h2>
-    
     <div class="zona-premis">
       <div class="premi-card" id="premiPle">
-        <h3>🏅 Premi Ple (jornada)</h3>
-        <div class="amount">0 €</div>
-      </div>
-      <div class="premi-card" id="premiGuanyador">
-        <h3>🥇 Premi Guanyador (sense ple)</h3>
-        <div class="amount">0 €</div>
-      </div>
-      <div class="premi-card" id="acumulatPle">
-        <h3>💰 Bote Ple Acumulat</h3>
+        <h3>🏅 Premi Ple (Jornada)</h3>
         <div class="amount">0 €</div>
       </div>
       <div class="premi-card" id="acumulatGuanyador">
@@ -463,6 +454,7 @@ a.menu-link:hover { transform: translateY(-2px); }
       </div>
     </div>
   </div>
+
 
 
 
@@ -750,12 +742,10 @@ async function cargarEstadisticas() {
 // --- Carregar recaptació i premis
 async function cargarRecaptacio() {
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
-  const premiGuanyadorEl = document.getElementById("premiGuanyador")?.querySelector(".amount");
-  const acumulatPleEl = document.getElementById("acumulatPle")?.querySelector(".amount");
   const acumulatGuanyadorEl = document.getElementById("acumulatGuanyador")?.querySelector(".amount");
 
   try {
-    // 1️⃣ Obtenir la quiniela activa
+    // 1️⃣ Quiniela activa
     const { data: quinielaActiva, error: errorActiva } = await supabase
       .from("quiniela_oficial")
       .select("id")
@@ -765,15 +755,13 @@ async function cargarRecaptacio() {
     if (errorActiva || !quinielaActiva?.id) {
       console.warn("No hi ha quiniela activa.");
       if (premiPleEl) premiPleEl.textContent = "0 €";
-      if (premiGuanyadorEl) premiGuanyadorEl.textContent = "0 €";
-      if (acumulatPleEl) acumulatPleEl.textContent = "0 €";
       if (acumulatGuanyadorEl) acumulatGuanyadorEl.textContent = "0 €";
       return;
     }
 
     const quinielaId = quinielaActiva.id;
 
-    // 2️⃣ Obtenir dades de la quiniela activa (acumulat i recaptació)
+    // 2️⃣ Dades de la quiniela activa (recaptació i acumulat)
     const { data: recActiva, error: errActivaRec } = await supabase
       .from("recaudacion_quinielas")
       .select("recaudado, acumulado")
@@ -785,7 +773,7 @@ async function cargarRecaptacio() {
     const recaptatActual = recActiva?.recaudado || 0;
     const acumulatPle = recActiva?.acumulado || 0;
 
-    // 3️⃣ Obtenir totes les recaptacions (per calcular l'acumulat guanyador)
+    // 3️⃣ Obtenir totes les recaptacions (per calcular el bote guanyador acumulat)
     const { data: totesRecaptacions, error: errTotals } = await supabase
       .from("recaudacion_quinielas")
       .select("recaudado");
@@ -793,22 +781,20 @@ async function cargarRecaptacio() {
     if (errTotals) throw errTotals;
 
     const totalRecaptatGlobal = totesRecaptacions?.reduce((sum, r) => sum + (r.recaudado || 0), 0) || 0;
-    const acumulatGuanyador = totalRecaptatGlobal * 0.15; // 15% del total global
+    const acumulatGuanyador = totalRecaptatGlobal * 0.15;
 
-    // 4️⃣ Calcul dels premis actuals
-    const premiPle = recaptatActual * 0.5;
-    const premiGuanyador = recaptatActual * 0.25;
+    // 4️⃣ Calcul del premi ple (jornada)
+    const premiPle = (recaptatActual * 0.5) + acumulatPle;
 
-    // 5️⃣ Actualitzar visuals (sense recaptació actual)
+    // 5️⃣ Actualitzar visuals
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
-    if (premiGuanyadorEl) premiGuanyadorEl.textContent = `${premiGuanyador.toFixed(2)} €`;
-    if (acumulatPleEl) acumulatPleEl.textContent = `${acumulatPle.toFixed(2)} €`;
     if (acumulatGuanyadorEl) acumulatGuanyadorEl.textContent = `${acumulatGuanyador.toFixed(2)} €`;
 
   } catch (err) {
     console.error("Error carregant premis:", err);
   }
 }
+
 
 
 
