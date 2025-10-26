@@ -520,6 +520,22 @@ a.menu-link:hover { transform: translateY(-2px); }
   font-style: italic;
 }
 
+.partit-row {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.partit-row:hover {
+  background: #eef2ff;
+}
+.detall-vots td {
+  font-size: 0.9rem;
+  color: #333;
+  padding: 10px 0;
+}
+.vots-grup strong {
+  color: #1e3a8a;
+}
+
 
 </style>
 </head>
@@ -836,7 +852,6 @@ async function cargarEstadisticas() {
     return;
   }
 
-  // Identificació de partits (agafem els equips de la primera aposta)
   const primer = apostes.find(a => a.resultados)?.resultados || {};
   const partits = Object.keys(primer).map(i => ({
     index: i,
@@ -844,29 +859,22 @@ async function cargarEstadisticas() {
     visitante: ""
   }));
 
-  // Calcular percentatges i noms
+  // Calcular vots per partit
   const stats = partits.map(() => ({ "1": [], "X": [], "2": [] }));
-
   apostes.forEach(a => {
     Object.entries(a.resultados || {}).forEach(([i, v]) => {
       if (stats[i] && stats[i][v] !== undefined) stats[i][v].push(a.nombre);
     });
   });
 
-  // Renderitzar la taula
+  const mostrarVots = quinielaActiva.blocked;
+
   tbodyEstadisticas.innerHTML = stats.map((r, i) => {
     const total = r["1"].length + r["X"].length + r["2"].length;
     if (!total) return "";
-
     const p1 = ((r["1"].length / total) * 100).toFixed(1);
     const px = ((r["X"].length / total) * 100).toFixed(1);
     const p2 = ((r["2"].length / total) * 100).toFixed(1);
-
-    const mostrarVots = quinielaActiva.blocked; // només si està tancada
-
-    const noms1 = mostrarVots ? `<div class="vots-llista">${r["1"].map(n => `<div class='vot-item'>${n}</div>`).join("") || "<div class='vot-item vot-buit'>–</div>"}</div>` : "";
-    const nomsX = mostrarVots ? `<div class="vots-llista">${r["X"].map(n => `<div class='vot-item'>${n}</div>`).join("") || "<div class='vot-item vot-buit'>–</div>"}</div>` : "";
-    const noms2 = mostrarVots ? `<div class="vots-llista">${r["2"].map(n => `<div class='vot-item'>${n}</div>`).join("") || "<div class='vot-item vot-buit'>–</div>"}</div>` : "";
 
     const match = partits[i];
     return `
@@ -874,20 +882,45 @@ async function cargarEstadisticas() {
         <td>
           <div class="label-equip">${match.local}</div>
           <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
-          ${noms1}
         </td>
         <td>
           <div class="label-vs">vs.</div>
           <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
-          ${nomsX}
         </td>
         <td>
           <div class="label-equip">${match.visitante}</div>
           <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
-          ${noms2}
         </td>
-      </tr>`;
+      </tr>
+      <tr class="detall-vots" id="vots-${i}" style="display:none;">
+        <td colspan="3" style="background:#f9fafb; text-align:center;">
+          ${mostrarVots ? `
+            <div class="vots-grup">
+              <strong>1:</strong> ${r["1"].join(", ") || "—"}<br>
+              <strong>X:</strong> ${r["X"].join(", ") || "—"}<br>
+              <strong>2:</strong> ${r["2"].join(", ") || "—"}
+            </div>
+          ` : "<em>Els vots es mostraran un cop la quiniela estigui tancada.</em>"}
+        </td>
+      </tr>
+    `;
   }).join("");
+
+  // Afegim el comportament de clic
+  document.querySelectorAll(".partit-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const index = row.dataset.index;
+      const detall = document.getElementById(`vots-${index}`);
+
+      // Tanquem tots els altres
+      document.querySelectorAll(".detall-vots").forEach(d => {
+        if (d.id !== `vots-${index}`) d.style.display = "none";
+      });
+
+      // Mostrem o amaguem aquest
+      detall.style.display = detall.style.display === "none" ? "table-row" : "none";
+    });
+  });
 }
 
 
