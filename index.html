@@ -882,9 +882,9 @@ async function activarDesplegablesRepartiment() {
   const rows = document.querySelectorAll(".partit-row");
 
   // 1️⃣ Obtenim la quiniela activa
-  const { data: quinielaActiva, error: errorQ } = await supabase
+    const { data: quinielaActiva, error: errorQ } = await supabase
     .from("quiniela_oficial")
-    .select("id, activa, tancada")
+    .select("id, activa, blocked")
     .eq("activa", true)
     .maybeSingle();
 
@@ -894,10 +894,9 @@ async function activarDesplegablesRepartiment() {
   }
 
   const idQuiniela = quinielaActiva.id;
-  const estaTancada = !quinielaActiva.activa;
 
-  // 2️⃣ Si no està tancada → bloquegem accés als vots
-  if (!estaTancada) {
+  // 🔒 Només es poden veure els vots si la quiniela ACTIVA està BLOQUEJADA
+  if (!quinielaActiva.blocked) {
     rows.forEach(row => {
       row.addEventListener("click", () => {
         alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
@@ -905,6 +904,7 @@ async function activarDesplegablesRepartiment() {
     });
     return;
   }
+
 
   // 3️⃣ Si està tancada → carreguem els vots dels participants
   const { data: participants, error: errorP } = await supabase
