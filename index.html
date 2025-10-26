@@ -494,6 +494,31 @@ a.menu-link:hover { transform: translateY(-2px); }
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
+.detall-vots td {
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  padding: 10px 20px;
+}
+
+.vots-llista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vot-item {
+  background: #eef2ff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  font-size: 0.9rem;
+}
+
+.vot-buit {
+  background: #f3f4f6;
+  color: #888;
+  font-style: italic;
+}
 
 
 </style>
@@ -854,51 +879,80 @@ async function cargarEstadisticas() {
 
 
 async function activarDesplegablesRepartiment() {
-  const files = document.querySelectorAll("#tablaEstadisticas tbody tr.partit-row");
+  const rows = document.querySelectorAll(".partit-row");
 
-  // Obtenim tots els participants i els seus resultats
-  const { data: participants, error } = await supabase
-    .from("quinielas_participantes")
-    .select("nombre, resultados");
+  // 1️⃣ Obtenim la quiniela activa o l'última jugada
+  const { data: quinielaActiva, error: errorQ } = await supabase
+    .from("quiniela_oficial")
+    .select("id, activa, data")
+    .eq("activa", true)
+    .maybeSingle();
 
-  if (error) {
-    console.error("Error carregant participants:", error);
+  if (errorQ) {
+    console.error("Error obtenint quiniela activa:", errorQ);
     return;
   }
 
-  files.forEach((fila) => {
-    const index = parseInt(fila.dataset.index);
+  const idQuiniela = quinielaActiva?.id;
+  const estaActiva = quinielaActiva?.activa;
 
-    fila.addEventListener("click", () => {
-      // Si ja hi ha un desplegable obert, el tanquem
-      const existing = document.querySelector(`.detalls-partit[data-index="${index}"]`);
-      if (existing) {
-        existing.remove();
+  // 2️⃣ Obtenim tots els participants (només de la quiniela activa)
+  const { data: participants, error: errorP } = await supabase
+    .from("quinielas_participantes")
+    .select("nombre, resultados")
+    .eq("quiniela_id", idQuiniela);
+
+  if (errorP) {
+    console.error("Error carregant participants:", errorP);
+    return;
+  }
+
+  // 3️⃣ Gestionem clics a les files
+  rows.forEach(row => {
+    row.addEventListener("click", () => {
+      const index = row.getAttribute("data-index");
+
+      // Si la quiniela encara està oberta, no mostrem res
+      if (estaActiva) {
+        alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
         return;
       }
 
-      // Tanquem qualsevol altre desplegable obert
-      document.querySelectorAll(".detalls-partit").forEach(el => el.remove());
+      // Si ja està tancada, mostrem qui va votar què
+      const detallExist = row.nextElementSibling;
+      if (detallExist && detallExist.classList.contains("detall-vots")) {
+        detallExist.remove(); // tancar desplegable
+        return;
+      }
 
-      // Creem una nova fila per mostrar els detalls
-      const detallsRow = document.createElement("tr");
-      detallsRow.className = "detalls-partit show";
-      detallsRow.dataset.index = index;
+      // Crear un nou desplegable amb els noms
+      const detall = document.createElement("tr");
+      detall.className = "detall-vots";
+      const cel = document.createElement("td");
+      cel.colSpan = 3;
 
-      // Construïm la llista de qui ha votat què
-      const detalls = participants.map(p => {
-        const pred = p.resultados?.[index] || "—";
-        let color = pred === "1" ? "#22c55e" : pred === "X" ? "#3b82f6" : pred === "2" ? "#ef4444" : "#6b7280";
-        return `<div style="color:${color}"><strong>${p.nombre}</strong> → ${pred}</div>`;
-      }).join("");
+      // Filtrar i construir la llista de vots per aquest partit
+      let html = "<div class='vots-llista'>";
+      let trobat = false;
 
-      detallsRow.innerHTML = `<td colspan="3">${detalls}</td>`;
+      participants.forEach(p => {
+        const prediccio = p.resultados?.[index];
+        if (prediccio) {
+          trobat = true;
+          html += `<div class="vot-item"><strong>${p.nombre}</strong> → ${prediccio}</div>`;
+        }
+      });
 
-      // Inserim la fila just després de la clicada
-      fila.parentNode.insertBefore(detallsRow, fila.nextSibling);
+      if (!trobat) html += "<div class='vot-item vot-buit'>Cap vot registrat</div>";
+      html += "</div>";
+
+      cel.innerHTML = html;
+      detall.appendChild(cel);
+      row.insertAdjacentElement("afterend", detall);
     });
   });
 }
+
 
 
 // --- Carregar recaptació
