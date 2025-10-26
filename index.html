@@ -428,6 +428,33 @@ a.menu-link:hover { transform: translateY(-2px); }
   font-weight: 700;
 }
 
+/* --- Detalls de qui ha votat cada partit --- */
+.detalls-partit {
+  background: #f9fafb;
+  border-left: 4px solid #3b82f6;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.detalls-partit.show {
+  display: table-row;
+}
+
+.detalls-partit td {
+  text-align: left;
+  color: #333;
+  padding: 10px 15px;
+}
+
+#tablaEstadisticas tbody tr.partit-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#tablaEstadisticas tbody tr.partit-row:hover {
+  background: #eef2ff;
+}
 
 
 </style>
@@ -721,7 +748,7 @@ async function cargarEstadisticas() {
     const p2 = ((r["2"] / total) * 100).toFixed(1);
     const match = partits[i];
     return `
-      <tr class="partit-barres">
+      <tr class="partit-row" data-index="${i}">
         <td>
           <div class="label-equip">${match.local}</div>
           <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
@@ -736,7 +763,59 @@ async function cargarEstadisticas() {
         </td>
       </tr>`;
   }).join("");
+
+// Afegim la funcionalitat de desplegable per veure els vots
+activarDesplegablesRepartiment();
+
 }
+
+async function activarDesplegablesRepartiment() {
+  const files = document.querySelectorAll("#tablaEstadisticas tbody tr.partit-row");
+
+  // Obtenim tots els participants i els seus resultats
+  const { data: participants, error } = await supabase
+    .from("quinielas_participantes")
+    .select("nombre, resultados");
+
+  if (error) {
+    console.error("Error carregant participants:", error);
+    return;
+  }
+
+  files.forEach((fila) => {
+    const index = parseInt(fila.dataset.index);
+
+    fila.addEventListener("click", () => {
+      // Si ja hi ha un desplegable obert, el tanquem
+      const existing = document.querySelector(`.detalls-partit[data-index="${index}"]`);
+      if (existing) {
+        existing.remove();
+        return;
+      }
+
+      // Tanquem qualsevol altre desplegable obert
+      document.querySelectorAll(".detalls-partit").forEach(el => el.remove());
+
+      // Creem una nova fila per mostrar els detalls
+      const detallsRow = document.createElement("tr");
+      detallsRow.className = "detalls-partit show";
+      detallsRow.dataset.index = index;
+
+      // Construïm la llista de qui ha votat què
+      const detalls = participants.map(p => {
+        const pred = p.resultados?.[index] || "—";
+        let color = pred === "1" ? "#22c55e" : pred === "X" ? "#3b82f6" : pred === "2" ? "#ef4444" : "#6b7280";
+        return `<div style="color:${color}"><strong>${p.nombre}</strong> → ${pred}</div>`;
+      }).join("");
+
+      detallsRow.innerHTML = `<td colspan="3">${detalls}</td>`;
+
+      // Inserim la fila just després de la clicada
+      fila.parentNode.insertBefore(detallsRow, fila.nextSibling);
+    });
+  });
+}
+
 
 // --- Carregar recaptació
 // --- Carregar recaptació i premis
