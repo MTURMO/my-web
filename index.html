@@ -456,6 +456,45 @@ a.menu-link:hover { transform: translateY(-2px); }
   background: #eef2ff;
 }
 
+/* Banner de la quiniela activa */
+.quiniela-activa-header {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.quiniela-banner {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  border-radius: 14px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+  display: inline-block;
+}
+
+.quiniela-banner h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.quiniela-banner p {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.no-quiniela {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 10px;
+  padding: 10px 15px;
+  display: inline-block;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+
 
 </style>
 </head>
@@ -720,26 +759,71 @@ async function cargarActivos() {
 }
 
 // --- Estadístiques
+// --- Estadístiques millorades i només per la quiniela activa
 async function cargarEstadisticas() {
-  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
-  const { data: quinielaActiva } = await supabase
-    .from("quiniela_oficial").select("id, data").eq("activa", true).single();
-  if (!quinielaActiva) return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
-
-  const { data: apostes } = await supabase
-    .from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
-  
-  // Comprovar que hi hagi mínim 3 quinieles
-  if (!apostes?.length || apostes.length < 3) {
-    return tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
+  const contenedor = document.querySelector(".taula-dreta");
+  const quinielaHeaderId = "infoQuinielaActiva";
+  let header = document.getElementById(quinielaHeaderId);
+  if (!header) {
+    header = document.createElement("div");
+    header.id = quinielaHeaderId;
+    header.className = "quiniela-activa-header";
+    contenedor.insertBefore(header, contenedor.firstChild);
   }
 
+  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
+
+  const { data: quinielaActiva, error: errorActiva } = await supabase
+    .from("quiniela_oficial")
+    .select("id, nombre, data, activa")
+    .eq("activa", true)
+    .single();
+
+  if (errorActiva || !quinielaActiva) {
+    header.innerHTML = `<div class="no-quiniela">⚠️ Cap quiniela activa</div>`;
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
+    return;
+  }
+
+  // Mostrem el nom i data de la quiniela activa
+  const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
+    weekday: "long", day: "numeric", month: "long"
+  });
+  header.innerHTML = `
+    <div class="quiniela-banner">
+      <h3>🏁 ${quinielaActiva.nombre}</h3>
+      <p>${dataBonica}</p>
+    </div>
+  `;
+
+  // Carreguem les apostes
+  const { data: apostes, error: errApostes } = await supabase
+    .from("quinielas_participantes")
+    .select("resultados")
+    .eq("quiniela_id", quinielaActiva.id);
+
+  if (errApostes) {
+    console.error(errApostes);
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Error carregant apostes.</td></tr>";
+    return;
+  }
+
+  if (!apostes?.length || apostes.length < 3) {
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
+    return;
+  }
+
+  // Dades dels partits
   const partits = quinielaActiva.data;
   const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
-  apostes.forEach(a => Object.entries(a.resultados || {}).forEach(([i, v]) => {
-    if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
-  }));
 
+  apostes.forEach(a => {
+    Object.entries(a.resultados || {}).forEach(([i, v]) => {
+      if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
+    });
+  });
+
+  // Renderitzar la taula
   tbodyEstadisticas.innerHTML = stats.map((r, i) => {
     const total = r["1"] + r["X"] + r["2"];
     if (!total) return "";
@@ -764,10 +848,10 @@ async function cargarEstadisticas() {
       </tr>`;
   }).join("");
 
-// Afegim la funcionalitat de desplegable per veure els vots
-activarDesplegablesRepartiment();
-
+  // Afegim la funcionalitat de desplegable
+  activarDesplegablesRepartiment();
 }
+
 
 async function activarDesplegablesRepartiment() {
   const files = document.querySelectorAll("#tablaEstadisticas tbody tr.partit-row");
