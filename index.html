@@ -520,22 +520,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   font-style: italic;
 }
 
-.partit-row {
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.partit-row:hover {
-  background: #eef2ff;
-}
-.detall-vots td {
-  font-size: 0.9rem;
-  color: #333;
-  padding: 10px 0;
-}
-.vots-grup strong {
-  color: #1e3a8a;
-}
-
 
 </style>
 </head>
@@ -816,7 +800,7 @@ async function cargarEstadisticas() {
 
   const { data: quinielaActiva, error: errorActiva } = await supabase
     .from("quiniela_oficial")
-    .select("id, nombre, data, activa, blocked")
+    .select("id, nombre, data, activa")
     .eq("activa", true)
     .single();
 
@@ -826,6 +810,7 @@ async function cargarEstadisticas() {
     return;
   }
 
+  // Mostrem el nom i data de la quiniela activa
   const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
     weekday: "long", day: "numeric", month: "long"
   });
@@ -836,9 +821,10 @@ async function cargarEstadisticas() {
     </div>
   `;
 
+  // Carreguem les apostes
   const { data: apostes, error: errApostes } = await supabase
     .from("quinielas_participantes")
-    .select("nombre, resultados")
+    .select("resultados")
     .eq("quiniela_id", quinielaActiva.id);
 
   if (errApostes) {
@@ -847,35 +833,28 @@ async function cargarEstadisticas() {
     return;
   }
 
-  if (!apostes?.length) {
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Encara no hi ha apostes.</td></tr>";
+  if (!apostes?.length || apostes.length < 3) {
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
     return;
   }
 
-  const primer = apostes.find(a => a.resultados)?.resultados || {};
-  const partits = Object.keys(primer).map(i => ({
-    index: i,
-    local: `Partit ${parseInt(i) + 1}`,
-    visitante: ""
-  }));
+  // Dades dels partits
+  const partits = quinielaActiva.data;
+  const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
 
-  // Calcular vots per partit
-  const stats = partits.map(() => ({ "1": [], "X": [], "2": [] }));
   apostes.forEach(a => {
     Object.entries(a.resultados || {}).forEach(([i, v]) => {
-      if (stats[i] && stats[i][v] !== undefined) stats[i][v].push(a.nombre);
+      if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
     });
   });
 
-  const mostrarVots = quinielaActiva.blocked;
-
+  // Renderitzar la taula
   tbodyEstadisticas.innerHTML = stats.map((r, i) => {
-    const total = r["1"].length + r["X"].length + r["2"].length;
+    const total = r["1"] + r["X"] + r["2"];
     if (!total) return "";
-    const p1 = ((r["1"].length / total) * 100).toFixed(1);
-    const px = ((r["X"].length / total) * 100).toFixed(1);
-    const p2 = ((r["2"].length / total) * 100).toFixed(1);
-
+    const p1 = ((r["1"] / total) * 100).toFixed(1);
+    const px = ((r["X"] / total) * 100).toFixed(1);
+    const p2 = ((r["2"] / total) * 100).toFixed(1);
     const match = partits[i];
     return `
       <tr class="partit-row" data-index="${i}">
@@ -891,38 +870,12 @@ async function cargarEstadisticas() {
           <div class="label-equip">${match.visitante}</div>
           <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
         </td>
-      </tr>
-      <tr class="detall-vots" id="vots-${i}" style="display:none;">
-        <td colspan="3" style="background:#f9fafb; text-align:center;">
-          ${mostrarVots ? `
-            <div class="vots-grup">
-              <strong>1:</strong> ${r["1"].join(", ") || "—"}<br>
-              <strong>X:</strong> ${r["X"].join(", ") || "—"}<br>
-              <strong>2:</strong> ${r["2"].join(", ") || "—"}
-            </div>
-          ` : "<em>Els vots es mostraran un cop la quiniela estigui tancada.</em>"}
-        </td>
-      </tr>
-    `;
+      </tr>`;
   }).join("");
 
-  // Afegim el comportament de clic
-  document.querySelectorAll(".partit-row").forEach(row => {
-    row.addEventListener("click", () => {
-      const index = row.dataset.index;
-      const detall = document.getElementById(`vots-${index}`);
-
-      // Tanquem tots els altres
-      document.querySelectorAll(".detall-vots").forEach(d => {
-        if (d.id !== `vots-${index}`) d.style.display = "none";
-      });
-
-      // Mostrem o amaguem aquest
-      detall.style.display = detall.style.display === "none" ? "table-row" : "none";
-    });
-  });
+  // Afegim la funcionalitat de desplegable
+  activarDesplegablesRepartiment();
 }
-
 
 
 async function activarDesplegablesRepartiment() {
