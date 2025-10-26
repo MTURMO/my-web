@@ -881,22 +881,32 @@ async function cargarEstadisticas() {
 async function activarDesplegablesRepartiment() {
   const rows = document.querySelectorAll(".partit-row");
 
-  // 1️⃣ Obtenim la quiniela activa o l'última jugada
+  // 1️⃣ Obtenim la quiniela activa
   const { data: quinielaActiva, error: errorQ } = await supabase
     .from("quiniela_oficial")
-    .select("id, activa, data")
+    .select("id, activa, tancada")
     .eq("activa", true)
     .maybeSingle();
 
-  if (errorQ) {
-    console.error("Error obtenint quiniela activa:", errorQ);
+  if (errorQ || !quinielaActiva) {
+    console.warn("⚠️ No s'ha trobat cap quiniela activa.");
     return;
   }
 
-  const idQuiniela = quinielaActiva?.id;
-  const estaActiva = quinielaActiva?.activa;
+  const idQuiniela = quinielaActiva.id;
+  const estaTancada = !quinielaActiva.activa;
 
-  // 2️⃣ Obtenim tots els participants (només de la quiniela activa)
+  // 2️⃣ Si no està tancada → bloquegem accés als vots
+  if (!estaTancada) {
+    rows.forEach(row => {
+      row.addEventListener("click", () => {
+        alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
+      });
+    });
+    return;
+  }
+
+  // 3️⃣ Si està tancada → carreguem els vots dels participants
   const { data: participants, error: errorP } = await supabase
     .from("quinielas_participantes")
     .select("nombre, resultados")
@@ -907,31 +917,22 @@ async function activarDesplegablesRepartiment() {
     return;
   }
 
-  // 3️⃣ Gestionem clics a les files
+  // 4️⃣ Afegim el desplegable de vots
   rows.forEach(row => {
     row.addEventListener("click", () => {
       const index = row.getAttribute("data-index");
 
-      // Si la quiniela encara està oberta, no mostrem res
-      if (estaActiva) {
-        alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
-        return;
-      }
-
-      // Si ja està tancada, mostrem qui va votar què
       const detallExist = row.nextElementSibling;
       if (detallExist && detallExist.classList.contains("detall-vots")) {
-        detallExist.remove(); // tancar desplegable
+        detallExist.remove(); // tanca si ja està obert
         return;
       }
 
-      // Crear un nou desplegable amb els noms
       const detall = document.createElement("tr");
       detall.className = "detall-vots";
       const cel = document.createElement("td");
       cel.colSpan = 3;
 
-      // Filtrar i construir la llista de vots per aquest partit
       let html = "<div class='vots-llista'>";
       let trobat = false;
 
@@ -952,6 +953,7 @@ async function activarDesplegablesRepartiment() {
     });
   });
 }
+
 
 
 
