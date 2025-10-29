@@ -814,12 +814,6 @@ async function cargarEstadisticas() {
   const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
     weekday: "long", day: "numeric", month: "long"
   });
-  header.innerHTML = `
-    <div class="quiniela-banner">
-      <h3>🏁 ${quinielaActiva.nombre}</h3>
-      <p>${dataBonica}</p>
-    </div>
-  `;
 
   // Carreguem les apostes
   const { data: apostes, error: errApostes } = await supabase
