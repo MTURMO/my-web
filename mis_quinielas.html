@@ -117,6 +117,8 @@
     let quinielaActiva = null;
     let quinielaActivaId = null;
 
+    
+
     // ✅ Comprovar sessió
     async function checkLogin() {
       const { data: { session } } = await supabase.auth.getSession();
@@ -157,10 +159,15 @@
     function renderPartidos(resultados, partidos) {
       if (!resultados) return '<p>Sense resultats</p>';
 
-      // Si els partits venen a la columna "data", no "partidos"
-      const llista = partidos || quinielaActiva?.data;
+      // 👇 Converteix objecte {"0":"1","1":"X"} → ["1","X"]
+      if (!Array.isArray(resultados)) {
+        resultados = Object.keys(resultados)
+          .sort((a, b) => Number(a) - Number(b))
+          .map(k => resultados[k]);
+      }
 
-      if (!llista) {
+      const llista = partidos || quinielaActiva?.partidos || [];
+      if (!llista || llista.length === 0) {
         return `<pre>${JSON.stringify(resultados, null, 2)}</pre>`;
       }
 
@@ -168,10 +175,10 @@
       html += '<tr><th>Partit</th><th>Selecció</th></tr>';
 
       llista.forEach((p, i) => {
-        const seleccio = resultados[i] || '-';
+        const seleccio = resultados[i] ?? '-';
         html += `
           <tr>
-            <td>${p.local || p.equip1} vs ${p.visitante || p.equip2}</td>
+            <td>${p.local || p.equip1 || '—'} vs ${p.visitante || p.equip2 || '—'}</td>
             <td>${seleccio}</td>
           </tr>`;
       });
@@ -179,6 +186,7 @@
       html += '</table>';
       return html;
     }
+
 
     // 📋 Carregar quinieles del participant
     async function cargarMisQuinielas() {
