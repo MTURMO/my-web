@@ -2,171 +2,126 @@
 <html lang="ca">
 <head>
   <meta charset="UTF-8">
-  <title>Les meves Quinieles ⚽</title>
+  <title>Les meves Quinieles</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #f3f4f6;
+      background: #f0f4f8;
       margin: 0;
-      padding: 0;
+      padding-top: 80px; /* espai per la barra superior fixa */
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
+    /* 🔹 Barra superior */
     header {
-      background: #2563eb;
-      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 15px 20px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      position: sticky;
-      top: 0;
       z-index: 100;
     }
 
     header h1 {
-      font-size: 18px;
+      font-size: 20px;
+      color: #4f46e5;
       margin: 0;
-      font-weight: 600;
     }
 
-    header button {
-      background: white;
-      color: #2563eb;
+    /* 🔹 Menú superior de filtres */
+    nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    nav button {
+      background: #eef2ff;
       border: none;
-      padding: 8px 14px;
-      font-weight: 600;
       border-radius: 8px;
+      padding: 8px 14px;
       cursor: pointer;
-      transition: all 0.2s;
+      font-weight: 600;
+      transition: background 0.2s;
     }
 
-    header button:hover {
-      background: #e0e7ff;
-      transform: translateY(-1px);
+    nav button:hover {
+      background: #c7d2fe;
     }
 
-    h2 {
-      margin: 20px 0 10px 0;
-      color: #374151;
-      text-align: center;
+    nav button.active {
+      background: #4f46e5;
+      color: white;
     }
 
+    /* 🔹 Botó “Nova Quiniela” */
+    #nueva {
+      padding: 10px 18px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    #nueva:hover { background: #3b82f6; transform: translateY(-2px); }
+
+    /* 🔹 Quinieles */
     #quinielasContainer {
       width: 100%;
       max-width: 600px;
-      padding: 10px;
+      padding: 0 20px;
     }
 
     .quiniela-card {
       background: white;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       margin: 15px 0;
       padding: 20px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .quiniela-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-    }
-
-    .quiniela-card.active {
-      border-left: 5px solid #2563eb;
-    }
-
-    .quiniela-card.old {
-      border-left: 5px solid #9ca3af;
-      opacity: 0.95;
     }
 
     .quiniela-card h3 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #111827;
+      margin: 0 0 10px 0;
+      color: #333;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 14px;
     }
 
     th, td {
-      padding: 8px;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 6px;
+      border-bottom: 1px solid #eee;
       text-align: center;
     }
 
-    th {
-      background: #eff6ff;
-      color: #1e3a8a;
-    }
+    th { background: #eef2ff; }
 
-    td {
-      background: #f9fafb;
-    }
-
-    .status {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .status.active {
-      background: #dbeafe;
-      color: #1e3a8a;
-    }
-
-    .status.old {
-      background: #f3f4f6;
-      color: #4b5563;
-    }
-
-    .loading {
-      text-align: center;
-      color: #555;
-      padding: 40px 0;
-    }
-
-    .spinner {
-      width: 30px;
-      height: 30px;
-      border: 4px solid #d1d5db;
-      border-top: 4px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 10px auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    #message { margin-top: 15px; font-size: 14px; text-align:center; }
 
     a {
-      margin: 20px;
-      color: #2563eb;
+      margin-top: 30px;
+      color: #3b82f6;
       text-decoration: none;
       font-weight: 500;
     }
 
-    a:hover {
-      text-decoration: underline;
-    }
-
-    /* Popup */
+    /* 🔹 Popup Bizum */
     .popup-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -190,13 +145,13 @@
 
     .popup-content h3 {
       margin-top: 0;
-      color: #2563eb;
+      color: #4f46e5;
     }
 
     .popup-content button {
       margin-top: 20px;
       padding: 10px 20px;
-      background: #2563eb;
+      background: #4f46e5;
       color: white;
       border: none;
       border-radius: 8px;
@@ -205,7 +160,7 @@
     }
 
     .popup-content button:hover {
-      background: #1d4ed8;
+      background: #3b82f6;
     }
 
     @keyframes fadeIn {
@@ -214,98 +169,71 @@
     }
   </style>
 </head>
-<body>
 
+<body>
+  <!-- 🔹 Barra superior -->
   <header>
-    <h1>Les meves Quinieles ⚽</h1>
-    <button id="nueva">➕ Nova Quiniela</button>
+    <h1>Les Meves Quinieles ⚽</h1>
+    <nav>
+      <button id="btnTotes" class="active">Totes</button>
+      <button id="btnActives">Actives</button>
+      <button id="btnAntigues">Antigues</button>
+      <button id="nueva">➕ Nova</button>
+    </nav>
   </header>
 
-  <h2 id="nombreUsuario"></h2>
+  <div id="quinielasContainer">Carregant les teves quinieles...</div>
+  <div id="message"></div>
+  <a href="index.html">⬅ Tornar al menú principal</a>
 
-  <div id="quinielasContainer">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Carregant les teves quinieles...</p>
+  <!-- 🔹 Popup Bizum -->
+  <div id="popupBizum" class="popup-overlay" style="display:none;">
+    <div class="popup-content">
+      <h3>Informació important 🧾</h3>
+      <p>Per tal que la quiniela sigui vàlida, cal fer un <strong>Bizum de 2€</strong> un cop completada al número:</p>
+      <p style="font-size: 18px; font-weight: bold; color: #2563eb;">📱 +34 611 456 094</p>
+      <p>Gràcies per participar i molta sort! 🍀</p>
+      <button id="popupClose">Entès!</button>
     </div>
   </div>
-
-  <a href="index.html">⬅ Tornar al menú principal</a>
 
   <script type="module">
     import { supabase } from './supabaseClient.js';
 
     const container = document.getElementById('quinielasContainer');
     const btnNueva = document.getElementById('nueva');
-    const nombreUsuario = document.getElementById('nombreUsuario');
+    const msg = document.getElementById('message');
+    const btnTotes = document.getElementById('btnTotes');
+    const btnActives = document.getElementById('btnActives');
+    const btnAntigues = document.getElementById('btnAntigues');
 
-    let participante = null;
-    let quinielaActiva = null;
+    let participant = null;
+    let quinieles = [];
     let quinielaActivaId = null;
+    let filtre = 'totes';
 
-    // ✅ Comprovar sessió
     async function checkLogin() {
       const { data: { session } } = await supabase.auth.getSession();
-      participante = JSON.parse(localStorage.getItem('participante') || '{}');
-
-      if (!session || !participante?.id) {
+      participant = JSON.parse(localStorage.getItem('participante') || '{}');
+      if (!session || !participant?.id) {
         alert('⚠️ Has d’iniciar sessió abans de veure les teves quinieles.');
         window.location.href = 'participante.html';
         return false;
       }
-
-      nombreUsuario.textContent = `Hola, ${participante.nombre}! 👋`;
       return true;
     }
 
-    // 🟦 Obtenir quiniela activa
     async function getQuinielaActiva() {
-      const { data, error } = await supabase
-        .from('quiniela_oficial')
-        .select('*')
-        .eq('activa', true)
-        .single();
-
-      if (error || !data) return null;
-
-      quinielaActiva = data;
-      quinielaActivaId = data.id;
-      return data;
+      const { data } = await supabase.from('quiniela_oficial').select('*').eq('activa', true).single();
+      quinielaActivaId = data?.id || null;
     }
 
-    // 🏆 Mostrar partits amb equips
-    function renderPartidos(resultados, partidos) {
-      if (!resultados) return '<p>Sense resultats</p>';
-
-      if (!Array.isArray(resultados)) {
-        resultados = Object.keys(resultados)
-          .sort((a, b) => Number(a) - Number(b))
-          .map(k => resultados[k]);
-      }
-
-      if (!partidos || partidos.length === 0)
-        return `<p style="color:#666;">(No hi ha partits disponibles)</p>`;
-
-      let html = '<table><tr><th>Partit</th><th>Selecció</th></tr>';
-      partidos.forEach((p, i) => {
-        const seleccio = resultados[i] ?? '-';
-        html += `<tr>
-          <td>${p.local || p.equip1} vs ${p.visitante || p.equip2}</td>
-          <td>${seleccio}</td>
-        </tr>`;
-      });
-      html += '</table>';
-      return html;
-    }
-
-    // 📋 Carregar quinieles del participant
     async function cargarMisQuinielas() {
-      container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregant les teves quinieles...</p></div>';
-
+      container.innerHTML = 'Carregant...';
       const { data, error } = await supabase
         .from('quinielas_participantes')
         .select('id, resultados, fecha, pagado, quiniela_id')
-        .eq('participante_id', participante.id)
+        .eq('participante_id', participant.id)
         .order('fecha', { ascending: false });
 
       if (error) {
@@ -313,29 +241,35 @@
         return;
       }
 
-      if (!data?.length) {
-        container.innerHTML = '<p>No has fet cap quiniela encara.</p>';
+      quinieles = data;
+      renderFiltrades();
+    }
+
+    async function renderFiltrades() {
+      container.innerHTML = '';
+      const filtrades = quinieles.filter(q => {
+        if (filtre === 'actives') return q.quiniela_id === quinielaActivaId;
+        if (filtre === 'antigues') return q.quiniela_id !== quinielaActivaId;
+        return true;
+      });
+
+      if (filtrades.length === 0) {
+        container.innerHTML = '<p>No hi ha quinieles en aquesta categoria.</p>';
         return;
       }
 
-      container.innerHTML = '';
-
-      for (const q of data) {
+      for (const q of filtrades) {
         const { data: quinielaData } = await supabase
           .from('quiniela_oficial')
           .select('data')
           .eq('id', q.quiniela_id)
           .single();
-
         const partits = quinielaData?.data || [];
         const esActiva = q.quiniela_id === quinielaActivaId;
-
         const card = document.createElement('div');
-        card.className = `quiniela-card ${esActiva ? 'active' : 'old'}`;
+        card.className = 'quiniela-card';
         card.innerHTML = `
-          <div class="status ${esActiva ? 'active' : 'old'}">
-            ${esActiva ? '🟢 Quiniela Activa' : '📜 Quiniela Anterior'}
-          </div>
+          <h3>${esActiva ? '⚽ Quiniela Activa' : '📜 Quiniela anterior'}</h3>
           <p><strong>Data:</strong> ${new Date(q.fecha).toLocaleString()}</p>
           <p><strong>Pagat:</strong> ${q.pagado ? '✅ Sí' : '❌ No'}</p>
           ${renderPartidos(q.resultados, partits)}
@@ -344,13 +278,35 @@
       }
     }
 
-    // ➕ Botó nova quiniela
+    function renderPartidos(resultados, partidos) {
+      if (!Array.isArray(resultados)) {
+        resultados = Object.keys(resultados)
+          .sort((a, b) => Number(a) - Number(b))
+          .map(k => resultados[k]);
+      }
+      let html = '<table><tr><th>Partit</th><th>Selecció</th></tr>';
+      partidos.forEach((p, i) => {
+        html += `<tr><td>${p.local} vs ${p.visitante}</td><td>${resultados[i] || '-'}</td></tr>`;
+      });
+      return html + '</table>';
+    }
+
+    // 🔹 Botons de filtre
+    [btnTotes, btnActives, btnAntigues].forEach(b => {
+      b.addEventListener('click', () => {
+        [btnTotes, btnActives, btnAntigues].forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        filtre = b.id.replace('btn', '').toLowerCase();
+        renderFiltrades();
+      });
+    });
+
+    // 🔹 Nova quiniela
     btnNueva.addEventListener('click', () => {
       if (!quinielaActivaId) {
         alert('⚠️ No hi ha cap quiniela activa.');
         return;
       }
-
       document.getElementById('popupBizum').style.display = 'flex';
       document.getElementById('popupClose').onclick = () => {
         document.getElementById('popupBizum').style.display = 'none';
@@ -358,22 +314,10 @@
       };
     });
 
-    // 🔄 Execució inicial
     if (await checkLogin()) {
       await getQuinielaActiva();
       await cargarMisQuinielas();
     }
   </script>
-
-  <div id="popupBizum" class="popup-overlay" style="display:none;">
-    <div class="popup-content">
-      <h3>Informació important 🧾</h3>
-      <p>Perquè la quiniela sigui vàlida, fes un <strong>Bizum de 2 €</strong> al número:</p>
-      <p style="font-size: 18px; font-weight: bold; color: #2563eb;">📱 +34 611 456 094</p>
-      <p>Gràcies per participar i molta sort 🍀</p>
-      <button id="popupClose">Entès!</button>
-    </div>
-  </div>
-
 </body>
 </html>
