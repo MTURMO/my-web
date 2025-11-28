@@ -208,12 +208,31 @@
         flex-wrap: wrap;
       }
     }
+    /* 🔙 Botó Tornar Enrere */
+    .back-btn {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.2s;
+      color: #4f46e5;
+      margin-right: 15px;
+    }
+
+    .back-btn:hover {
+      background: #e0e7ff;
+    }
+
   </style>
 </head>
 
 <body>
   <!-- 🔹 Barra superior -->
   <header>
+    <button id="btnBack" class="back-btn">⬅ Enrere</button>
     <h1>Les Meves Quinieles ⚽</h1>
     <nav>
       <button id="btnTotes" class="active">Totes</button>
@@ -226,7 +245,6 @@
   <!-- 🔹 Contingut -->
   <div id="quinielasContainer">Carregant les teves quinieles...</div>
   <div id="message"></div>
-  <a href="index.html">⬅ Tornar al menú principal</a>
 
   <!-- 🔹 Popup Bizum -->
   <div id="popupBizum" class="popup-overlay" style="display:none;">
@@ -355,6 +373,11 @@
         window.location.href = `quiniela_participante.html?quiniela_id=${quinielaActivaId}`;
       };
     });
+
+    document.getElementById("btnBack").addEventListener("click", () => {
+      window.location.href = "index.html"; 
+    });
+
 
     if (await checkLogin()) {
       await getQuinielaActiva();
