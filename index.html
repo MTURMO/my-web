@@ -2,7 +2,7 @@
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
-<title>Rànquing General</title>
+<title>Rànquing General 🎄</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -10,13 +10,103 @@
 * { box-sizing: border-box; }
 body {
   font-family: 'Inter', sans-serif;
-  background: #f3f4f6;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ❄️ NEU QUE CAU */
+@keyframes snow-fall {
+  0% { top: -10px; opacity: 1; }
+  100% { top: 100vh; opacity: 0.3; }
+}
+
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: white;
+  font-size: 1.5rem;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: snow-fall linear infinite;
+  z-index: 9999;
+}
+
+/* 🎄 DECORACIONS NADALENQUES */
+.christmas-decoration {
+  position: fixed;
+  font-size: 3rem;
+  z-index: 10;
+  pointer-events: none;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.deco-top-left { top: 10px; left: 10px; }
+.deco-top-right { top: 10px; right: 10px; }
+.deco-bottom-left { bottom: 10px; left: 10px; }
+.deco-bottom-right { bottom: 10px; right: 10px; }
+
+/* 🎉 MISSATGE PUNTUACIÓ x2 ANIMAT */
+.puntuacio-x2 {
+  position: relative;
+  margin: 30px auto;
+  width: fit-content;
+  background: linear-gradient(135deg, #dc2626, #ef4444, #f87171);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 900;
+  padding: 25px 45px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(220, 38, 38, 0.6);
+  z-index: 100;
+  text-align: center;
+  animation: pulse-x2 1.5s ease-in-out infinite, rotate-x2 2s linear infinite;
+  border: 5px solid gold;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+}
+
+@keyframes pulse-x2 {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes rotate-x2 {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.puntuacio-x2::before {
+  content: '🎁';
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  font-size: 2.5rem;
+  animation: spin 2s linear infinite;
+}
+
+.puntuacio-x2::after {
+  content: '🎁';
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  font-size: 2.5rem;
+  animation: spin 2s linear infinite reverse;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Botons superiors */
@@ -25,7 +115,7 @@ body {
   top: 20px;
   z-index: 1000;
   padding: 10px 20px;
-  background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  background: linear-gradient(90deg, #dc2626, #ef4444);
   color: white;
   border-radius: 10px;
   font-weight: 600;
@@ -34,17 +124,43 @@ body {
   cursor: pointer;
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
-.info-btn:hover, .login-btn:hover { transform: translateY(-2px); }
+.info-btn:hover, .login-btn:hover { transform: translateY(-2px) scale(1.05); }
 .info-btn { left: 20px; }
 .login-btn { right: 20px; text-decoration: none; display: inline-block; }
 
 /* Títols */
 h1 { 
-  font-size: 2rem; color: #333; margin-bottom: 20px; text-align: center; 
-  margin-top: 60px; width: 100%; max-width: 1400px;
+  font-size: 2.5rem; 
+  color: white; 
+  margin-bottom: 20px; 
+  text-align: center; 
+  margin-top: 60px; 
+  width: 100%; 
+  max-width: 1400px;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  position: relative;
 }
-h2 { color: #2563eb; margin-top: 40px; margin-bottom: 20px; text-align: center; font-size: 1.5rem; }
+
+h1::before {
+  content: '🎄';
+  margin-right: 15px;
+}
+
+h1::after {
+  content: '🎄';
+  margin-left: 15px;
+}
+
+h2 { 
+  color: white; 
+  margin-top: 40px; 
+  margin-bottom: 20px; 
+  text-align: center; 
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+}
 
 .content-wrapper {
   width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center;
@@ -60,20 +176,21 @@ h2 { color: #2563eb; margin-top: 40px; margin-bottom: 20px; text-align: center; 
 }
 
 .recaptacio-card {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
   border-radius: 16px;
   padding: 20px 30px;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.5);
   display: flex;
   align-items: center;
   gap: 20px;
   transition: transform 0.3s ease;
   min-width: 280px;
+  border: 3px solid gold;
 }
 
 .recaptacio-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.6);
 }
 
 .recaptacio-icon {
@@ -88,7 +205,7 @@ h2 { color: #2563eb; margin-top: 40px; margin-bottom: 20px; text-align: center; 
 }
 
 .recaptacio-label {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   font-size: 0.9rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -99,7 +216,7 @@ h2 { color: #2563eb; margin-top: 40px; margin-bottom: 20px; text-align: center; 
   color: white;
   font-size: 2rem;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Taules generals */
@@ -109,17 +226,18 @@ table {
   max-width: 700px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   margin-bottom: 20px;
   overflow: hidden;
+  border: 2px solid #dc2626;
 }
 th, td { padding: 12px; text-align: center; border-bottom: 1px solid #f3f4f6; }
 th {
-  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
   color: white; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;
-  letter-spacing: 0.5px; border-bottom: 3px solid #3b82f6;
+  letter-spacing: 0.5px; border-bottom: 3px solid gold;
 }
-tbody tr:hover { background: #f0f9ff; }
+tbody tr:hover { background: #fef3c7; }
 tbody tr:nth-child(odd) { background: #fafbff; }
 
 /* Colors de pòdium */
@@ -128,16 +246,21 @@ tbody tr:nth-child(odd) { background: #fafbff; }
   font-weight: 600;
 }
 #tablaRanking tbody tr:nth-child(1) td:first-child { color: #d97706; font-weight: 700; font-size: 1.2rem; }
+#tablaRanking tbody tr:nth-child(1) td:first-child::before { content: '🥇 '; }
+
 #tablaRanking tbody tr:nth-child(2) {
   background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
   font-weight: 600;
 }
 #tablaRanking tbody tr:nth-child(2) td:first-child { color: #6b7280; font-weight: 700; font-size: 1.1rem; }
+#tablaRanking tbody tr:nth-child(2) td:first-child::before { content: '🥈 '; }
+
 #tablaRanking tbody tr:nth-child(3) {
   background: linear-gradient(90deg, #fed7aa 0%, #fdba74 100%);
   font-weight: 600;
 }
 #tablaRanking tbody tr:nth-child(3) td:first-child { color: #c2410c; font-weight: 700; font-size: 1.1rem; }
+#tablaRanking tbody tr:nth-child(3) td:first-child::before { content: '🥉 '; }
 
 /* Menú inferior */
 .menu {
@@ -145,21 +268,22 @@ tbody tr:nth-child(odd) { background: #fafbff; }
   flex-wrap: wrap; justify-content: center;
 }
 a.menu-link {
-  padding: 10px 20px; background: linear-gradient(90deg,#4f46e5,#3b82f6);
+  padding: 10px 20px; background: linear-gradient(90deg, #dc2626, #ef4444);
   color: white; text-decoration: none; border-radius: 10px; font-weight: 600;
   transition: transform 0.2s;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
-a.menu-link:hover { transform: translateY(-2px); }
+a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
 
 /* Select bonic */
 .select-xulo {
-  padding: 10px 14px; border-radius: 10px; border: 2px solid #3b82f6;
-  background: white; font-size: 1rem; font-weight: 500; color: #1e3a8a;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 10px 14px; border-radius: 10px; border: 2px solid #dc2626;
+  background: white; font-size: 1rem; font-weight: 500; color: #991b1b;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   cursor: pointer; transition: all 0.2s ease-in-out;
   margin-bottom: 20px; max-width: 700px; width: 100%;
 }
-.select-xulo:hover { border-color: #4f46e5; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+.select-xulo:hover { border-color: #ef4444; box-shadow: 0 3px 8px rgba(220, 38, 38, 0.3); }
 
 /* Disseny paral·lel */
 .tablas-lado {
@@ -178,7 +302,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   margin-top: 40px;
 }
 
-/* Bloc esquerre (ranking) */
 .taula-esquerra {
   background: transparent;
   flex: 0 0 38%;
@@ -188,7 +311,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   align-items: center;
 }
 
-/* Bloc dret (repartiment d'apostes) */
 .taula-dreta {
   background: transparent;
   flex: 0 0 60%;
@@ -198,7 +320,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   align-items: center;
 }
 
-/* Assegurem que les taules interiors ocupin tot l'espai assignat */
 .taula-esquerra table, 
 .taula-dreta table {
   table-layout: fixed;
@@ -207,7 +328,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   min-width: 100%;
 }
 
-/* Evitem que les cel·les quedin tallades i fem que s’ajustin */
 .taula-dreta table td, 
 .taula-dreta table th {
   white-space: nowrap;
@@ -215,7 +335,6 @@ a.menu-link:hover { transform: translateY(-2px); }
   text-overflow: ellipsis;
 }
 
-/* Responsivitat per mòbils */
 @media (max-width: 900px) {
   .zona-taules {
     flex-direction: column;
@@ -234,7 +353,6 @@ a.menu-link:hover { transform: translateY(-2px); }
     min-width: auto;
   }
 }
-
 
 .tabla { flex: 1 1 600px; min-width: 0; max-width: 100%; }
 .tabla-participants { flex: 0 1 400px; }
@@ -256,21 +374,21 @@ a.menu-link:hover { transform: translateY(-2px); }
   position: fixed; top: 70px; left: 20px;
   width: 550px; max-width: calc(100vw - 40px);
   background: white; border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   z-index: 999; opacity: 0; visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.3s ease-in-out;
   max-height: 500px; overflow-y: auto;
+  border: 2px solid #dc2626;
 }
 .info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
 .info-content { padding: 20px; }
 .alerta {
-  background: #fff3cd; color: #92400e; padding: 12px;
-  border-radius: 10px; border: 1px solid #fcd34d;
+  background: #fef3c7; color: #92400e; padding: 12px;
+  border-radius: 10px; border: 2px solid #fcd34d;
   margin: 15px 0; font-weight: 600; text-align: center;
 }
 
-/* Fletxa del globus */
 .info-panel::before {
   content: '';
   position: absolute;
@@ -284,7 +402,7 @@ a.menu-link:hover { transform: translateY(-2px); }
 }
 
 .info-content h2 {
-  color: #4f46e5;
+  color: #dc2626;
   margin-top: 0;
   margin-bottom: 15px;
 }
@@ -303,7 +421,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   transition: background 0.2s;
 }
 .info-content details[open] {
-  background: #eef2ff;
+  background: #fee2e2;
 }
 .info-content summary {
   font-weight: 600;
@@ -313,9 +431,6 @@ a.menu-link:hover { transform: translateY(-2px); }
 .info-content ul {
   margin: 8px 0 0 20px;
   padding: 0;
-}
-.info-content details summary::-webkit-details-marker {
-  display: none;
 }
 
 /* Responsivitat mòbil */
@@ -335,6 +450,11 @@ a.menu-link:hover { transform: translateY(-2px); }
   .recaptacio-amount {
     font-size: 1.5rem;
   }
+
+  .puntuacio-x2 {
+    font-size: 2rem;
+    padding: 20px 30px;
+  }
 }
 
 /* === Repartiment de Premis === */
@@ -346,51 +466,9 @@ a.menu-link:hover { transform: translateY(-2px); }
 }
 
 .premis-container h2 {
-  color: #065f46;
+  color: white;
   font-size: 1.8rem;
   margin-bottom: 20px;
-}
-
-.premis-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.premi-card {
-  flex: 1 1 220px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.premi-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
-}
-
-.premi-card .emoji {
-  font-size: 2rem;
-  margin-bottom: 8px;
-}
-
-.premi-card .label {
-  font-weight: 600;
-  margin-bottom: 6px;
-  font-size: 1rem;
-}
-
-.premi-card .amount {
-  font-size: 1.4rem;
-  font-weight: bold;
-}
-
-@media (max-width: 768px) {
-  .premi-card { flex: 1 1 100%; }
 }
 
 .zona-premis {
@@ -404,18 +482,19 @@ a.menu-link:hover { transform: translateY(-2px); }
 }
 
 .premi-card {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
   color: white;
   border-radius: 14px;
   padding: 20px 25px;
   flex: 1 1 200px;
   text-align: center;
-  box-shadow: 0 6px 16px rgba(59,130,246,0.3);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.5);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 3px solid gold;
 }
 .premi-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(59,130,246,0.4);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.6);
 }
 
 .premi-card h3 {
@@ -428,10 +507,9 @@ a.menu-link:hover { transform: translateY(-2px); }
   font-weight: 700;
 }
 
-/* --- Detalls de qui ha votat cada partit --- */
 .detalls-partit {
   background: #f9fafb;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #dc2626;
   padding: 10px 15px;
   font-size: 0.9rem;
   display: none;
@@ -453,10 +531,9 @@ a.menu-link:hover { transform: translateY(-2px); }
 }
 
 #tablaEstadisticas tbody tr.partit-row:hover {
-  background: #eef2ff;
+  background: #fee2e2;
 }
 
-/* Banner de la quiniela activa */
 .quiniela-activa-header {
   width: 100%;
   margin-bottom: 20px;
@@ -464,12 +541,13 @@ a.menu-link:hover { transform: translateY(-2px); }
 }
 
 .quiniela-banner {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
   color: white;
   border-radius: 14px;
   padding: 12px 20px;
-  box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
   display: inline-block;
+  border: 2px solid gold;
 }
 
 .quiniela-banner h3 {
@@ -491,7 +569,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   padding: 10px 15px;
   display: inline-block;
   font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .detall-vots td {
@@ -507,11 +585,12 @@ a.menu-link:hover { transform: translateY(-2px); }
 }
 
 .vot-item {
-  background: #eef2ff;
+  background: #fee2e2;
   border-radius: 8px;
   padding: 6px 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   font-size: 0.9rem;
+  border: 1px solid #fca5a5;
 }
 
 .vot-buit {
@@ -520,16 +599,26 @@ a.menu-link:hover { transform: translateY(-2px); }
   font-style: italic;
 }
 
-
 </style>
 </head>
 <body>
+
+<!-- 🎄 DECORACIONS NADALENQUES -->
+<div class="christmas-decoration deco-top-left">🎄</div>
+<div class="christmas-decoration deco-top-right">⛄</div>
+<div class="christmas-decoration deco-bottom-left">🎅</div>
+<div class="christmas-decoration deco-bottom-right">🎁</div>
 
 <button id="btnInfo" class="info-btn">ℹ️ Informació</button>
 <a href="participante.html" class="login-btn">🔐 Login</a>
 
 <div class="content-wrapper">
   <h1>🏆 Rànquing General</h1>
+
+  <!-- 🎉 MISSATGE PUNTUACIÓ x2 -->
+  <div class="puntuacio-x2">
+    ⭐ PUNTUACIÓ x2 ⭐
+  </div>
 
   <!-- Mostrador de recaptació i premis -->
   <div id="zonaPremis">
@@ -545,10 +634,6 @@ a.menu-link:hover { transform: translateY(-2px); }
       </div>
     </div>
   </div>
-
-
-
-
 
   <div id="infoPanel" class="info-panel">
   <div class="info-content">
@@ -613,7 +698,7 @@ a.menu-link:hover { transform: translateY(-2px); }
   </div>
 </div>
 
-<p>Consulta els punts totals o filtra per jornada:</p>
+<p style="color: white; font-weight: 600;">Consulta els punts totals o filtra per jornada:</p>
 <select id="filtroQuiniela" class="select-xulo">
   <option value="">Rànquing General</option>
 </select>
@@ -651,6 +736,24 @@ a.menu-link:hover { transform: translateY(-2px); }
 </div>
 
 <script>
+// ❄️ CREAR NEU QUE CAU
+function createSnowflakes() {
+  const snowflakes = ['❄️', '❅', '❆'];
+  for (let i = 0; i < 50; i++) {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+    snowflake.style.left = Math.random() * 100 + '%';
+    snowflake.style.animationDuration = (Math.random() * 3 + 5) + 's';
+    snowflake.style.animationDelay = Math.random() * 5 + 's';
+    snowflake.style.fontSize = (Math.random() * 1 + 0.8) + 'rem';
+    document.body.appendChild(snowflake);
+  }
+}
+
+// Iniciar la neu
+createSnowflakes();
+
 // Panell informatiu
 const infoPanel = document.getElementById("infoPanel");
 const btnInfo = document.getElementById("btnInfo");
@@ -664,414 +767,3 @@ document.addEventListener("click", e => {
   }
 });
 </script>
-
-<script type="module">
-import { supabase } from './supabaseClient.js';
-
-const filtro = document.getElementById("filtroQuiniela");
-const tbodyRanking = document.querySelector("#tablaRanking tbody");
-const tbodyActivos = document.querySelector("#tablaActivos tbody");
-const tbodyEstadisticas = document.querySelector("#tablaEstadisticas tbody");
-const adminLink = document.getElementById("adminLink");
-
-const { data: { session } } = await supabase.auth.getSession();
-if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
-
-async function cargarQuinielas() {
-  const { data, error } = await supabase
-    .from("quiniela_oficial")
-    .select("id, nombre")
-    .order("creada_el", { ascending: false });
-  
-  if (error) console.error("Error carregant quinieles:", error);
-  if (data) {
-    data.forEach(q => {
-      const opt = document.createElement("option");
-      opt.value = q.id;
-      opt.textContent = q.nombre;
-      filtro.appendChild(opt);
-    });
-  }
-}
-
-
-// --- Rànquing
-async function cargarRanking(quinielaId = "") {
-  tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
-  let data = [];
-
-  try {
-    if (quinielaId) {
-      const quinielaNom = filtro.options[filtro.selectedIndex].text;
-
-      console.log("Carregant rànquing per a quiniela:", quinielaNom);
-
-      const { data: detalle, error } = await supabase
-        .from("resultados_detalle")
-        .select("correo, nombre, puntos, quiniela_nombre")
-        .eq("quiniela_nombre", quinielaNom);
-
-      if (error) {
-        console.error("Error Supabase:", error);
-        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
-        return;
-      }
-
-      if (detalle?.length) {
-        const perJugador = {};
-        detalle.forEach(d => {
-          if (!perJugador[d.correo] || d.puntos > perJugador[d.correo].punts) {
-            perJugador[d.correo] = { nombre: d.nombre, punts: d.puntos };
-          }
-        });
-
-        data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
-      }
-
-    } else {
-      const { data: general, error } = await supabase
-        .from("resultados_generales")
-        .select("nombre, puntos_totales")
-        .order("puntos_totales", { ascending: false });
-
-      if (error) {
-        console.error("Error Supabase:", error);
-        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
-        return;
-      }
-
-      data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
-    }
-
-    if (!data.length) {
-      tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades per aquesta jornada.</td></tr>";
-      return;
-    }
-
-    tbodyRanking.innerHTML = data
-      .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`)
-      .join("");
-
-  } catch (err) {
-    console.error("Error carregant rànquing:", err);
-    tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
-  }
-}
-
-
-// --- Participants de la quiniela activa
-async function cargarActivos() {
-  const { data: activa } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
-  if (!activa) return tbodyActivos.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
-
-  const { data } = await supabase
-    .from("quinielas_participantes")
-    .select("participante_id, nombre")
-    .eq("quiniela_id", activa.id);
-
-  if (!data?.length) return tbodyActivos.innerHTML = "<tr><td colspan='3'>Encara no hi ha participants.</td></tr>";
-
-  const conteo = {};
-  data.forEach(q => {
-    if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
-    conteo[q.participante_id].count++;
-  });
-  const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
-
-  tbodyActivos.innerHTML = lista.map((p, i) => `
-    <tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>
-  `).join("");
-}
-
-// --- Estadístiques
-// --- Estadístiques millorades i només per la quiniela activa
-async function cargarEstadisticas() {
-  const contenedor = document.querySelector(".taula-dreta");
-  const quinielaHeaderId = "infoQuinielaActiva";
-  let header = document.getElementById(quinielaHeaderId);
-  if (!header) {
-    header = document.createElement("div");
-    header.id = quinielaHeaderId;
-    header.className = "quiniela-activa-header";
-    contenedor.insertBefore(header, contenedor.firstChild);
-  }
-
-  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
-
-  const { data: quinielaActiva, error: errorActiva } = await supabase
-    .from("quiniela_oficial")
-    .select("id, nombre, data, activa")
-    .eq("activa", true)
-    .single();
-
-  if (errorActiva || !quinielaActiva) {
-    header.innerHTML = `<div class="no-quiniela">⚠️ Cap quiniela activa</div>`;
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
-    return;
-  }
-
-  // Mostrem el nom i data de la quiniela activa
-  const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
-    weekday: "long", day: "numeric", month: "long"
-  });
-
-  // Carreguem les apostes
-  const { data: apostes, error: errApostes } = await supabase
-    .from("quinielas_participantes")
-    .select("resultados")
-    .eq("quiniela_id", quinielaActiva.id);
-
-  if (errApostes) {
-    console.error(errApostes);
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Error carregant apostes.</td></tr>";
-    return;
-  }
-
-  if (!apostes?.length || apostes.length < 3) {
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
-    return;
-  }
-
-  // Dades dels partits
-  const partits = quinielaActiva.data;
-  const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
-
-  apostes.forEach(a => {
-    Object.entries(a.resultados || {}).forEach(([i, v]) => {
-      if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
-    });
-  });
-
-  // Renderitzar la taula
-  tbodyEstadisticas.innerHTML = stats.map((r, i) => {
-    const total = r["1"] + r["X"] + r["2"];
-    if (!total) return "";
-    const p1 = ((r["1"] / total) * 100).toFixed(1);
-    const px = ((r["X"] / total) * 100).toFixed(1);
-    const p2 = ((r["2"] / total) * 100).toFixed(1);
-    const match = partits[i];
-    return `
-      <tr class="partit-row" data-index="${i}">
-        <td>
-          <div class="label-equip">${match.local}</div>
-          <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
-        </td>
-        <td>
-          <div class="label-vs">vs.</div>
-          <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
-        </td>
-        <td>
-          <div class="label-equip">${match.visitante}</div>
-          <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
-        </td>
-      </tr>`;
-  }).join("");
-
-  // Afegim la funcionalitat de desplegable
-  activarDesplegablesRepartiment();
-}
-
-
-async function activarDesplegablesRepartiment() {
-  const rows = document.querySelectorAll(".partit-row");
-
-  // 1️⃣ Obtenim la quiniela activa
-    const { data: quinielaActiva, error: errorQ } = await supabase
-    .from("quiniela_oficial")
-    .select("id, activa, blocked")
-    .eq("activa", true)
-    .maybeSingle();
-
-  if (errorQ || !quinielaActiva) {
-    console.warn("⚠️ No s'ha trobat cap quiniela activa.");
-    return;
-  }
-
-  const idQuiniela = quinielaActiva.id;
-
-  // 🔒 Només es poden veure els vots si la quiniela ACTIVA està BLOQUEJADA
-  if (!quinielaActiva.blocked) {
-    rows.forEach(row => {
-      row.addEventListener("click", () => {
-        alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
-      });
-    });
-    return;
-  }
-
-
-  // 3️⃣ Si està tancada → carreguem els vots dels participants
-  const { data: participants, error: errorP } = await supabase
-    .from("quinielas_participantes")
-    .select("nombre, resultados")
-    .eq("quiniela_id", idQuiniela);
-
-  if (errorP) {
-    console.error("Error carregant participants:", errorP);
-    return;
-  }
-
-  // 4️⃣ Afegim el desplegable de vots
-  rows.forEach(row => {
-    row.addEventListener("click", () => {
-      const index = row.getAttribute("data-index");
-
-      const detallExist = row.nextElementSibling;
-      if (detallExist && detallExist.classList.contains("detall-vots")) {
-        detallExist.remove(); // tanca si ja està obert
-        return;
-      }
-
-      const detall = document.createElement("tr");
-      detall.className = "detall-vots";
-      const cel = document.createElement("td");
-      cel.colSpan = 3;
-
-      let html = "<div class='vots-llista'>";
-      let trobat = false;
-
-      participants.forEach(p => {
-        const prediccio = p.resultados?.[index];
-        if (prediccio) {
-          trobat = true;
-          html += `<div class="vot-item"><strong>${p.nombre}</strong> → ${prediccio}</div>`;
-        }
-      });
-
-      if (!trobat) html += "<div class='vot-item vot-buit'>Cap vot registrat</div>";
-      html += "</div>";
-
-      cel.innerHTML = html;
-      detall.appendChild(cel);
-      row.insertAdjacentElement("afterend", detall);
-    });
-  });
-}
-
-
-
-
-// --- Carregar recaptació
-// --- Carregar recaptació i premis
-async function cargarRecaptacio() {
-  const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
-  const acumulatGuanyadorEl = document.getElementById("acumulatGuanyador")?.querySelector(".amount");
-
-  try {
-    // 1️⃣ Quiniela activa
-    const { data: quinielaActiva, error: errorActiva } = await supabase
-      .from("quiniela_oficial")
-      .select("id")
-      .eq("activa", true)
-      .single();
-
-    if (errorActiva || !quinielaActiva?.id) {
-      console.warn("No hi ha quiniela activa.");
-      if (premiPleEl) premiPleEl.textContent = "0 €";
-      if (acumulatGuanyadorEl) acumulatGuanyadorEl.textContent = "0 €";
-      return;
-    }
-
-    const quinielaId = quinielaActiva.id;
-
-    // 2️⃣ Dades de la quiniela activa (recaptació i acumulat)
-    const { data: recActiva, error: errActivaRec } = await supabase
-      .from("recaudacion_quinielas")
-      .select("recaudado, acumulado")
-      .eq("quiniela_id", quinielaId)
-      .single();
-
-    if (errActivaRec) throw errActivaRec;
-
-    const recaptatActual = recActiva?.recaudado || 0;
-    const acumulatPle = recActiva?.acumulado || 0;
-
-    // 3️⃣ Obtenir totes les recaptacions (per calcular el bote guanyador acumulat)
-    const { data: totesRecaptacions, error: errTotals } = await supabase
-      .from("recaudacion_quinielas")
-      .select("recaudado");
-
-    if (errTotals) throw errTotals;
-
-    const totalRecaptatGlobal = totesRecaptacions?.reduce((sum, r) => sum + (r.recaudado || 0), 0) || 0;
-    const acumulatGuanyador = totalRecaptatGlobal * 0.15;
-
-    // 4️⃣ Calcul del premi ple (jornada)
-    const premiPle = (recaptatActual * 0.5) + acumulatPle;
-
-    // 5️⃣ Actualitzar visuals
-    if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
-    if (acumulatGuanyadorEl) acumulatGuanyadorEl.textContent = `${acumulatGuanyador.toFixed(2)} €`;
-
-  } catch (err) {
-    console.error("Error carregant premis:", err);
-  }
-}
-
-
-
-
-// 💰 Carregar Repartiment de Premis
-async function cargarPremis() {
-  try {
-    // Quiniela activa
-    const { data: activa, error: errActiva } = await supabase
-      .from("quiniela_oficial")
-      .select("id")
-      .eq("activa", true)
-      .single();
-
-    if (errActiva || !activa?.id) {
-      console.warn("No hi ha quiniela activa per mostrar premis.");
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("recaudacion_quinielas")
-      .select("recaudado, acumulado")
-      .eq("quiniela_id", activa.id)
-      .single();
-
-    if (error) {
-      console.error("Error carregant premis:", error);
-      return;
-    }
-
-    const { data: totesRecaptacions, error: errTotals } = await supabase
-    .from("recaudacion_quinielas")
-    .select("recaudado");
-    if (errTotals) throw errTotals;
-    if (!totesRecaptacions?.length) {
-      document.querySelector("#acumulatGuanyador .amount").textContent = "0 €";
-      return;
-    }
-
-    const totalRecaptatGlobal = totesRecaptacions.reduce((sum, r) => sum + (r.recaudado || 0), 0);
-    const acumulatGuanyador = totalRecaptatGlobal * 0.15;
-
-
-    document.querySelector("#premiPle .amount").textContent = `${(data?.recaudado * 0.5).toFixed(2)} €`; // ex. 50% pel ple
-    document.querySelector("#premiGuanyador .amount").textContent = `${(data?.recaudado * 0.3).toFixed(2)} €`; // ex. 30% pel guanyador
-    document.querySelector("#acumulatPle .amount").textContent = `${(data?.acumulado * 1).toFixed(2)} €`;
-    document.querySelector("#acumulatGuanyador .amount").textContent = `${acumulatGuanyador.toFixed(2)} €`;
-
-
-  } catch (err) {
-    console.error("Error carregant repartiment de premis:", err);
-  }
-}
-
-
-
-// --- Event listeners
-filtro.addEventListener("change", e => cargarRanking(e.target.value));
-
-await cargarQuinielas();
-await cargarRanking();
-await cargarActivos();
-await cargarEstadisticas();
-await cargarRecaptacio();
-
-</script>
-</body>
-</html>
