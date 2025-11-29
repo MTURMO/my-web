@@ -600,25 +600,15 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
 }
 
 </style>
+
 </head>
 <body>
-
-<!-- 🎄 DECORACIONS NADALENQUES -->
-<div class="christmas-decoration deco-top-left">🎄</div>
-<div class="christmas-decoration deco-top-right">⛄</div>
-<div class="christmas-decoration deco-bottom-left">🎅</div>
-<div class="christmas-decoration deco-bottom-right">🎁</div>
 
 <button id="btnInfo" class="info-btn">ℹ️ Informació</button>
 <a href="participante.html" class="login-btn">🔐 Login</a>
 
 <div class="content-wrapper">
   <h1>🏆 Rànquing General</h1>
-
-  <!-- 🎉 MISSATGE PUNTUACIÓ x2 -->
-  <div class="puntuacio-x2">
-    ⭐ PUNTUACIÓ x2 ⭐
-  </div>
 
   <!-- Mostrador de recaptació i premis -->
   <div id="zonaPremis">
@@ -634,6 +624,10 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
       </div>
     </div>
   </div>
+
+
+
+
 
   <div id="infoPanel" class="info-panel">
   <div class="info-content">
@@ -698,7 +692,7 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
   </div>
 </div>
 
-<p style="color: white; font-weight: 600;">Consulta els punts totals o filtra per jornada:</p>
+<p>Consulta els punts totals o filtra per jornada:</p>
 <select id="filtroQuiniela" class="select-xulo">
   <option value="">Rànquing General</option>
 </select>
@@ -736,7 +730,6 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
 </div>
 
 <script>
-// ❄️ CREAR NEU QUE CAU
 function createSnowflakes() {
   const snowflakes = ['❄️', '❅', '❆'];
   for (let i = 0; i < 50; i++) {
@@ -767,3 +760,414 @@ document.addEventListener("click", e => {
   }
 });
 </script>
+
+<script type="module">
+import { supabase } from './supabaseClient.js';
+
+const filtro = document.getElementById("filtroQuiniela");
+const tbodyRanking = document.querySelector("#tablaRanking tbody");
+const tbodyActivos = document.querySelector("#tablaActivos tbody");
+const tbodyEstadisticas = document.querySelector("#tablaEstadisticas tbody");
+const adminLink = document.getElementById("adminLink");
+
+const { data: { session } } = await supabase.auth.getSession();
+if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
+
+async function cargarQuinielas() {
+  const { data, error } = await supabase
+    .from("quiniela_oficial")
+    .select("id, nombre")
+    .order("creada_el", { ascending: false });
+  
+  if (error) console.error("Error carregant quinieles:", error);
+  if (data) {
+    data.forEach(q => {
+      const opt = document.createElement("option");
+      opt.value = q.id;
+      opt.textContent = q.nombre;
+      filtro.appendChild(opt);
+    });
+  }
+}
+
+
+// --- Rànquing
+async function cargarRanking(quinielaId = "") {
+  tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
+  let data = [];
+
+  try {
+    if (quinielaId) {
+      const quinielaNom = filtro.options[filtro.selectedIndex].text;
+
+      console.log("Carregant rànquing per a quiniela:", quinielaNom);
+
+      const { data: detalle, error } = await supabase
+        .from("resultados_detalle")
+        .select("correo, nombre, puntos, quiniela_nombre")
+        .eq("quiniela_nombre", quinielaNom);
+
+      if (error) {
+        console.error("Error Supabase:", error);
+        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
+        return;
+      }
+
+      if (detalle?.length) {
+        const perJugador = {};
+        detalle.forEach(d => {
+          if (!perJugador[d.correo] || d.puntos > perJugador[d.correo].punts) {
+            perJugador[d.correo] = { nombre: d.nombre, punts: d.puntos };
+          }
+        });
+
+        data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
+      }
+
+    } else {
+      const { data: general, error } = await supabase
+        .from("resultados_generales")
+        .select("nombre, puntos_totales")
+        .order("puntos_totales", { ascending: false });
+
+      if (error) {
+        console.error("Error Supabase:", error);
+        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
+        return;
+      }
+
+      data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
+    }
+
+    if (!data.length) {
+      tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades per aquesta jornada.</td></tr>";
+      return;
+    }
+
+    tbodyRanking.innerHTML = data
+      .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`)
+      .join("");
+
+  } catch (err) {
+    console.error("Error carregant rànquing:", err);
+    tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
+  }
+}
+
+
+// --- Participants de la quiniela activa
+async function cargarActivos() {
+  const { data: activa } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
+  if (!activa) return tbodyActivos.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
+
+  const { data } = await supabase
+    .from("quinielas_participantes")
+    .select("participante_id, nombre")
+    .eq("quiniela_id", activa.id);
+
+  if (!data?.length) return tbodyActivos.innerHTML = "<tr><td colspan='3'>Encara no hi ha participants.</td></tr>";
+
+  const conteo = {};
+  data.forEach(q => {
+    if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
+    conteo[q.participante_id].count++;
+  });
+  const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
+
+  tbodyActivos.innerHTML = lista.map((p, i) => `
+    <tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>
+  `).join("");
+}
+
+// --- Estadístiques
+// --- Estadístiques millorades i només per la quiniela activa
+async function cargarEstadisticas() {
+  const contenedor = document.querySelector(".taula-dreta");
+  const quinielaHeaderId = "infoQuinielaActiva";
+  let header = document.getElementById(quinielaHeaderId);
+  if (!header) {
+    header = document.createElement("div");
+    header.id = quinielaHeaderId;
+    header.className = "quiniela-activa-header";
+    contenedor.insertBefore(header, contenedor.firstChild);
+  }
+
+  tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
+
+  const { data: quinielaActiva, error: errorActiva } = await supabase
+    .from("quiniela_oficial")
+    .select("id, nombre, data, activa")
+    .eq("activa", true)
+    .single();
+
+  if (errorActiva || !quinielaActiva) {
+    header.innerHTML = `<div class="no-quiniela">⚠️ Cap quiniela activa</div>`;
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
+    return;
+  }
+
+  // Mostrem el nom i data de la quiniela activa
+  const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
+    weekday: "long", day: "numeric", month: "long"
+  });
+
+  // Carreguem les apostes
+  const { data: apostes, error: errApostes } = await supabase
+    .from("quinielas_participantes")
+    .select("resultados")
+    .eq("quiniela_id", quinielaActiva.id);
+
+  if (errApostes) {
+    console.error(errApostes);
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Error carregant apostes.</td></tr>";
+    return;
+  }
+
+  if (!apostes?.length || apostes.length < 3) {
+    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
+    return;
+  }
+
+  // Dades dels partits
+  const partits = quinielaActiva.data;
+  const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
+
+  apostes.forEach(a => {
+    Object.entries(a.resultados || {}).forEach(([i, v]) => {
+      if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
+    });
+  });
+
+  // Renderitzar la taula
+  tbodyEstadisticas.innerHTML = stats.map((r, i) => {
+    const total = r["1"] + r["X"] + r["2"];
+    if (!total) return "";
+    const p1 = ((r["1"] / total) * 100).toFixed(1);
+    const px = ((r["X"] / total) * 100).toFixed(1);
+    const p2 = ((r["2"] / total) * 100).toFixed(1);
+    const match = partits[i];
+    return `
+      <tr class="partit-row" data-index="${i}">
+        <td>
+          <div class="label-equip">${match.local}</div>
+          <div class="barra"><div class="barra-inner barra-1" style="width:${p1}%"></div><span class="percent-text">${p1}%</span></div>
+        </td>
+        <td>
+          <div class="label-vs">vs.</div>
+          <div class="barra"><div class="barra-inner barra-X" style="width:${px}%"></div><span class="percent-text">${px}%</span></div>
+        </td>
+        <td>
+          <div class="label-equip">${match.visitante}</div>
+          <div class="barra"><div class="barra-inner barra-2" style="width:${p2}%"></div><span class="percent-text">${p2}%</span></div>
+        </td>
+      </tr>`;
+  }).join("");
+
+  // Afegim la funcionalitat de desplegable
+  activarDesplegablesRepartiment();
+}
+
+
+async function activarDesplegablesRepartiment() {
+  const rows = document.querySelectorAll(".partit-row");
+
+  // 1️⃣ Obtenim la quiniela activa
+    const { data: quinielaActiva, error: errorQ } = await supabase
+    .from("quiniela_oficial")
+    .select("id, activa, blocked")
+    .eq("activa", true)
+    .maybeSingle();
+
+  if (errorQ || !quinielaActiva) {
+    console.warn("⚠️ No s'ha trobat cap quiniela activa.");
+    return;
+  }
+
+  const idQuiniela = quinielaActiva.id;
+
+  // 🔒 Només es poden veure els vots si la quiniela ACTIVA està BLOQUEJADA
+  if (!quinielaActiva.blocked) {
+    rows.forEach(row => {
+      row.addEventListener("click", () => {
+        alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
+      });
+    });
+    return;
+  }
+
+
+  // 3️⃣ Si està tancada → carreguem els vots dels participants
+  const { data: participants, error: errorP } = await supabase
+    .from("quinielas_participantes")
+    .select("nombre, resultados")
+    .eq("quiniela_id", idQuiniela);
+
+  if (errorP) {
+    console.error("Error carregant participants:", errorP);
+    return;
+  }
+
+  // 4️⃣ Afegim el desplegable de vots
+  rows.forEach(row => {
+    row.addEventListener("click", () => {
+      const index = row.getAttribute("data-index");
+
+      const detallExist = row.nextElementSibling;
+      if (detallExist && detallExist.classList.contains("detall-vots")) {
+        detallExist.remove(); // tanca si ja està obert
+        return;
+      }
+
+      const detall = document.createElement("tr");
+      detall.className = "detall-vots";
+      const cel = document.createElement("td");
+      cel.colSpan = 3;
+
+      let html = "<div class='vots-llista'>";
+      let trobat = false;
+
+      participants.forEach(p => {
+        const prediccio = p.resultados?.[index];
+        if (prediccio) {
+          trobat = true;
+          html += `<div class="vot-item"><strong>${p.nombre}</strong> → ${prediccio}</div>`;
+        }
+      });
+
+      if (!trobat) html += "<div class='vot-item vot-buit'>Cap vot registrat</div>";
+      html += "</div>";
+
+      cel.innerHTML = html;
+      detall.appendChild(cel);
+      row.insertAdjacentElement("afterend", detall);
+    });
+  });
+}
+
+
+
+
+// --- Carregar recaptació
+// --- Carregar recaptació i premis
+async function cargarRecaptacio() {
+  const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
+  const acumulatGuanyadorEl = document.getElementById("acumulatGuanyador")?.querySelector(".amount");
+
+  try {
+    // 1️⃣ Quiniela activa
+    const { data: quinielaActiva, error: errorActiva } = await supabase
+      .from("quiniela_oficial")
+      .select("id")
+      .eq("activa", true)
+      .single();
+
+    if (errorActiva || !quinielaActiva?.id) {
+      console.warn("No hi ha quiniela activa.");
+      if (premiPleEl) premiPleEl.textContent = "0 €";
+      if (acumulatGuanyadorEl) acumulatGuanyadorEl.textContent = "0 €";
+      return;
+    }
+
+    const quinielaId = quinielaActiva.id;
+
+    // 2️⃣ Dades de la quiniela activa (recaptació i acumulat)
+    const { data: recActiva, error: errActivaRec } = await supabase
+      .from("recaudacion_quinielas")
+      .select("recaudado, acumulado")
+      .eq("quiniela_id", quinielaId)
+      .single();
+
+    if (errActivaRec) throw errActivaRec;
+
+    const recaptatActual = recActiva?.recaudado || 0;
+    const acumulatPle = recActiva?.acumulado || 0;
+
+    // 3️⃣ Obtenir totes les recaptacions (per calcular el bote guanyador acumulat)
+    const { data: totesRecaptacions, error: errTotals } = await supabase
+      .from("recaudacion_quinielas")
+      .select("recaudado");
+
+    if (errTotals) throw errTotals;
+
+    const totalRecaptatGlobal = totesRecaptacions?.reduce((sum, r) => sum + (r.recaudado || 0), 0) || 0;
+    const acumulatGuanyador = totalRecaptatGlobal * 0.15;
+
+    // 4️⃣ Calcul del premi ple (jornada)
+    const premiPle = (recaptatActual * 0.5) + acumulatPle;
+
+    // 5️⃣ Actualitzar visuals
+    if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
+    if (acumulatGuanyadorEl) acumulatGuanyadorEl.textContent = `${acumulatGuanyador.toFixed(2)} €`;
+
+  } catch (err) {
+    console.error("Error carregant premis:", err);
+  }
+}
+
+
+
+
+// 💰 Carregar Repartiment de Premis
+async function cargarPremis() {
+  try {
+    // Quiniela activa
+    const { data: activa, error: errActiva } = await supabase
+      .from("quiniela_oficial")
+      .select("id")
+      .eq("activa", true)
+      .single();
+
+    if (errActiva || !activa?.id) {
+      console.warn("No hi ha quiniela activa per mostrar premis.");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("recaudacion_quinielas")
+      .select("recaudado, acumulado")
+      .eq("quiniela_id", activa.id)
+      .single();
+
+    if (error) {
+      console.error("Error carregant premis:", error);
+      return;
+    }
+
+    const { data: totesRecaptacions, error: errTotals } = await supabase
+    .from("recaudacion_quinielas")
+    .select("recaudado");
+    if (errTotals) throw errTotals;
+    if (!totesRecaptacions?.length) {
+      document.querySelector("#acumulatGuanyador .amount").textContent = "0 €";
+      return;
+    }
+
+    const totalRecaptatGlobal = totesRecaptacions.reduce((sum, r) => sum + (r.recaudado || 0), 0);
+    const acumulatGuanyador = totalRecaptatGlobal * 0.15;
+
+
+    document.querySelector("#premiPle .amount").textContent = `${(data?.recaudado * 0.5).toFixed(2)} €`; // ex. 50% pel ple
+    document.querySelector("#premiGuanyador .amount").textContent = `${(data?.recaudado * 0.3).toFixed(2)} €`; // ex. 30% pel guanyador
+    document.querySelector("#acumulatPle .amount").textContent = `${(data?.acumulado * 1).toFixed(2)} €`;
+    document.querySelector("#acumulatGuanyador .amount").textContent = `${acumulatGuanyador.toFixed(2)} €`;
+
+
+  } catch (err) {
+    console.error("Error carregant repartiment de premis:", err);
+  }
+}
+
+
+
+// --- Event listeners
+filtro.addEventListener("change", e => cargarRanking(e.target.value));
+
+await cargarQuinielas();
+await cargarRanking();
+await cargarActivos();
+await cargarEstadisticas();
+await cargarRecaptacio();
+
+</script>
+</body>
+</html>
