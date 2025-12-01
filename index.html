@@ -818,16 +818,25 @@ async function cargarRanking(quinielaId = "") {
         return;
       }
 
-      if (detalle?.length) {
+      if (detalle && detalle.length > 0) {
+        console.log("Entrades trobades:", detalle);
+
         const perJugador = {};
+
         detalle.forEach(d => {
-          if (!perJugador[d.correo] || d.puntos > perJugador[d.correo].punts) {
-            perJugador[d.correo] = { nombre: d.nombre, punts: d.puntos };
+          if (!perJugador[d.correo]) {
+            perJugador[d.correo] = { nombre: d.nombre, punts: Number(d.puntos) };
+          } else {
+            perJugador[d.correo].punts += Number(d.puntos); // SUMA SEGURA
           }
         });
 
         data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
+
+        console.log("Rànquing processat:", data);
       }
+
+
 
     } else {
       const { data: general, error } = await supabase
