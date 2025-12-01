@@ -821,9 +821,14 @@ async function cargarRanking(quinielaId = "") {
       if (detalle?.length) {
         const perJugador = {};
         detalle.forEach(d => {
-          if (!perJugador[d.correo] || d.puntos > perJugador[d.correo].punts) {
-            perJugador[d.correo] = { nombre: d.nombre, punts: d.puntos };
-          }
+          const perJugador = {};
+          detalle.forEach(d => {
+            if (!perJugador[d.correo]) {
+              perJugador[d.correo] = { nombre: d.nombre, punts: d.puntos };
+            } else {
+              perJugador[d.correo].punts += d.puntos;  // ➜ SUMAR punt per punt
+            }
+          });
         });
 
         data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
