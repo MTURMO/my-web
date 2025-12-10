@@ -9,7 +9,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Funció de prova: agafa totes les files d'una taula de prova
 async function testSupabase() {
-    const { data, error } = await supabase.from('test_table').select('*');
+    const { data, error } = await supabase.from('resultados_generales').select('*');
 
     if (error) {
         console.error('Error accedint a Supabase:', error);
