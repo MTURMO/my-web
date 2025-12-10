@@ -771,8 +771,6 @@ document.addEventListener("click", e => {
 <script type="module">
 import { supabase } from './supabaseClient.js';
 
-const { data: { session } } = await supabase.auth.getSession();
-console.log(session);
 
 const filtro = document.getElementById("filtroQuiniela");
 const tbodyRanking = document.querySelector("#tablaRanking tbody");
@@ -780,7 +778,7 @@ const tbodyActivos = document.querySelector("#tablaActivos tbody");
 const tbodyEstadisticas = document.querySelector("#tablaEstadisticas tbody");
 const adminLink = document.getElementById("adminLink");
 
-//const { data: { session } } = await supabase.auth.getSession();
+const { data: { session } } = await supabase.auth.getSession();
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
 async function cargarQuinielas() {
