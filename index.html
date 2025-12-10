@@ -778,6 +778,7 @@ const tbodyEstadisticas = document.querySelector("#tablaEstadisticas tbody");
 const adminLink = document.getElementById("adminLink");
 
 const { data: { session } } = await supabase.auth.getSession();
+console.log(session);
 if (session?.user?.email !== "admin@quiniela.com") adminLink.style.display = "none";
 
 async function cargarQuinielas() {
