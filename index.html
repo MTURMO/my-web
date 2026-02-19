@@ -3,72 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <title>Rànquing General</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-/* --- ESTILS GENERALS --- */
+:root {
+  --blue-dark:   #0f172a;
+  --blue-mid:    #1e3a8a;
+  --blue-main:   #2563eb;
+  --blue-light:  #eff6ff;
+  --blue-border: #bfdbfe;
+  --black:       #0f172a;
+  --gray:        #64748b;
+  --gray-light:  #f1f5f9;
+  --white:       #ffffff;
+  --gold:        #ca8a04;
+  --gold-light:  #fef9c3;
+}
+
 * { box-sizing: border-box; }
+
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
   min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
+  color: var(--black);
 }
 
-/* Botons superiors */
+/* ─── Botons superiors ─── */
 .info-btn, .login-btn {
   position: fixed;
   top: 20px;
   z-index: 1000;
   padding: 10px 20px;
-  background: linear-gradient(90deg, #dc2626, #ef4444);
+  background: var(--blue-mid);
   color: white;
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: 600;
-  transition: transform 0.2s;
+  font-size: 0.9rem;
+  transition: background 0.2s, transform 0.2s;
   border: none;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 2px 8px rgba(30,58,138,0.18);
+  letter-spacing: 0.01em;
 }
-.info-btn:hover, .login-btn:hover { transform: translateY(-2px) scale(1.05); }
+.info-btn:hover, .login-btn:hover {
+  background: var(--blue-main);
+  transform: translateY(-2px);
+}
 .info-btn { left: 20px; }
 .login-btn { right: 20px; text-decoration: none; display: inline-block; }
 
-/* Títols */
-h1 { 
-  font-size: 2.5rem; 
-  color: white; 
-  margin-bottom: 20px; 
-  text-align: center; 
-  margin-top: 60px; 
-  width: 100%; 
+/* ─── Títols ─── */
+h1 {
+  font-size: 2.2rem;
+  color: var(--blue-dark);
+  margin-bottom: 20px;
+  text-align: center;
+  margin-top: 60px;
+  width: 100%;
   max-width: 1400px;
-  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-  position: relative;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
-h2 { 
-  color: white; 
-  margin-top: 40px; 
-  margin-bottom: 20px; 
-  text-align: center; 
-  font-size: 1.5rem;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+h2 {
+  color: var(--blue-mid);
+  margin-top: 40px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .content-wrapper {
-  width: 100%; max-width: 1400px; display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Comptador de recaptació */
+/* ─── Comptador de recaptació ─── */
 .recaptacio-container {
   width: 100%;
   max-width: 700px;
@@ -78,121 +100,155 @@ h2 {
 }
 
 .recaptacio-card {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  border-radius: 16px;
+  background: var(--blue-mid);
+  border-radius: 12px;
   padding: 20px 30px;
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.5);
+  box-shadow: 0 4px 16px rgba(30,58,138,0.15);
   display: flex;
   align-items: center;
   gap: 20px;
   transition: transform 0.3s ease;
   min-width: 280px;
-  border: 3px solid gold;
+  border: 2px solid var(--blue-main);
 }
-
 .recaptacio-card:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.6);
+  transform: translateY(-3px);
 }
 
-.recaptacio-icon {
-  font-size: 3rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
+.recaptacio-icon { font-size: 2.5rem; }
 
-.recaptacio-content {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+.recaptacio-content { display: flex; flex-direction: column; gap: 4px; }
 
 .recaptacio-label {
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
 }
 
 .recaptacio-amount {
   color: white;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  font-family: 'DM Mono', monospace;
 }
 
-/* Taules generals */
+/* ─── Taules ─── */
 table {
   border-collapse: collapse;
   width: 100%;
   max-width: 700px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(15,23,42,0.08), 0 0 0 1px var(--blue-border);
   margin-bottom: 20px;
   overflow: hidden;
 }
-th, td { padding: 12px; text-align: center; border-bottom: 1px solid #f3f4f6; }
-th {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  color: white; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;
-  letter-spacing: 0.5px; border-bottom: 3px solid gold;
+
+th, td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--gray-light);
 }
-tbody tr:hover { background: #fef3c7; }
+
+th {
+  background: var(--blue-dark);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  border-bottom: 2px solid var(--blue-main);
+}
+
+tbody tr:hover { background: var(--blue-light); }
 tbody tr:nth-child(odd) { background: #fafbff; }
 
-/* Colors de pòdium */
+/* ─── Pòdium ─── */
 #tablaRanking tbody tr:nth-child(1) {
-  background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+  background: var(--gold-light);
   font-weight: 600;
 }
-#tablaRanking tbody tr:nth-child(1) td:first-child { color: #d97706; font-weight: 700; font-size: 1.2rem; }
+#tablaRanking tbody tr:nth-child(1) td:first-child {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: 'DM Mono', monospace;
+}
 #tablaRanking tbody tr:nth-child(1) td:first-child::before { content: '🥇 '; }
 
 #tablaRanking tbody tr:nth-child(2) {
-  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
+  background: var(--gray-light);
   font-weight: 600;
 }
-#tablaRanking tbody tr:nth-child(2) td:first-child { color: #6b7280; font-weight: 700; font-size: 1.1rem; }
+#tablaRanking tbody tr:nth-child(2) td:first-child { color: var(--gray); font-weight: 700; }
 #tablaRanking tbody tr:nth-child(2) td:first-child::before { content: '🥈 '; }
 
 #tablaRanking tbody tr:nth-child(3) {
-  background: linear-gradient(90deg, #fed7aa 0%, #fdba74 100%);
+  background: #fff7ed;
   font-weight: 600;
 }
-#tablaRanking tbody tr:nth-child(3) td:first-child { color: #c2410c; font-weight: 700; font-size: 1.1rem; }
+#tablaRanking tbody tr:nth-child(3) td:first-child { color: #c2410c; font-weight: 700; }
 #tablaRanking tbody tr:nth-child(3) td:first-child::before { content: '🥉 '; }
 
-/* Menú inferior */
+/* ─── Menú inferior ─── */
 .menu {
-  margin-top: 40px; margin-bottom: 20px; display: flex; gap: 10px;
-  flex-wrap: wrap; justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
+
 a.menu-link {
-  padding: 10px 20px; background: linear-gradient(90deg, #dc2626, #ef4444);
-  color: white; text-decoration: none; border-radius: 10px; font-weight: 600;
-  transition: transform 0.2s;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+  padding: 10px 22px;
+  background: var(--blue-dark);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(15,23,42,0.15);
 }
-a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
+a.menu-link:hover { background: var(--blue-mid); transform: translateY(-2px); }
 
-/* Select bonic */
+/* ─── Select ─── */
 .select-xulo {
-  padding: 10px 14px; border-radius: 10px; border: 2px solid #dc2626;
-  background: white; font-size: 1rem; font-weight: 500; color: #991b1b;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  cursor: pointer; transition: all 0.2s ease-in-out;
-  margin-bottom: 20px; max-width: 700px; width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--blue-border);
+  background: var(--white);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--blue-mid);
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 1px 4px rgba(15,23,42,0.06);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 20px;
+  max-width: 700px;
+  width: 100%;
 }
-.select-xulo:hover { border-color: #ef4444; box-shadow: 0 3px 8px rgba(220, 38, 38, 0.3); }
+.select-xulo:hover, .select-xulo:focus {
+  border-color: var(--blue-main);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
 
-/* Disseny paral·lel */
+/* ─── Layout paral·lel ─── */
 .tablas-lado {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;
-  width: 100%; max-width: 1400px; margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  width: 100%;
+  max-width: 1400px;
+  margin-top: 40px;
 }
 
-/* ---- Zona de taules paral·leles ---- */
 .zona-taules {
   display: flex;
   justify-content: center;
@@ -221,7 +277,7 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
   align-items: center;
 }
 
-.taula-esquerra table, 
+.taula-esquerra table,
 .taula-dreta table {
   table-layout: fixed;
   width: 100%;
@@ -229,7 +285,7 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
   min-width: 100%;
 }
 
-.taula-dreta table td, 
+.taula-dreta table td,
 .taula-dreta table th {
   white-space: nowrap;
   overflow: hidden;
@@ -237,266 +293,216 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
 }
 
 @media (max-width: 900px) {
-  .zona-taules {
-    flex-direction: column;
-    gap: 30px;
-    align-items: center;
-  }
-
-  .taula-esquerra, 
-  .taula-dreta {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .taula-esquerra table, 
-  .taula-dreta table {
-    min-width: auto;
-  }
+  .zona-taules { flex-direction: column; gap: 30px; align-items: center; }
+  .taula-esquerra, .taula-dreta { flex: 1 1 100%; max-width: 100%; }
+  .taula-esquerra table, .taula-dreta table { min-width: auto; }
 }
 
 .tabla { flex: 1 1 600px; min-width: 0; max-width: 100%; }
 .tabla-participants { flex: 0 1 400px; }
 .tabla-estadistiques { flex: 1 1 700px; }
-
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 
-/* Barres percentuals */
-.barra { height: 30px; border-radius: 10px; background: #e5e7eb; position: relative; overflow: hidden; margin: 6px auto; width: 180px; max-width: 100%; }
-.barra-inner { height: 100%; border-radius: 10px; transition: width 0.8s ease-in-out; }
-.barra-1 { background: #22c55e; } .barra-X { background: #3b82f6; } .barra-2 { background: #ef4444; }
-.percent-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.9rem; font-weight: 700; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-.label-equip, .label-vs { text-align: center; margin-bottom: 5px; }
-.label-equip { font-weight: 600; font-size: 0.9rem; color: #1e3a8a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 5px; }
-.label-vs { font-weight: 500; font-size: 0.85rem; color: #6b7280; }
+/* ─── Barres percentuals ─── */
+.barra {
+  height: 28px;
+  border-radius: 6px;
+  background: var(--gray-light);
+  position: relative;
+  overflow: hidden;
+  margin: 6px auto;
+  width: 180px;
+  max-width: 100%;
+}
+.barra-inner { height: 100%; border-radius: 6px; transition: width 0.8s ease-in-out; }
+.barra-1 { background: var(--blue-main); }
+.barra-X { background: var(--blue-dark); }
+.barra-2 { background: #334155; }
+.percent-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  font-family: 'DM Mono', monospace;
+}
+.label-equip, .label-vs { text-align: center; margin-bottom: 4px; }
+.label-equip {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--blue-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 5px;
+}
+.label-vs { font-weight: 500; font-size: 0.8rem; color: var(--gray); }
 
-/* Panell info */
+/* ─── Panell info ─── */
 .info-panel {
-  position: fixed; top: 70px; left: 20px;
-  width: 550px; max-width: calc(100vw - 40px);
-  background: white; border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  z-index: 999; opacity: 0; visibility: hidden;
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  width: 550px;
+  max-width: calc(100vw - 40px);
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(15,23,42,0.18);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.3s ease-in-out;
-  max-height: 500px; overflow-y: auto;
-  border: 2px solid #dc2626;
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1.5px solid var(--blue-border);
 }
 .info-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
 .info-content { padding: 20px; }
+
 .alerta {
-  background: #fef3c7; color: #92400e; padding: 12px;
-  border-radius: 10px; border: 2px solid #fcd34d;
-  margin: 15px 0; font-weight: 600; text-align: center;
+  background: var(--gold-light);
+  color: #78350f;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1.5px solid #fde68a;
+  margin: 15px 0;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
 .info-panel::before {
   content: '';
   position: absolute;
-  top: -10px;
+  top: -9px;
   left: 30px;
   width: 0;
   height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid white;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid var(--white);
 }
 
-.info-content h2 {
-  color: #dc2626;
-  margin-top: 0;
-  margin-bottom: 15px;
-}
+.info-content h2 { color: var(--blue-mid); margin-top: 0; margin-bottom: 15px; text-align: left; }
 
-.info-content p {
-  line-height: 1.6;
-  color: #1f2937;
-}
+.info-content p { line-height: 1.6; color: var(--black); font-size: 0.95rem; }
 
 .info-content details {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: var(--gray-light);
+  border: 1px solid var(--blue-border);
   border-radius: 8px;
   margin-bottom: 10px;
   padding: 10px 15px;
   transition: background 0.2s;
 }
-.info-content details[open] {
-  background: #fee2e2;
+.info-content details[open] { background: var(--blue-light); }
+.info-content summary { font-weight: 600; cursor: pointer; outline: none; color: var(--blue-dark); }
+.info-content ul { margin: 8px 0 0 20px; padding: 0; }
+
+/* ─── Detalls de partits ─── */
+.detalls-partit {
+  background: var(--blue-light);
+  border-left: 3px solid var(--blue-main);
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  display: none;
 }
-.info-content summary {
+.detalls-partit.show { display: table-row; }
+.detalls-partit td { text-align: left; color: var(--black); padding: 10px 15px; }
+
+#tablaEstadisticas tbody tr.partit-row { cursor: pointer; transition: background 0.2s ease; }
+#tablaEstadisticas tbody tr.partit-row:hover { background: var(--blue-light); }
+
+/* ─── Quiniela activa header ─── */
+.quiniela-activa-header { width: 100%; margin-bottom: 20px; text-align: center; }
+
+.quiniela-banner {
+  background: var(--blue-dark);
+  color: white;
+  border-radius: 10px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(15,23,42,0.18);
+  display: inline-block;
+  border: 1.5px solid var(--blue-main);
+}
+.quiniela-banner h3 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+.quiniela-banner p { margin: 4px 0 0; font-size: 0.9rem; opacity: 0.8; }
+
+.no-quiniela {
+  background: var(--gold-light);
+  color: #78350f;
+  border-radius: 8px;
+  padding: 10px 15px;
+  display: inline-block;
   font-weight: 600;
-  cursor: pointer;
-  outline: none;
-}
-.info-content ul {
-  margin: 8px 0 0 20px;
-  padding: 0;
+  border: 1px solid #fde68a;
 }
 
-/* Responsivitat mòbil */
-@media (max-width: 768px) {
-  .tablas-lado { flex-direction: column; gap: 30px; margin-top: 20px; }
-  .tabla { flex: 1 1 100%; width: 100%; }
-  
-  .recaptacio-card {
-    padding: 15px 20px;
-    min-width: auto;
-  }
-  
-  .recaptacio-icon {
-    font-size: 2.5rem;
-  }
-  
-  .recaptacio-amount {
-    font-size: 1.5rem;
-  }
+/* ─── Vots ─── */
+.detall-vots td {
+  background: var(--blue-light);
+  border-top: 1px solid var(--blue-border);
+  padding: 10px 20px;
 }
+.vots-llista { display: flex; flex-wrap: wrap; gap: 8px; }
+.vot-item {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 5px 10px;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.08);
+  font-size: 0.88rem;
+  border: 1px solid var(--blue-border);
+  color: var(--blue-dark);
+}
+.vot-buit { background: var(--gray-light); color: var(--gray); font-style: italic; }
 
-/* === Repartiment de Premis === */
+/* ─── Premis ─── */
 .premis-container {
   text-align: center;
   margin: 30px auto 50px;
   width: 100%;
   max-width: 1000px;
 }
-
-.premis-container h2 {
-  color: white;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-}
+.premis-container h2 { color: var(--blue-mid); font-size: 1.6rem; margin-bottom: 20px; }
 
 .zona-premis {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  margin: 30px 0;
+  margin: 20px 0;
   width: 100%;
   max-width: 900px;
 }
 
 .premi-card {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  background: var(--blue-dark);
   color: white;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 20px 25px;
   flex: 1 1 200px;
   text-align: center;
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.5);
+  box-shadow: 0 4px 16px rgba(15,23,42,0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 3px solid gold;
+  border: 1.5px solid var(--blue-main);
 }
-.premi-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.6);
-}
+.premi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(15,23,42,0.25); }
+.premi-card h3 { font-size: 0.9rem; margin-bottom: 10px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.05em; }
+.premi-card .amount { font-size: 1.6rem; font-weight: 700; font-family: 'DM Mono', monospace; }
 
-.premi-card h3 {
-  font-size: 1rem;
-  margin-bottom: 10px;
+/* ─── Responsiu mòbil ─── */
+@media (max-width: 768px) {
+  .tablas-lado { flex-direction: column; gap: 30px; margin-top: 20px; }
+  .tabla { flex: 1 1 100%; width: 100%; }
+  .recaptacio-card { padding: 15px 20px; min-width: auto; }
+  .recaptacio-icon { font-size: 2rem; }
+  .recaptacio-amount { font-size: 1.4rem; }
 }
-
-.premi-card .amount {
-  font-size: 1.6rem;
-  font-weight: 700;
-}
-
-.detalls-partit {
-  background: #f9fafb;
-  border-left: 4px solid #dc2626;
-  padding: 10px 15px;
-  font-size: 0.9rem;
-  display: none;
-}
-
-.detalls-partit.show {
-  display: table-row;
-}
-
-.detalls-partit td {
-  text-align: left;
-  color: #333;
-  padding: 10px 15px;
-}
-
-#tablaEstadisticas tbody tr.partit-row {
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-#tablaEstadisticas tbody tr.partit-row:hover {
-  background: #fee2e2;
-}
-
-.quiniela-activa-header {
-  width: 100%;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.quiniela-banner {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  color: white;
-  border-radius: 14px;
-  padding: 12px 20px;
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
-  display: inline-block;
-  border: 2px solid gold;
-}
-
-.quiniela-banner h3 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
-.quiniela-banner p {
-  margin: 4px 0 0;
-  font-size: 0.95rem;
-  opacity: 0.9;
-}
-
-.no-quiniela {
-  background: #fef3c7;
-  color: #92400e;
-  border-radius: 10px;
-  padding: 10px 15px;
-  display: inline-block;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.detall-vots td {
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
-  padding: 10px 20px;
-}
-
-.vots-llista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.vot-item {
-  background: #fee2e2;
-  border-radius: 8px;
-  padding: 6px 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  font-size: 0.9rem;
-  border: 1px solid #fca5a5;
-}
-
-.vot-buit {
-  background: #f3f4f6;
-  color: #888;
-  font-style: italic;
-}
-
 </style>
-
 </head>
 <body>
 
@@ -506,7 +512,6 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
 <div class="content-wrapper">
   <h1>🏆 Rànquing General</h1>
 
-  <!-- Mostrador de recaptació i premis -->
   <div id="zonaPremis">
     <h2>💶 Estat de la Quiniela</h2>
     <div class="zona-premis">
@@ -522,99 +527,91 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
   </div>
 
   <div id="infoPanel" class="info-panel">
-  <div class="info-content">
-    <h2>ℹ️ Com funciona la Quiniela</h2>
-    
-    <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
-    
-    <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions a cada jornada.</p>
-
-    <details open>
-      <summary>🎟️ Apostes</summary>
-      <ul>
-        <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
-        <li>Pots fer tantes apostes com vulguis a cada jornada.</li>
-        <li>Només la teva aposta amb <strong>la millor puntuació</strong> de la jornada sumarà per a la classificació general.</li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>📊 Puntuació per jornada</summary>
-      <ul>
-        <li>Encert de <strong>1</strong> (guanyador local) o <strong>2</strong> (guanyador visitant): <strong>1 punt</strong>.</li>
-        <li>Encert de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
-        <li>Es sumen els punts de totes les apostes de cada participant.</li>
-        <li>Només comptarà <strong>l'aposta amb més punts</strong> de cada participant per al total general.</li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>🏅 Premis</summary>
-      <ul>
-        <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
-        <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
+    <div class="info-content">
+      <h2>ℹ️ Com funciona la Quiniela</h2>
+      <div class="alerta">⚠️ Les quinieles es tanquen cada dissabte a les <strong>16:00 h</strong>.</div>
+      <p>Aquesta pàgina mostra el rànquing de tots els participants i les seves puntuacions a cada jornada.</p>
+      <details open>
+        <summary>🎟️ Apostes</summary>
         <ul>
-          <li>50% destinat al <strong>premi setmanal</strong>.</li>
-          <li>15% destinat al <strong>premi general</strong>.</li>
-          <li>35% destinat al <strong>club</strong>.</li>
+          <li>Cada aposta o quiniela té un preu de <strong>2 €</strong>.</li>
+          <li>Pots fer tantes apostes com vulguis a cada jornada.</li>
+          <li>Només la teva aposta amb <strong>la millor puntuació</strong> de la jornada sumarà per a la classificació general.</li>
         </ul>
-      </ul>
-
+      </details>
       <details>
-        <summary>💰 Premi per jornada</summary>
+        <summary>📊 Puntuació per jornada</summary>
         <ul>
-          <li>Per obtenir el premi setmanal cal fer <strong>ple d'encerts (8 encerts)</strong>.</li>
-          <li>Si hi ha diversos participants amb ple, el premi es divideix entre tots.</li>
-          <li>Si no hi ha cap ple:</li>
+          <li>Encert de <strong>1</strong> (guanyador local) o <strong>2</strong> (guanyador visitant): <strong>1 punt</strong>.</li>
+          <li>Encert de <strong>X</strong> (empat): <strong>2 punts</strong>.</li>
+          <li>Es sumen els punts de totes les apostes de cada participant.</li>
+          <li>Només comptarà <strong>l'aposta amb més punts</strong> de cada participant per al total general.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>🏅 Premis</summary>
+        <ul>
+          <li>Es reparteix un premi al <strong>guanyador de cada jornada</strong> i un altre al <strong>guanyador general</strong>.</li>
+          <li>Els premis es financen exclusivament amb la recaptació de les apostes:</li>
           <ul>
-            <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
-            <li>El 50% restant es divideix a parts iguals entre el club i el premi setmanal de la jornada següent.</li>
+            <li>50% destinat al <strong>premi setmanal</strong>.</li>
+            <li>15% destinat al <strong>premi general</strong>.</li>
+            <li>35% destinat al <strong>club</strong>.</li>
           </ul>
         </ul>
+        <details>
+          <summary>💰 Premi per jornada</summary>
+          <ul>
+            <li>Per obtenir el premi setmanal cal fer <strong>ple d'encerts (8 encerts)</strong>.</li>
+            <li>Si hi ha diversos participants amb ple, el premi es divideix entre tots.</li>
+            <li>Si no hi ha cap ple:</li>
+            <ul>
+              <li>El participant amb més punts rep el <strong>50%</strong> del premi setmanal.</li>
+              <li>El 50% restant es divideix a parts iguals entre el club i el premi setmanal de la jornada següent.</li>
+            </ul>
+          </ul>
+        </details>
+        <details>
+          <summary>🏆 Premi de temporada</summary>
+          <ul>
+            <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi general</strong>.</li>
+            <li>Si hi ha empat, el premi es dividirà a parts iguals entre els empatats.</li>
+          </ul>
+        </details>
       </details>
-
-      <details>
-        <summary>🏆 Premi de temporada</summary>
-        <ul>
-          <li>El participant amb la puntuació acumulada més alta guanyarà el <strong>premi general</strong>.</li>
-          <li>Si hi ha empat, el premi es dividirà a parts iguals entre els empatats.</li>
-        </ul>
-      </details>
-    </details>
-  </div>
-</div>
-
-<p>Consulta els punts totals o filtra per jornada:</p>
-<select id="filtroQuiniela" class="select-xulo">
-  <option value="">Rànquing General</option>
-</select>
-
-<table id="tablaRanking">
-  <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
-  <tbody></tbody>
-</table>
-
-<div class="zona-taules">
-  <div class="taula-esquerra">
-    <h2>📋 Participants i Quinieles Fetes</h2>
-    <div class="table-scroll">
-      <table id="tablaActivos">
-        <thead><tr><th>#</th><th>Nom</th><th>Quinieles</th></tr></thead>
-        <tbody></tbody>
-      </table>
     </div>
   </div>
 
-  <div class="taula-dreta">
-    <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
-    <div class="table-scroll">
-      <table id="tablaEstadisticas">
-        <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
-        <tbody></tbody>
-      </table>
+  <p style="color: var(--gray); font-size: 0.95rem;">Consulta els punts totals o filtra per jornada:</p>
+  <select id="filtroQuiniela" class="select-xulo">
+    <option value="">Rànquing General</option>
+  </select>
+
+  <table id="tablaRanking">
+    <thead><tr><th>#</th><th>Nom</th><th>Punts</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="zona-taules">
+    <div class="taula-esquerra">
+      <h2>📋 Participants i Quinieles Fetes</h2>
+      <div class="table-scroll">
+        <table id="tablaActivos">
+          <thead><tr><th>#</th><th>Nom</th><th>Quinieles</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="taula-dreta">
+      <h2>⚽ Repartiment d'Apostes (Quiniela Activa)</h2>
+      <div class="table-scroll">
+        <table id="tablaEstadisticas">
+          <thead><tr><th>Local</th><th>Empat</th><th>Visitant</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 
   <div class="menu">
     <a href="admin.html" id="adminLink" class="menu-link">Administrador</a>
@@ -622,7 +619,6 @@ a.menu-link:hover { transform: translateY(-2px) scale(1.05); }
 </div>
 
 <script>
-// Panell informatiu
 const infoPanel = document.getElementById("infoPanel");
 const btnInfo = document.getElementById("btnInfo");
 btnInfo.addEventListener("click", e => {
@@ -653,7 +649,6 @@ async function cargarQuinielas() {
     .from("quiniela_oficial")
     .select("id, nombre")
     .order("creada_el", { ascending: false });
-  
   if (error) console.error("Error carregant quinieles:", error);
   if (data) {
     data.forEach(q => {
@@ -665,103 +660,54 @@ async function cargarQuinielas() {
   }
 }
 
-
-// --- Rànquing
 async function cargarRanking(quinielaId = "") {
   tbodyRanking.innerHTML = `<tr><td colspan='3'>Carregant...</td></tr>`;
   let data = [];
-
   try {
     if (quinielaId) {
       const quinielaNom = filtro.options[filtro.selectedIndex].text;
-
-      console.log("Carregant rànquing per a quiniela:", quinielaNom);
-
       const { data: detalle, error } = await supabase
         .from("resultados_detalle")
         .select("correo, nombre, puntos, quiniela_nombre")
         .eq("quiniela_nombre", quinielaNom);
-
-      if (error) {
-        console.error("Error Supabase:", error);
-        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
-        return;
-      }
-
+      if (error) { tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>"; return; }
       if (detalle && detalle.length > 0) {
-        console.log("Entrades trobades:", detalle);
-
         const perJugador = {};
-
         detalle.forEach(d => {
-          if (!perJugador[d.correo]) {
-            perJugador[d.correo] = { nombre: d.nombre, punts: Number(d.puntos) };
-          } else {
-            perJugador[d.correo].punts += Number(d.puntos);
-          }
+          if (!perJugador[d.correo]) perJugador[d.correo] = { nombre: d.nombre, punts: Number(d.puntos) };
+          else perJugador[d.correo].punts += Number(d.puntos);
         });
-
         data = Object.values(perJugador).sort((a, b) => b.punts - a.punts);
-
-        console.log("Rànquing processat:", data);
       }
-
     } else {
       const { data: general, error } = await supabase
         .from("resultados_generales")
         .select("nombre, puntos_totales")
         .order("puntos_totales", { ascending: false });
-
-      if (error) {
-        console.error("Error Supabase:", error);
-        tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
-        return;
-      }
-
+      if (error) { tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>"; return; }
       data = (general || []).map(d => ({ nombre: d.nombre, punts: d.puntos_totales }));
     }
-
-    if (!data.length) {
-      tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades per aquesta jornada.</td></tr>";
-      return;
-    }
-
-    tbodyRanking.innerHTML = data
-      .map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`)
-      .join("");
-
+    if (!data.length) { tbodyRanking.innerHTML = "<tr><td colspan='3'>No hi ha dades per aquesta jornada.</td></tr>"; return; }
+    tbodyRanking.innerHTML = data.map((r, i) => `<tr><td>${i + 1}</td><td>${r.nombre}</td><td>${r.punts}</td></tr>`).join("");
   } catch (err) {
-    console.error("Error carregant rànquing:", err);
     tbodyRanking.innerHTML = "<tr><td colspan='3'>Error carregant dades.</td></tr>";
   }
 }
 
-
-// --- Participants de la quiniela activa
 async function cargarActivos() {
   const { data: activa } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
   if (!activa) return tbodyActivos.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
-
-  const { data } = await supabase
-    .from("quinielas_participantes")
-    .select("participante_id, nombre")
-    .eq("quiniela_id", activa.id);
-
+  const { data } = await supabase.from("quinielas_participantes").select("participante_id, nombre").eq("quiniela_id", activa.id);
   if (!data?.length) return tbodyActivos.innerHTML = "<tr><td colspan='3'>Encara no hi ha participants.</td></tr>";
-
   const conteo = {};
   data.forEach(q => {
     if (!conteo[q.participante_id]) conteo[q.participante_id] = { nombre: q.nombre, count: 0 };
     conteo[q.participante_id].count++;
   });
   const lista = Object.values(conteo).sort((a, b) => b.count - a.count);
-
-  tbodyActivos.innerHTML = lista.map((p, i) => `
-    <tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>
-  `).join("");
+  tbodyActivos.innerHTML = lista.map((p, i) => `<tr><td>${i + 1}</td><td>${p.nombre}</td><td>${p.count}</td></tr>`).join("");
 }
 
-// --- Estadístiques
 async function cargarEstadisticas() {
   const contenedor = document.querySelector(".taula-dreta");
   const quinielaHeaderId = "infoQuinielaActiva";
@@ -772,50 +718,23 @@ async function cargarEstadisticas() {
     header.className = "quiniela-activa-header";
     contenedor.insertBefore(header, contenedor.firstChild);
   }
-
   tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Carregant...</td></tr>";
-
-  const { data: quinielaActiva, error: errorActiva } = await supabase
-    .from("quiniela_oficial")
-    .select("id, nombre, data, activa")
-    .eq("activa", true)
-    .single();
-
+  const { data: quinielaActiva, error: errorActiva } = await supabase.from("quiniela_oficial").select("id, nombre, data, activa").eq("activa", true).single();
   if (errorActiva || !quinielaActiva) {
     header.innerHTML = `<div class="no-quiniela">⚠️ Cap quiniela activa</div>`;
     tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>No hi ha cap quiniela activa.</td></tr>";
     return;
   }
-
-  const dataBonica = new Date(quinielaActiva.data).toLocaleDateString("ca-ES", {
-    weekday: "long", day: "numeric", month: "long"
-  });
-
-  const { data: apostes, error: errApostes } = await supabase
-    .from("quinielas_participantes")
-    .select("resultados")
-    .eq("quiniela_id", quinielaActiva.id);
-
-  if (errApostes) {
-    console.error(errApostes);
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Error carregant apostes.</td></tr>";
-    return;
-  }
-
-  if (!apostes?.length || apostes.length < 3) {
-    tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>";
-    return;
-  }
-
+  const { data: apostes, error: errApostes } = await supabase.from("quinielas_participantes").select("resultados").eq("quiniela_id", quinielaActiva.id);
+  if (errApostes) { tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Error carregant apostes.</td></tr>"; return; }
+  if (!apostes?.length || apostes.length < 3) { tbodyEstadisticas.innerHTML = "<tr><td colspan='3'>Es necessiten mínim 3 quinieles per mostrar estadístiques.</td></tr>"; return; }
   const partits = quinielaActiva.data;
   const stats = partits.map(() => ({ "1": 0, "X": 0, "2": 0 }));
-
   apostes.forEach(a => {
     Object.entries(a.resultados || {}).forEach(([i, v]) => {
       if (stats[i] && stats[i][v] !== undefined) stats[i][v]++;
     });
   });
-
   tbodyEstadisticas.innerHTML = stats.map((r, i) => {
     const total = r["1"] + r["X"] + r["2"];
     if (!total) return "";
@@ -839,75 +758,37 @@ async function cargarEstadisticas() {
         </td>
       </tr>`;
   }).join("");
-
   activarDesplegablesRepartiment();
 }
 
-
 async function activarDesplegablesRepartiment() {
   const rows = document.querySelectorAll(".partit-row");
-
-  const { data: quinielaActiva, error: errorQ } = await supabase
-    .from("quiniela_oficial")
-    .select("id, activa, blocked")
-    .eq("activa", true)
-    .maybeSingle();
-
-  if (errorQ || !quinielaActiva) {
-    console.warn("⚠️ No s'ha trobat cap quiniela activa.");
-    return;
-  }
-
+  const { data: quinielaActiva, error: errorQ } = await supabase.from("quiniela_oficial").select("id, activa, blocked").eq("activa", true).maybeSingle();
+  if (errorQ || !quinielaActiva) return;
   const idQuiniela = quinielaActiva.id;
-
   if (!quinielaActiva.blocked) {
-    rows.forEach(row => {
-      row.addEventListener("click", () => {
-        alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui.");
-      });
-    });
+    rows.forEach(row => { row.addEventListener("click", () => { alert("🔒 Aquesta quiniela encara està oberta. No es poden veure els vots fins que es tanqui."); }); });
     return;
   }
-
-  const { data: participants, error: errorP } = await supabase
-    .from("quinielas_participantes")
-    .select("nombre, resultados")
-    .eq("quiniela_id", idQuiniela);
-
-  if (errorP) {
-    console.error("Error carregant participants:", errorP);
-    return;
-  }
-
+  const { data: participants, error: errorP } = await supabase.from("quinielas_participantes").select("nombre, resultados").eq("quiniela_id", idQuiniela);
+  if (errorP) return;
   rows.forEach(row => {
     row.addEventListener("click", () => {
       const index = row.getAttribute("data-index");
-
       const detallExist = row.nextElementSibling;
-      if (detallExist && detallExist.classList.contains("detall-vots")) {
-        detallExist.remove();
-        return;
-      }
-
+      if (detallExist && detallExist.classList.contains("detall-vots")) { detallExist.remove(); return; }
       const detall = document.createElement("tr");
       detall.className = "detall-vots";
       const cel = document.createElement("td");
       cel.colSpan = 3;
-
       let html = "<div class='vots-llista'>";
       let trobat = false;
-
       participants.forEach(p => {
         const prediccio = p.resultados?.[index];
-        if (prediccio) {
-          trobat = true;
-          html += `<div class="vot-item"><strong>${p.nombre}</strong> → ${prediccio}</div>`;
-        }
+        if (prediccio) { trobat = true; html += `<div class="vot-item"><strong>${p.nombre}</strong> → ${prediccio}</div>`; }
       });
-
       if (!trobat) html += "<div class='vot-item vot-buit'>Cap vot registrat</div>";
       html += "</div>";
-
       cel.innerHTML = html;
       detall.appendChild(cel);
       row.insertAdjacentElement("afterend", detall);
@@ -915,49 +796,23 @@ async function activarDesplegablesRepartiment() {
   });
 }
 
-
-// --- Carregar recaptació
 async function cargarRecaptacio() {
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
-  // El bote guanyador acumulat és un valor fix: 51,60 €
-  // No actualitzem acumulatGuanyadorEl des de la base de dades
-
   try {
-    const { data: quinielaActiva, error: errorActiva } = await supabase
-      .from("quiniela_oficial")
-      .select("id")
-      .eq("activa", true)
-      .single();
-
-    if (errorActiva || !quinielaActiva?.id) {
-      console.warn("No hi ha quiniela activa.");
-      if (premiPleEl) premiPleEl.textContent = "0 €";
-      return;
-    }
-
+    const { data: quinielaActiva, error: errorActiva } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
+    if (errorActiva || !quinielaActiva?.id) { if (premiPleEl) premiPleEl.textContent = "0 €"; return; }
     const quinielaId = quinielaActiva.id;
-
-    const { data: recActiva, error: errActivaRec } = await supabase
-      .from("recaudacion_quinielas")
-      .select("recaudado, acumulado")
-      .eq("quiniela_id", quinielaId)
-      .single();
-
+    const { data: recActiva, error: errActivaRec } = await supabase.from("recaudacion_quinielas").select("recaudado, acumulado").eq("quiniela_id", quinielaId).single();
     if (errActivaRec) throw errActivaRec;
-
     const recaptatActual = recActiva?.recaudado || 0;
     const acumulatPle = recActiva?.acumulado || 0;
     const premiPle = (recaptatActual * 0.5) + acumulatPle;
-
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
-
   } catch (err) {
     console.error("Error carregant premis:", err);
   }
 }
 
-
-// --- Event listeners
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
 
 await cargarQuinielas();
@@ -965,7 +820,6 @@ await cargarRanking();
 await cargarActivos();
 await cargarEstadisticas();
 await cargarRecaptacio();
-
 </script>
 </body>
 </html>
