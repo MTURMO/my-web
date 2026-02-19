@@ -800,7 +800,7 @@ async function cargarRecaptacio() {
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
   try {
     const { data: quinielaActiva, error: errorActiva } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
-    if (errorActiva || !quinielaActiva?.id) { if (premiPleEl) premiPleEl.textContent = "0 €"; return; }
+    if (errorActiva || !quinielaActiva?.id) { if (premiPleEl) premiPleEl.textContent = "2,60 €"; return; }
     const quinielaId = quinielaActiva.id;
     const { data: recActiva, error: errActivaRec } = await supabase.from("recaudacion_quinielas").select("recaudado, acumulado").eq("quiniela_id", quinielaId).single();
     if (errActivaRec) throw errActivaRec;
