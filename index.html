@@ -799,34 +799,19 @@ async function activarDesplegablesRepartiment() {
 async function cargarRecaptacio() {
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
   try {
-    const { data: quinielaActiva, error: errorActiva } = await supabase
-      .from("quiniela_oficial")
-      .select("id")
-      .eq("activa", true)
-      .single();
-
-    if (errorActiva || !quinielaActiva?.id) {
-      if (premiPleEl) premiPleEl.textContent = "2,60 €";
-      return;
-    }
-
-    const { data: apostes } = await supabase
-      .from("quinielas_participantes")
-      .select("id")
-      .eq("quiniela_id", quinielaActiva.id);
-
-    const numApostes = apostes?.length || 0;
-    const recaptatActual = numApostes * 2;
+    const { data: quinielaActiva, error: errorActiva } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
+    if (errorActiva || !quinielaActiva?.id) { if (premiPleEl) premiPleEl.textContent = "2,60 €"; return; }
+    const quinielaId = quinielaActiva.id;
+    const { data: recActiva, error: errActivaRec } = await supabase.from("recaudacion_quinielas").select("recaudado, acumulado").eq("quiniela_id", quinielaId).single();
+    if (errActivaRec) throw errActivaRec;
+    const recaptatActual = recActiva?.recaudado || 0;
     const acumulatPle = 2.6;
     const premiPle = (recaptatActual * 0.7) + acumulatPle;
-
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
-
   } catch (err) {
     console.error("Error carregant premis:", err);
   }
 }
-
 
 filtro.addEventListener("change", e => cargarRanking(e.target.value));
 
