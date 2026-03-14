@@ -805,7 +805,7 @@ async function cargarRecaptacio() {
     const { data: recActiva, error: errActivaRec } = await supabase.from("recaudacion_quinielas").select("recaudado, acumulado").eq("quiniela_id", quinielaId).single();
     if (errActivaRec) throw errActivaRec;
     const recaptatActual = recActiva?.recaudado || 0;
-    const acumulatPle = 14.5;
+    const acumulatPle = 20.8;
     const premiPle = (recaptatActual/2) + acumulatPle;
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
   } catch (err) {
