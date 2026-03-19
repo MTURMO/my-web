@@ -806,7 +806,11 @@ async function cargarRecaptacio() {
     if (errActivaRec) throw errActivaRec;
     const recaptatActual = recActiva?.recaudado || 0;
     const acumulatPle = 26.4;
-    const premiPle = (recaptatActual/2) + acumulatPle;
+    if (recaptatActual = 0) {
+      const premiPle = acumulatPle;
+    } else {
+      const premiPle = (recaptatActual/2) + acumulatPle;
+    }
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
   } catch (err) {
     console.error("Error carregant premis:", err);
