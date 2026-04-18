@@ -798,20 +798,15 @@ async function activarDesplegablesRepartiment() {
 
 async function cargarRecaptacio() {
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
+  const acumulatPle = 38.3;
+  if (premiPleEl) premiPleEl.textContent = `${acumulatPle.toFixed(2)} €`;
   try {
     const { data: quinielaActiva, error: errorActiva } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
-    if (errorActiva || !quinielaActiva?.id) { if (premiPleEl) premiPleEl.textContent = "2,60 €"; return; }
+    if (errorActiva || !quinielaActiva?.id) return;
     const quinielaId = quinielaActiva.id;
-    const { data: recActiva, error: errActivaRec } = await supabase.from("recaudacion_quinielas").select("recaudado, acumulado").eq("quiniela_id", quinielaId).single();
-    if (errActivaRec) throw errActivaRec;
+    const { data: recActiva } = await supabase.from("recaudacion_quinielas").select("recaudado, acumulado").eq("quiniela_id", quinielaId).single();
     const recaptatActual = recActiva?.recaudado || 0;
-    const acumulatPle = 38.3;
-    let premiPle;
-    if (recaptatActual === 0) {
-      premiPle = acumulatPle;
-    } else {
-      premiPle = (recaptatActual / 2) + acumulatPle;
-    }
+    const premiPle = recaptatActual === 0 ? acumulatPle : (recaptatActual / 2) + acumulatPle;
     if (premiPleEl) premiPleEl.textContent = `${premiPle.toFixed(2)} €`;
   } catch (err) {
     console.error("Error carregant premis:", err);
