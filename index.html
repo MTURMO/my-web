@@ -798,7 +798,7 @@ async function activarDesplegablesRepartiment() {
 
 async function cargarRecaptacio() {
   const premiPleEl = document.getElementById("premiPle")?.querySelector(".amount");
-  const acumulatPle = 51.6;
+  const acumulatPle = 44.6;
   if (premiPleEl) premiPleEl.textContent = `${acumulatPle.toFixed(2)} €`;
   try {
     const { data: quinielaActiva, error: errorActiva } = await supabase.from("quiniela_oficial").select("id").eq("activa", true).single();
